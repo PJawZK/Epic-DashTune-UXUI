@@ -1,13 +1,13 @@
-# Epic DashTune UX/UI
+# Epic-DashTune UX/UI
 
 > [!IMPORTANT]
-> **This repository contains an experimental UX/UI test application. It is not the full EpicDash application and must not be treated as a production release.**
+> **This repository contains an experimental UX/UI test application. It is not the full Epic-DashTune application and must not be treated as a production release.**
 >
 > Everything shown here is exploratory. A screen, control, workflow, feature, layout, data channel, or interaction appearing in this test app is **not permanent**, is **not a promise**, and does **not guarantee that it will or can be implemented in the full application**. Features may be changed, replaced, reduced, or removed as testing continues.
 
 ## Purpose
 
-Epic DashTune UX/UI is a standalone layout and interaction laboratory used to explore possible user-interface directions for an EpicEFI-oriented dashboard and tuning companion.
+Epic-DashTune UX/UI is a standalone layout and interaction laboratory used to explore possible user-interface directions for an EpicEFI-oriented dashboard and tuning companion.
 
 The project is intended for:
 
@@ -17,17 +17,17 @@ The project is intended for:
 - read-only tuning, table, logging, and diagnostics workflow prototypes;
 - evaluating ideas before deciding whether they belong in another application.
 
-It is not intended to define the final feature set or architecture of EpicDash.
+It is not intended to define the final feature set or architecture of Epic-DashTune.
 
-## Current experimental baseline
+## Current experimental preview
 
-- App label: `EpicDash UX`
+- App label: `Epic-DashTune UX`
 - Application ID: `com.buttonbox.ble.ul`
-- Current accepted test baseline: `0.12.29-ux-state-31`
-- Version code: `1229`
-- Official EpicDash JZ package remains separate: `com.buttonbox.ble.jz`
+- Preview version: `0.12.30-ux-brand-32`
+- Version code: `1230`
+- The separate full application package remains `com.buttonbox.ble.jz`.
 
-The two package identities are intentionally separate so the UX experiment can be installed alongside the official application.
+The two package identities are intentionally separate so the UX experiment can be installed alongside the full application.
 
 ## Safety boundary
 
@@ -58,9 +58,13 @@ The clean wrapper does **not** claim to reproduce the repackaged test APK's comp
 - This repository tracks the experimental UX/UI source and its documented test state.
 - Private signing keys and passwords must never be committed.
 - Signed APKs are test artifacts, not production releases.
-- A feature being present here does not imply acceptance into any other EpicDash project.
+- A feature being present here does not imply acceptance into any other Epic-DashTune project.
 - Compatibility, completeness, and long-term support are not guaranteed.
+
+## Installation note
+
+The public preview APK is built from the clean wrapper and debug-signed. Android may require a clean installation when replacing an experimental APK signed with a different certificate. Uninstall only `com.buttonbox.ble.ul` when resolving that specific signature mismatch. Do not uninstall or modify `com.buttonbox.ble.jz`.
 
 ## Status
 
-The repository is being initialized from the accepted r31 UX/UI test state. Detailed implementation history, source, validation notes, and build instructions will be imported in the baseline source pull request.
+The verified r32 source payload and one-time reconstruction workflow are currently being expanded into the normal repository tree. The resulting prerelease is intended for public UX/UI testing only.
