@@ -15,72 +15,54 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out import branch
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: import/r31-baseline
           fetch-depth: 0
 
-      - name: Reconstruct and verify source archive
-        shell: bash
+      - name: Reconstruct and verify source
         run: |
           set -euo pipefail
           cat bootstrap/r32-source.b64.part-* > /tmp/r32-source.b64
-          base64 --decode /tmp/r32-source.b64 > /tmp/Epic-DashTune-UX-Source-r32-lean.tar.xz
-          echo "8a5a1bc7f23604e4cc8d9d1d91789b6cfef724c8b5bcd4c119fefdc28071db6e  /tmp/Epic-DashTune-UX-Source-r32-lean.tar.xz" | sha256sum --check --strict
-          mkdir -p /tmp/r32-source
-          tar -xJf /tmp/Epic-DashTune-UX-Source-r32-lean.tar.xz -C /tmp/r32-source
+          base64 --decode /tmp/r32-source.b64 > /tmp/Epic-DashTune-UX-Source-r32.tar.xz
+          echo "8a5a1bc7f23604e4cc8d9d1d91789b6cfef724c8b5bcd4c119fefdc28071db6e  /tmp/Epic-DashTune-UX-Source-r32.tar.xz" | sha256sum --check --strict
+          mkdir /tmp/r32-source
+          tar -xJf /tmp/Epic-DashTune-UX-Source-r32.tar.xz -C /tmp/r32-source
           test -f /tmp/r32-source/app/build.gradle.kts
           test -f /tmp/r32-source/app/src/main/assets/dashboard_lab.html
           test -f /tmp/r32-source/app/src/main/assets/tune_catalog.js
           test -f /tmp/r32-source/app/src/main/assets/table_catalog.js
-
-      - name: Replace transport with normal source tree
-        shell: bash
-        run: |
-          set -euo pipefail
           cp -a /tmp/r32-source/. ./
           rm -rf bootstrap
           rm -f .github/workflows/reconstruct-and-release-r32.yml
 
-      - name: Apply repository disclosure and release notes
-        shell: bash
+      - name: Apply public disclaimer and branding note
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
-          readme = Path('README.md')
-          text = readme.read_text(encoding='utf-8')
-          title, _, rest = text.partition('\n')
-          notice = """> [!IMPORTANT]
+          p = Path('README.md')
+          s = p.read_text(encoding='utf-8')
+          title, _, body = s.partition('\n')
+          note = """> [!IMPORTANT]
           > **Epic-DashTune UX/UI is an experimental test application, not the full Epic-DashTune application and not a production release.**
           >
-          > Every screen, control, workflow, feature, layout, theme, data channel and interaction is exploratory. Nothing demonstrated here is permanent product scope or a promise that it will or can be implemented in another application. Experiments may be changed, replaced, reduced or removed at any time."""
-          if 'not the full Epic-DashTune application' not in text:
-              text = title + '\n\n' + notice + '\n\n' + rest.lstrip('\n')
-          text = text.replace('# Epic-DashTune UX — standalone exploratory source r31', '# Epic-DashTune UX/UI — experimental preview r32')
-          text = text.replace('Candidate version: `0.12.29-ux-state-31` (`1229`)', 'Preview version: `0.12.30-ux-brand-32` (`1230`)')
-          readme.write_text(text, encoding='utf-8')
+          > Nothing demonstrated here is permanent product scope or a promise that it will or can be implemented. Experiments may be changed, replaced, reduced or removed at any time."""
+          s = s.replace('# Epic-DashTune UX — standalone exploratory source r31', '# Epic-DashTune UX/UI — experimental preview r32')
+          s = s.replace('Candidate version: `0.12.29-ux-state-31` (`1229`)', 'Preview version: `0.12.30-ux-brand-32` (`1230`)')
+          if 'not the full Epic-DashTune application' not in s:
+              s = title + '\n\n' + note + '\n\n' + body.lstrip('\n')
+          p.write_text(s, encoding='utf-8')
           Path('R32_BRANDING_AND_PUBLIC_PREVIEW.md').write_text('''# r32 branding and public preview
 
-r32 establishes **Epic-DashTune** as the public-facing project and application name while retaining the experimental package identity `com.buttonbox.ble.ul`.
+Epic-DashTune is the public-facing project and application name. This remains a standalone UX/UI test application, not the full application or a production release. Nothing shown is permanent product scope or a promise of implementation.
 
-## Public status
-
-This remains a standalone UX/UI test application. It is not the full application, not a production release, and not a promise of permanent or technically feasible product scope. Any experiment may change or be removed.
-
-## Preview build
-
-The public GitHub prerelease is built from this clean Android wrapper and is intended for UX/UI evaluation. Native USB, BLE, MSL and diagnostic behavior that has not been reconstructed remains stubbed or read-only. The preview uses a GitHub Actions debug signature and therefore requires a clean installation when replacing a differently signed experimental APK.
+The public preview uses the experimental package `com.buttonbox.ble.ul`, remains read-only toward the ECU, and is built from the clean Android wrapper. Native USB, BLE, MSL and diagnostic behavior not reconstructed in this wrapper remains stubbed or read-only.
 ''', encoding='utf-8')
           PY
-          if grep -RIn --exclude-dir=.git --exclude='SOURCE_FILE_SHA256SUMS.txt' 'EpicDash' .; then
-            echo "Legacy public name remains in repository content" >&2
-            exit 1
-          fi
+          ! grep -RIn --exclude-dir=.git --exclude='SOURCE_FILE_SHA256SUMS.txt' 'EpicDash' .
 
-      - name: Add persistent preview workflow
-        shell: bash
+      - name: Add reusable build workflow
         run: |
           mkdir -p .github/workflows
           cat > .github/workflows/build-preview.yml <<'YAML'
@@ -120,57 +102,43 @@ The public GitHub prerelease is built from this clean Android wrapper and is int
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.2.1'
-      - name: Build public preview APK
+      - name: Build preview
         run: gradle --no-daemon :app:assembleDebug
 
-      - name: Prepare release assets
-        shell: bash
+      - name: Prepare assets
         run: |
-          set -euo pipefail
-          mkdir -p release-assets
+          mkdir release-assets
           cp app/build/outputs/apk/debug/app-debug.apk release-assets/Epic-DashTune-UX-preview-r32.apk
           sha256sum release-assets/Epic-DashTune-UX-preview-r32.apk > release-assets/Epic-DashTune-UX-preview-r32.apk.sha256
-          cp /tmp/Epic-DashTune-UX-Source-r32-lean.tar.xz release-assets/Epic-DashTune-UX-Source-r32.tar.xz
+          cp /tmp/Epic-DashTune-UX-Source-r32.tar.xz release-assets/Epic-DashTune-UX-Source-r32.tar.xz
           sha256sum release-assets/Epic-DashTune-UX-Source-r32.tar.xz > release-assets/Epic-DashTune-UX-Source-r32.tar.xz.sha256
 
-      - name: Commit reconstructed repository source
-        shell: bash
+      - name: Commit source tree
         run: |
-          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add --all
           git commit -m "Import Epic-DashTune r32 UX/UI source baseline"
           git push origin HEAD:import/r31-baseline
 
-      - name: Publish experimental prerelease
+      - name: Publish prerelease
         env:
           GH_TOKEN: ${{ github.token }}
-        shell: bash
         run: |
-          set -euo pipefail
-          TAG="v0.12.30-ux-brand-32-preview"
-          cat > /tmp/release-notes.md <<'EOF'
+          TAG=v0.12.30-ux-brand-32-preview
+          cat > /tmp/notes.md <<'EOF'
           ## Epic-DashTune UX/UI experimental preview
 
-          This is a **standalone UX/UI test application**. It is not the full Epic-DashTune application and not a production release. Nothing demonstrated here is permanent product scope or a promise that every experiment will or can be implemented.
+          This is a standalone UX/UI test application, not the full Epic-DashTune application or a production release. Nothing demonstrated here is permanent product scope or a promise of implementation.
 
           - Package: `com.buttonbox.ble.ul`
           - Version: `0.12.30-ux-brand-32`
           - Version code: `1230`
           - ECU boundary: read-only
 
-          The APK is debug-signed by GitHub Actions. A clean installation may be required when replacing a differently signed experimental APK. Never uninstall or modify the separate `com.buttonbox.ble.jz` application.
+          The APK is debug-signed by GitHub Actions, so a clean installation may be required when replacing a differently signed experimental APK. Never uninstall or modify the separate `com.buttonbox.ble.jz` application.
 
-          Native USB, BLE, MSL and diagnostic behavior that has not been reconstructed remains stubbed or read-only. This release is intended for layout, interaction and workflow testing.
+          This clean wrapper is intended for layout, interaction and workflow testing. Native USB, BLE, MSL and diagnostic behavior not reconstructed in the wrapper remains stubbed or read-only.
           EOF
           gh release delete "$TAG" --yes --cleanup-tag >/dev/null 2>&1 || true
-          gh release create "$TAG" \
-            release-assets/Epic-DashTune-UX-preview-r32.apk \
-            release-assets/Epic-DashTune-UX-preview-r32.apk.sha256 \
-            release-assets/Epic-DashTune-UX-Source-r32.tar.xz \
-            release-assets/Epic-DashTune-UX-Source-r32.tar.xz.sha256 \
-            --target "$(git rev-parse HEAD)" \
-            --title "Epic-DashTune UX/UI Preview r32" \
-            --notes-file /tmp/release-notes.md \
-            --prerelease
+          gh release create "$TAG" release-assets/* --target "$(git rev-parse HEAD)" --title "Epic-DashTune UX/UI Preview r32" --notes-file /tmp/notes.md --prerelease
