@@ -1,9 +1,8 @@
 name: Reconstruct and release Epic-DashTune r32
 
 on:
-  pull_request:
+  push:
     branches: [main]
-    types: [opened, reopened, synchronize]
   workflow_dispatch:
 
 permissions:
@@ -11,12 +10,11 @@ permissions:
 
 jobs:
   reconstruct-build-release:
-    if: github.event.pull_request.head.ref == 'import/r31-baseline'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: import/r31-baseline
+          ref: main
           fetch-depth: 0
       - name: Reconstruct and verify source
         run: |
@@ -111,7 +109,7 @@ The preview uses package `com.buttonbox.ble.ul`, remains read-only toward the EC
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add --all
           git commit -m "Import Epic-DashTune r32 UX/UI source baseline"
-          git push origin HEAD:import/r31-baseline
+          git push origin HEAD:main
       - name: Publish prerelease
         env:
           GH_TOKEN: ${{ github.token }}
