@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - import/r31-baseline
-    paths:
-      - .github/workflows/reconstruct-and-release-r32.yml
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -17,6 +18,7 @@ concurrency:
 
 jobs:
   reconstruct-build-release:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.ref == 'import/r31-baseline'
     runs-on: ubuntu-latest
 
     steps:
@@ -60,14 +62,11 @@ jobs:
 
           readme = Path("README.md")
           text = readme.read_text(encoding="utf-8")
-          title, sep, rest = text.partition("\n")
-          notice = """
-
-          > [!IMPORTANT]
+          title, _, rest = text.partition("\n")
+          notice = """> [!IMPORTANT]
           > **Epic-DashTune UX/UI is an experimental test application, not the full Epic-DashTune application and not a production release.**
           >
-          > Every screen, control, workflow, feature, layout, theme, data channel and interaction is exploratory. Nothing demonstrated here is permanent product scope or a promise that it will or can be implemented in another application. Experiments may be changed, replaced, reduced or removed at any time.
-          """.strip("\n")
+          > Every screen, control, workflow, feature, layout, theme, data channel and interaction is exploratory. Nothing demonstrated here is permanent product scope or a promise that it will or can be implemented in another application. Experiments may be changed, replaced, reduced or removed at any time."""
           if "not the full Epic-DashTune application" not in text:
               text = title + "\n\n" + notice + "\n\n" + rest.lstrip("\n")
           text = text.replace("# Epic-DashTune UX — standalone exploratory source r31", "# Epic-DashTune UX/UI — experimental preview r32")
@@ -76,16 +75,16 @@ jobs:
 
           Path("R32_BRANDING_AND_PUBLIC_PREVIEW.md").write_text("""# r32 branding and public preview
 
-          r32 establishes **Epic-DashTune** as the public-facing project and application name while retaining the established experimental package identity `com.buttonbox.ble.ul`.
+r32 establishes **Epic-DashTune** as the public-facing project and application name while retaining the established experimental package identity `com.buttonbox.ble.ul`.
 
-          ## Public status
+## Public status
 
-          This remains a standalone UX/UI test application. It is not the full application, not a production release, and not a promise of permanent or technically feasible product scope. Any experiment may change or be removed.
+This remains a standalone UX/UI test application. It is not the full application, not a production release, and not a promise of permanent or technically feasible product scope. Any experiment may change or be removed.
 
-          ## Preview build
+## Preview build
 
-          The public GitHub prerelease is built from this clean Android wrapper and is intended for UX/UI evaluation. Native USB, BLE, MSL and diagnostic behavior that has not been reconstructed remains stubbed or read-only. The preview uses a GitHub Actions debug signature and therefore requires a clean installation when replacing a differently signed experimental APK.
-          """, encoding="utf-8")
+The public GitHub prerelease is built from this clean Android wrapper and is intended for UX/UI evaluation. Native USB, BLE, MSL and diagnostic behavior that has not been reconstructed remains stubbed or read-only. The preview uses a GitHub Actions debug signature and therefore requires a clean installation when replacing a differently signed experimental APK.
+""", encoding="utf-8")
           PY
 
           if grep -RIn --exclude-dir=.git --exclude='SOURCE_FILE_SHA256SUMS.txt' 'EpicDash' .; then
@@ -169,8 +168,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- README.md R32_BRANDING_AND_PUBLIC_PREVIEW.md .github/workflows/build-preview.yml app build.gradle.kts settings.gradle.kts gradle.properties scripts reference '*.md' '*.json' SOURCE_FILE_SHA256SUMS.txt .gitignore 2>/dev/null || true
-          git add -u -- bootstrap .github/workflows/reconstruct-and-release-r32.yml
+          git add --all
           git commit -m "Import Epic-DashTune r32 UX/UI source baseline"
           git push origin HEAD:import/r31-baseline
 
