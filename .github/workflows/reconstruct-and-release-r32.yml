@@ -39,7 +39,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          shopt -s dotglob nullglob
           cp -a /tmp/r32-source/. ./
           rm -rf bootstrap
           rm -f .github/workflows/reconstruct-and-release-r32.yml
