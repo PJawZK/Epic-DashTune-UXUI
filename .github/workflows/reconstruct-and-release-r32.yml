@@ -13,13 +13,11 @@ jobs:
   reconstruct-build-release:
     if: github.event.pull_request.head.ref == 'import/r31-baseline'
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
         with:
           ref: import/r31-baseline
           fetch-depth: 0
-
       - name: Reconstruct and verify source
         run: |
           set -euo pipefail
@@ -35,10 +33,8 @@ jobs:
           cp -a /tmp/r32-source/. ./
           rm -rf bootstrap
           rm -f .github/workflows/reconstruct-and-release-r32.yml
-
       - name: Apply public disclaimer and branding note
         run: |
-          set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
           p = Path('README.md')
@@ -57,12 +53,11 @@ jobs:
 
 Epic-DashTune is the public-facing project and application name. This remains a standalone UX/UI test application, not the full application or a production release. Nothing shown is permanent product scope or a promise of implementation.
 
-The public preview uses the experimental package `com.buttonbox.ble.ul`, remains read-only toward the ECU, and is built from the clean Android wrapper. Native USB, BLE, MSL and diagnostic behavior not reconstructed in this wrapper remains stubbed or read-only.
+The preview uses package `com.buttonbox.ble.ul`, remains read-only toward the ECU, and is built from the clean Android wrapper. Native USB, BLE, MSL and diagnostic behavior not reconstructed in this wrapper remains stubbed or read-only.
 ''', encoding='utf-8')
           PY
           ! grep -RIn --exclude-dir=.git --exclude='SOURCE_FILE_SHA256SUMS.txt' 'EpicDash' .
-
-      - name: Add reusable build workflow
+      - name: Add reusable preview workflow
         run: |
           mkdir -p .github/workflows
           cat > .github/workflows/build-preview.yml <<'YAML'
@@ -92,7 +87,6 @@ The public preview uses the experimental package `com.buttonbox.ble.ul`, remains
                     name: Epic-DashTune-UX-preview
                     path: app/build/outputs/apk/debug/app-debug.apk
           YAML
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -104,7 +98,6 @@ The public preview uses the experimental package `com.buttonbox.ble.ul`, remains
           gradle-version: '8.2.1'
       - name: Build preview
         run: gradle --no-daemon :app:assembleDebug
-
       - name: Prepare assets
         run: |
           mkdir release-assets
@@ -112,7 +105,6 @@ The public preview uses the experimental package `com.buttonbox.ble.ul`, remains
           sha256sum release-assets/Epic-DashTune-UX-preview-r32.apk > release-assets/Epic-DashTune-UX-preview-r32.apk.sha256
           cp /tmp/Epic-DashTune-UX-Source-r32.tar.xz release-assets/Epic-DashTune-UX-Source-r32.tar.xz
           sha256sum release-assets/Epic-DashTune-UX-Source-r32.tar.xz > release-assets/Epic-DashTune-UX-Source-r32.tar.xz.sha256
-
       - name: Commit source tree
         run: |
           git config user.name "github-actions[bot]"
@@ -120,7 +112,6 @@ The public preview uses the experimental package `com.buttonbox.ble.ul`, remains
           git add --all
           git commit -m "Import Epic-DashTune r32 UX/UI source baseline"
           git push origin HEAD:import/r31-baseline
-
       - name: Publish prerelease
         env:
           GH_TOKEN: ${{ github.token }}
