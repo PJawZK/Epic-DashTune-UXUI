@@ -19,15 +19,23 @@ The project is intended for:
 
 It is not intended to define the final feature set or architecture of Epic-DashTune.
 
-## Current experimental preview
+## Accepted test release
 
-- App label: `Epic-DashTune UX`
+The sole accepted APK baseline is **r31, unchanged**:
+
+- Original APK filename: `EpicDash-UX-Layout-Lab-unofficial-r31.apk`
+- On-device app label: `EpicDash UX`
 - Application ID: `com.buttonbox.ble.ul`
-- Preview version: `0.12.30-ux-brand-32`
-- Version code: `1230`
-- The separate full application package remains `com.buttonbox.ble.jz`.
+- Version: `0.12.29-ux-state-31`
+- Version code: `1229`
+- APK SHA-256: `78d64936d21124b375914d14777c59d9be1e2cab4616fb82996aa363b715bd56`
+- Signer certificate SHA-256: `cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142`
 
-The two package identities are intentionally separate so the UX experiment can be installed alongside the full application.
+The r31 APK is intentionally used **as built and tested**. Its internal app label, packaged assets, native code, signing identity and version metadata must not be renamed, patched, rebuilt or replaced for publication.
+
+The attempted r32 branding/rebuild path is rejected and is not an accepted release.
+
+The separate full application package remains `com.buttonbox.ble.jz`. Do not uninstall or modify it when testing this UX application.
 
 ## Safety boundary
 
@@ -44,27 +52,20 @@ Only one application should own the ECU USB connection at a time.
 
 ## Source provenance
 
-The first working UX test APK was produced as an APK-level experiment rather than from a preserved dedicated native source repository. The recovered project therefore contains:
+The working UX test APK was produced as an APK-level experiment rather than from a preserved dedicated native source repository. Recovered source and documentation may be used for inspection and future development, but they must not be represented as a byte-for-byte replacement for the accepted r31 APK.
 
-- an editable Android wrapper;
-- the continuously developed HTML, CSS, and JavaScript UI;
-- generated TunerStudio/INI/MSQ-derived catalogs;
-- revision notes, validation evidence, and reference material.
-
-The clean wrapper does **not** claim to reproduce the repackaged test APK's complete native USB, BLE, MSL, or diagnostics implementation exactly. Native bridge behavior that has not been reconstructed remains stubbed or read-only.
+The accepted r31 APK and its checksum are authoritative for public testing.
 
 ## Repository policy
 
-- This repository tracks the experimental UX/UI source and its documented test state.
-- Private signing keys and passwords must never be committed.
-- Signed APKs are test artifacts, not production releases.
-- A feature being present here does not imply acceptance into any other Epic-DashTune project.
-- Compatibility, completeness, and long-term support are not guaranteed.
+- This repository tracks experimental UX/UI work and its documented test state.
+- Private signing keys, signing bundles and passwords must never be committed.
+- A feature being present here does not imply acceptance into another Epic-DashTune project.
+- Compatibility, completeness and long-term support are not guaranteed.
+- Future APK revisions must begin from the accepted r31 native package and require device validation before replacing it.
 
-## Installation note
+## Installation
 
-The public preview APK is built from the clean wrapper and debug-signed. Android may require a clean installation when replacing an experimental APK signed with a different certificate. Uninstall only `com.buttonbox.ble.ul` when resolving that specific signature mismatch. Do not uninstall or modify `com.buttonbox.ble.jz`.
+The accepted r31 APK retains the same signer used by the prior experimental revisions. Install it over an earlier compatible `com.buttonbox.ble.ul` build with Android's normal update installation.
 
-## Status
-
-The verified r32 source payload and one-time reconstruction workflow are currently being expanded into the normal repository tree. The resulting prerelease is intended for public UX/UI testing only.
+Do not uninstall or modify `com.buttonbox.ble.jz`.
