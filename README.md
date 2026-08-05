@@ -43,6 +43,12 @@ Accepted test APKs are published as normal GitHub Releases, not as GitHub prerel
 
 Using a normal release keeps the download visible on the repository front page and makes the accepted APK easy for testers to find. This does not change the experimental status, scope limitations, or lack of production guarantees.
 
+## Current repository content
+
+`main` currently contains the accepted r31 identity, verification records, release documentation and project policy. The recovered editable r31 source tree has **not yet been imported into normal browsable repository paths**.
+
+Until that import is completed, this repository must not be described as source-complete. The exact accepted APK and its checksum remain authoritative for testing, while the separately preserved r31 source archive remains the source-restoration authority.
+
 ## Safety boundary
 
 The UX experiment is designed around a strict read-only ECU boundary. It must not provide:
