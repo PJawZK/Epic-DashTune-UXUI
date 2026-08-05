@@ -1,7 +1,7 @@
 # Epic-DashTune UX/UI
 
 > [!IMPORTANT]
-> **This repository contains an experimental UX/UI test application. It is not the full Epic-DashTune application and must not be treated as a production release.**
+> **This repository contains an experimental UX/UI test application. It is not the full Epic-DashTune application and must not be treated as a production application.**
 >
 > Everything shown here is exploratory. A screen, control, workflow, feature, layout, data channel, or interaction appearing in this test app is **not permanent**, is **not a promise**, and does **not guarantee that it will or can be implemented in the full application**. Features may be changed, replaced, reduced, or removed as testing continues.
 
@@ -37,6 +37,12 @@ The attempted r32 branding/rebuild path is rejected and is not an accepted relea
 
 The separate full application package remains `com.buttonbox.ble.jz`. Do not uninstall or modify it when testing this UX application.
 
+## GitHub release policy
+
+Accepted test APKs are published as normal GitHub Releases, not as GitHub prereleases. The application is already clearly identified here and in the release notes as experimental UX/UI test software.
+
+Using a normal release keeps the download visible on the repository front page and makes the accepted APK easy for testers to find. This does not change the experimental status, scope limitations, or lack of production guarantees.
+
 ## Safety boundary
 
 The UX experiment is designed around a strict read-only ECU boundary. It must not provide:
@@ -58,6 +64,7 @@ The accepted r31 APK and its checksum are authoritative for public testing.
 
 ## Repository policy
 
+- `main` is the sole authoritative branch.
 - This repository tracks experimental UX/UI work and its documented test state.
 - Private signing keys, signing bundles and passwords must never be committed.
 - A feature being present here does not imply acceptance into another Epic-DashTune project.
