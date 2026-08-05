@@ -16,9 +16,11 @@ The APK must not be renamed internally, patched, rebuilt, resigned, repackaged, 
 
 ## Project status
 
-This is a standalone experimental UX/UI test application. It is not the full Epic-DashTune application and it is not a production release.
+This is a standalone experimental UX/UI test application. It is not the full Epic-DashTune application and it is not a production application.
 
 Nothing demonstrated here is permanent product scope or a promise that every experiment will or can be implemented. Features, layouts, themes, interactions, diagnostics and workflows may change, be replaced or be removed.
+
+This is intentionally published as a normal GitHub Release so the accepted download is clearly visible to testers. The normal-release status does not make the application production-ready or alter its experimental scope.
 
 ## Installation
 
