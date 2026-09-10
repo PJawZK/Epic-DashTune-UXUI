@@ -1,9 +1,91 @@
 {
-  "candidate": {"package":"com.buttonbox.ble.ul","app_name":"EpicDash UX","version_name":"0.12.20-ux-symbol22","version_code":1220,"apk_sha256":"16e261622b0ddf3dd5f266f789bca438ecb7dde6837a544dbeb1c4278c4632bf","apk_size":6770827,"signer_certificate_sha256":"cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142"},
+  "candidate": {
+    "package": "com.buttonbox.ble.ul",
+    "app_name": "EpicDash UX",
+    "version_name": "0.12.20-ux-symbol22",
+    "version_code": 1220,
+    "apk_sha256": "16e261622b0ddf3dd5f266f789bca438ecb7dde6837a544dbeb1c4278c4632bf",
+    "apk_size": 6770827,
+    "signer_certificate_sha256": "cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142"
+  },
   "zip_integrity": true,
-  "alignment": {"stored_entries":231,"issues":[]},
-  "signature": {"v2":{"verified":true,"digest":"15b10fc5aa16af49bec33a2257af8aaf1a8b5e5a4df2005b087cc9ab19976f4f","certificate_sha256":"cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142","attrs_length":12},"v3":{"verified":true,"digest":"15b10fc5aa16af49bec33a2257af8aaf1a8b5e5a4df2005b087cc9ab19976f4f","certificate_sha256":"cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142","attrs_length":0}},
-  "dex_byte_identical_to_r21": {"classes.dex":true,"classes2.dex":true,"classes3.dex":true,"classes4.dex":true,"classes5.dex":true,"classes6.dex":true},
-  "assets_match_source": {"dashboard_lab.html":true,"radial_gauges.css":true,"whatsnew.txt":true,"concept_radial_gauges.js":true},
-  "scope": {"rpm_symbol_removed":true,"five_radial_symbols_replaced":true,"concept_radial_renderer_byte_identical_to_r21":true,"ecu_writes_added":false}
+  "alignment": {
+    "stored_entries": 231,
+    "issues": []
+  },
+  "signature": {
+    "v2": {
+      "verified": true,
+      "digest": "15b10fc5aa16af49bec33a2257af8aaf1a8b5e5a4df2005b087cc9ab19976f4f",
+      "certificate_sha256": "cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142",
+      "attrs_length": 12
+    },
+    "v3": {
+      "verified": true,
+      "digest": "15b10fc5aa16af49bec33a2257af8aaf1a8b5e5a4df2005b087cc9ab19976f4f",
+      "certificate_sha256": "cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142",
+      "attrs_length": 0
+    },
+    "signing_block_start": 6679768,
+    "central_directory_offset": 6682984,
+    "certificate_sha256": "cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142"
+  },
+  "dex_headers": {
+    "classes.dex": {
+      "magic": "dex\n038\u0000",
+      "sha1_valid": true,
+      "adler32_valid": true,
+      "sha256": "55ad8d7bd8264659def0e3ba164dc55336d0b8b26653e426edb4fe12e06ded05"
+    },
+    "classes2.dex": {
+      "magic": "dex\n038\u0000",
+      "sha1_valid": true,
+      "adler32_valid": true,
+      "sha256": "41c3f108d3e6418ff9b31011cf797616676d7848c4fb3aa36fe342e65d1ce50b"
+    },
+    "classes3.dex": {
+      "magic": "dex\n038\u0000",
+      "sha1_valid": true,
+      "adler32_valid": true,
+      "sha256": "e893732aeea324a8c9f7637692473bfd90c9c64987fdf2d08fd53c498e0caf08"
+    },
+    "classes4.dex": {
+      "magic": "dex\n038\u0000",
+      "sha1_valid": true,
+      "adler32_valid": true,
+      "sha256": "3ddb3b43228f4c23c1983bcc116d831a102c75c44a43bc2cd3d4c680f591abb4"
+    },
+    "classes5.dex": {
+      "magic": "dex\n038\u0000",
+      "sha1_valid": true,
+      "adler32_valid": true,
+      "sha256": "3ea7d58560dee45d116dfc57d8bb3c08580cae8d5f7f44f33c99fdeb6a662bc4"
+    },
+    "classes6.dex": {
+      "magic": "dex\n038\u0000",
+      "sha1_valid": true,
+      "adler32_valid": true,
+      "sha256": "ee8698aaa0877b78cf8e3843f16d4ad463807f5597963edce728ac1b66f1dccd"
+    }
+  },
+  "dex_byte_identical_to_r21": {
+    "classes.dex": true,
+    "classes2.dex": true,
+    "classes3.dex": true,
+    "classes4.dex": true,
+    "classes5.dex": true,
+    "classes6.dex": true
+  },
+  "assets_match_source": {
+    "dashboard_lab.html": true,
+    "radial_gauges.css": true,
+    "whatsnew.txt": true,
+    "concept_radial_gauges.js": true
+  },
+  "scope": {
+    "rpm_symbol_removed": true,
+    "five_radial_symbols_replaced": true,
+    "concept_radial_renderer_byte_identical_to_r21": true,
+    "ecu_writes_added": false
+  }
 }
