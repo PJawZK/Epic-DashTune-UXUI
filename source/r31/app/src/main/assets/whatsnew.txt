@@ -1,0 +1,7 @@
+EpicDash UX r31 — persistent formats and table rendering corrections
+
+- Selected temperature, pressure, speed, mixture and precision formats now remain visible when DEMO/live data is switched off.
+- Sticky RPM/MAP row and column headers now render above the 2D live cell and trace trail.
+- The 2D table colour map remains active in Default, OLED, Steel, Arctic and Amber themes.
+
+The app remains strictly read-only toward the ECU.
