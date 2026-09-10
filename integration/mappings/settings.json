@@ -1,0 +1,6 @@
+{
+  "contractVersion": 1,
+  "localOnly": ["theme", "units", "gaugeLimits", "reducedMotion", "navigation", "graphPresentation", "favorites"],
+  "hostOwned": ["source", "connected", "session", "revision", "usbGeneration", "connectionState", "runtimeSnapshot"],
+  "forbidden": ["tuneWrite", "tableWrite", "burn", "actuatorControl", "virtualInputWrite", "faultClear", "ecuConfiguration"]
+}

@@ -1,0 +1,10 @@
+# Accepted immutable executable evidence (APK itself is not copied into integration/)
+# Signer certificate SHA-256: cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142
+78d64936d21124b375914d14777c59d9be1e2cab4616fb82996aa363b715bd56  EpicDash-UX-Layout-Lab-unofficial-r31.apk
+
+# Exact r31 assets copied/used by integration/web
+c6d36d4d57164edff23cd27558c545b29f1619cbd26c8d59cc727a2f55d07f7a  web/css/r31/radial_gauges.css
+8960e931bdcd20bd8721b03be7dd678c9133cf853fd20bef8d9aab2ec6517120  web/css/r31/r29_theme.css
+b8277fae53d26225c1e4f0d5229eda015d77c0462c08aa5e35f8f91a7df1e81b  web/css/r31/responsive_layout.css
+b520cb1b9afb28a15b4b29c81c20c25193f20b5297a8d13d282cf26f3e5b44c7  web/js/r31/responsive_layout.js
+a3436a979e2063ff611b8e313f0d13a191344e64c1457810ab1bd2e613eeddf1  web/js/r31/concept_radial_gauges.js

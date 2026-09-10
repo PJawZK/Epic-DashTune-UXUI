@@ -1,0 +1,7 @@
+{
+  "contractVersion": 1,
+  "authority": "EpicDash-JZ DiagnosticStore / diagnostics bridge",
+  "presentationOnly": true,
+  "groups": ["faults", "sensors", "trigger", "communications", "power", "network", "ecu"],
+  "blockedActions": ["actuator-test", "fault-clear", "output-control", "tune-write", "burn"]
+}

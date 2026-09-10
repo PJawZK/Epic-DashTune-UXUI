@@ -1,0 +1,18 @@
+{
+  "name": "Epic-DashTune r31 integration package",
+  "stage": "A",
+  "sourceAuthority": "source/r31",
+  "sourceImmutable": true,
+  "nativeAuthority": "EpicDash-JZ",
+  "readOnly": true,
+  "runtimeSources": ["OFFLINE", "LIVE", "DEMO", "MSL", "CSV", "SELF_TEST"],
+  "productionCatalogStartup": false,
+  "entrypoint": "web/index.html",
+  "contracts": {
+    "runtime": "schemas/runtime-snapshot.schema.json",
+    "connection": "schemas/connection-state.schema.json",
+    "appInfo": "schemas/app-info.schema.json",
+    "tuneSnapshot": "schemas/tune-snapshot.schema.json",
+    "storage": "schemas/storage-v1.schema.json"
+  }
+}

@@ -1,0 +1,98 @@
+
+/* EpicDash UX r29 — broad surface palettes. Theme IDs remain backward compatible. */
+body{
+ --theme-page:#02080d;--theme-page-2:#071923;--theme-card:#061017;--theme-card-2:#08151d;
+ --theme-card-3:#0a1821;--theme-line:#17313d;--theme-line-soft:#0c242e;--theme-control:#061820;
+ --theme-control-active:#073341;--theme-text:#e9edf0;--theme-muted:#7f9099;--theme-shadow:rgba(0,189,244,.08);
+}
+body[data-theme="oled"]{
+ --theme-page:#000;--theme-page-2:#000;--theme-card:#000;--theme-card-2:#020202;--theme-card-3:#050505;
+ --theme-line:#20272a;--theme-line-soft:#101416;--theme-control:#050708;--theme-control-active:#07252e;
+ --theme-text:#f4f7f8;--theme-muted:#8d969a;--theme-shadow:transparent;background:#000!important;
+}
+body[data-theme="darker"]{
+ --theme-page:#070a0d;--theme-page-2:#18212a;--theme-card:#10171d;--theme-card-2:#151e25;--theme-card-3:#1a252d;
+ --theme-line:#354653;--theme-line-soft:#26343e;--theme-control:#172129;--theme-control-active:#273946;
+ --theme-text:#eef2f4;--theme-muted:#9aa8af;--theme-shadow:rgba(139,183,207,.10);
+ background:radial-gradient(circle at 45% -15%,#2b3944 0,#111920 36%,#070b0e 100%)!important;
+}
+body[data-theme="arctic"]{
+ --theme-page:#07121b;--theme-page-2:#17364a;--theme-card:#0d2330;--theme-card-2:#123041;--theme-card-3:#173b4e;
+ --theme-line:#2f637c;--theme-line-soft:#20495c;--theme-control:#123143;--theme-control-active:#1c526c;
+ --theme-text:#f0faff;--theme-muted:#9dbdca;--theme-shadow:rgba(96,205,255,.15);
+ background:radial-gradient(circle at 45% -12%,#245b77 0,#0b2637 34%,#061018 100%)!important;
+}
+body[data-theme="amber"]{
+ --theme-page:#130d07;--theme-page-2:#3b2712;--theme-card:#21160d;--theme-card-2:#2b1d11;--theme-card-3:#352416;
+ --theme-line:#684724;--theme-line-soft:#463019;--theme-control:#2d1e11;--theme-control-active:#593817;
+ --theme-text:#fff3df;--theme-muted:#c3a783;--theme-shadow:rgba(255,157,42,.14);
+ background:radial-gradient(circle at 45% -12%,#67401c 0,#2b1b0e 34%,#100a05 100%)!important;
+}
+body[data-theme="amber"]{--cyan:#ff9d2a;--cyan2:#ffd082;--cyan-bright:#ffc15c}
+body[data-theme="arctic"]{--cyan:#65d5ff;--cyan2:#c3efff;--cyan-bright:#a8e9ff}
+body[data-theme="darker"]{--cyan:#91c8df;--cyan2:#d5edf6;--cyan-bright:#c1e6f5}
+
+body:not([data-theme="dark"]){color:var(--theme-text)}
+body:not([data-theme="dark"]) .header,
+body:not([data-theme="dark"]) .tabs,
+body:not([data-theme="dark"]) .card,
+body:not([data-theme="dark"]) .pCard,
+body:not([data-theme="dark"]) .morePanel,
+body:not([data-theme="dark"]) .gaugeQuickPanel,
+body:not([data-theme="dark"]) .tableSurfaceModalBox,
+body:not([data-theme="dark"]) .tableCsvBox,
+body:not([data-theme="dark"]) .logImportBox,
+body:not([data-theme="dark"]) .logPresetEditorBox,
+body:not([data-theme="dark"]) .settingsModalBoxV2{
+ background:linear-gradient(145deg,var(--theme-card-2),var(--theme-card))!important;
+ border-color:var(--theme-line)!important;
+ box-shadow:0 0 28px var(--theme-shadow)!important;
+}
+body:not([data-theme="dark"]) .header{background:linear-gradient(180deg,var(--theme-card-2),var(--theme-card))!important}
+body:not([data-theme="dark"]) .tabs{background:var(--theme-card)!important}
+body:not([data-theme="dark"]) .tab.active,
+body:not([data-theme="dark"]) .pButton.active,
+body:not([data-theme="dark"]) .filterChip.active,
+body:not([data-theme="dark"]) .pNavItem.active{background:var(--theme-control-active)!important}
+body:not([data-theme="dark"]) .pButton,
+body:not([data-theme="dark"]) .headBtn,
+body:not([data-theme="dark"]) .pill,
+body:not([data-theme="dark"]) input:not(.tableDataCell),
+body:not([data-theme="dark"]) select,
+body:not([data-theme="dark"]) textarea,
+body:not([data-theme="dark"]) .logChannelCheck,
+body:not([data-theme="dark"]) .logChannelOrder,
+body:not([data-theme="dark"]) .settingsControlV2{
+ background:var(--theme-control)!important;border-color:var(--theme-line)!important;color:var(--theme-text);
+}
+body:not([data-theme="dark"]) .pCardTitle,
+body:not([data-theme="dark"]) .settingsHeadV2,
+body:not([data-theme="dark"]) .tableSurfaceModalHead,
+body:not([data-theme="dark"]) .logToolbar,
+body:not([data-theme="dark"]) .moreHead,
+body:not([data-theme="dark"]) .gaugeQuickHead{border-color:var(--theme-line-soft)!important}
+body:not([data-theme="dark"]) .secondaryLabel,
+body:not([data-theme="dark"]) .compactLabel,
+body:not([data-theme="dark"]) .pMuted,
+body:not([data-theme="dark"]) small{color:var(--theme-muted)}
+body[data-theme="oled"] .card:before,body[data-theme="oled"] .pCard:before{display:none}
+body[data-theme="oled"] .card,body[data-theme="oled"] .pCard{box-shadow:none!important}
+.themeChoiceR29{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.themeChoiceR29 .pButton{min-width:0;padding:0 5px;font-size:8px}
+.gaugeQuickPrecisionField{grid-column:1/3}
+.gaugeQuickField select{height:34px;border:1px solid #1b4657;border-radius:5px;background:#06151d;color:#e1e8eb;text-align:center;font-size:11px;outline:0}
+.gaugeQuickHint,.gaugeQuickError{grid-column:1/3}
+.dashboardGaugeTarget{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;cursor:pointer}
+.dashboardGaugeTarget *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+@media(max-width:680px){.themeChoiceR29{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* EpicDash UX r30 — DEMO active state must remain unmistakable in every palette. */
+body .headBtn.demoOn,body:not([data-theme="dark"]) .headBtn.demoOn{
+ background:var(--green)!important;border-color:var(--green)!important;color:#071005!important;font-weight:850!important;
+ box-shadow:0 0 0 1px rgba(128,213,0,.24),0 0 12px rgba(128,213,0,.22)!important;
+}
+body:not([data-theme="dark"]) .headBtn#demoBtn:not(.demoOn){background:var(--theme-control)!important;border-color:var(--theme-line)!important;color:var(--theme-text)!important}
+
+
+/* EpicDash UX r31 — table heat-map cells retain their authored colour scale in every theme. */
+body input.tableDataCell{background:var(--table-cell-bg,#06151d)!important}

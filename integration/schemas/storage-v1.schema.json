@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://epicdash.local/schemas/storage-v1.schema.json",
+  "title": "EpicDash integration local storage v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "page": {"enum": ["dashboard", "tuning", "tables", "logging", "diagnostics", "settings"]},
+    "settings": {"type": "object"},
+    "favorites": {"type": "array", "maxItems": 256, "items": {"type": "string", "maxLength": 128}}
+  }
+}

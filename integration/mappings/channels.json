@@ -1,0 +1,33 @@
+{
+  "contractVersion": 1,
+  "description": "Canonical UI channel keys. Host adapters map active-profile/native names into these keys before publishing authorized snapshots.",
+  "channels": {
+    "rpm": {"label": "RPM", "unit": "rpm"},
+    "map": {"label": "MAP", "unit": "kPa"},
+    "baro": {"label": "Barometric pressure", "unit": "kPa"},
+    "afr": {"label": "AFR Gas Scale", "unit": "AFR"},
+    "clt": {"label": "Coolant", "unit": "degC"},
+    "iat": {"label": "Intake Air", "unit": "degC"},
+    "oilTemp": {"label": "Oil Temperature", "unit": "degC", "optional": true},
+    "fuelPressure": {"label": "Fuel Pressure", "unit": "kPa", "optional": true},
+    "fuelDelta": {"label": "Fuel Delta Pressure", "unit": "kPa", "optional": true},
+    "batt": {"label": "Battery", "unit": "V"},
+    "ign": {"label": "Ignition Advance", "unit": "deg"},
+    "oilPressure": {"label": "Oil Pressure", "unit": "bar", "optional": true},
+    "tps": {"label": "TPS", "unit": "percent"},
+    "idleDuty": {"label": "IAC Duty", "unit": "percent", "optional": true},
+    "boostDuty": {"label": "Wastegate Duty", "unit": "percent", "optional": true},
+    "auxDuty": {"label": "Aux Duty", "unit": "percent", "optional": true},
+    "vehicleSpeed": {"label": "Vehicle Speed", "unit": "kmh", "optional": true},
+    "gear": {"label": "Gear", "unit": "index", "optional": true},
+    "knockRetard": {"label": "Knock Retard", "unit": "deg", "optional": true},
+    "engineLoad": {"label": "Engine Load", "unit": "percent", "optional": true},
+    "injMs": {"label": "Injector PW", "unit": "ms", "optional": true},
+    "injectorDuty": {"label": "Injector Duty", "unit": "percent", "optional": true},
+    "ethanol": {"label": "Ethanol", "unit": "percent", "optional": true},
+    "fuelLevel": {"label": "Fuel Level", "unit": "percent", "optional": true},
+    "cylindersCount": {"label": "Cylinder Count", "unit": "count", "optional": true},
+    "ignitionFaultMask": {"label": "Ignition Fault Mask", "unit": "bitmask", "optional": true},
+    "injectorFaultMask": {"label": "Injector Fault Mask", "unit": "bitmask", "optional": true}
+  }
+}

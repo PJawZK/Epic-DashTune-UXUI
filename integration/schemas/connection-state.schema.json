@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://epicdash.local/schemas/connection-state.schema.json",
+  "title": "EpicDash connection presentation state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source", "connected", "session", "revision"],
+  "properties": {
+    "source": {"enum": ["OFFLINE", "LIVE", "DEMO", "MSL", "CSV", "SELF_TEST"]},
+    "connected": {"type": "boolean"},
+    "session": {"type": ["string", "null"]},
+    "revision": {"type": "integer", "minimum": -1}
+  }
+}

@@ -1,0 +1,35 @@
+const assert=require('assert');
+const {createStore}=require('../web/js/state-store.js');
+const Mock=require('../bridge/bridge-mock.js');
+const Client=require('../bridge/bridge-client.js');
+
+const store=createStore();
+const mock=Mock.create();
+const client=Client.create({store,bridge:mock});
+client.start();
+let seen=[];store.subscribe(s=>seen.push(`${s.source}:${s.session}:${s.revision}`));
+
+mock.activate('DEMO',{rpm:900});
+assert.equal(store.getState().source,'DEMO');
+assert.equal(store.getState().revision,0);
+assert.equal(store.getState().values.rpm,900);
+mock.emit({rpm:901});
+assert.equal(store.getState().revision,1);
+assert.equal(store.getState().values.rpm,901);
+const before=store.getStats().accepted;
+mock.emitStale();
+assert.equal(store.getStats().accepted,before);
+assert.equal(store.getStats().rejectedByReason.stale_revision,1);
+const retired=mock.getCurrentSnapshot();
+mock.activate('CSV',{rpm:1200});
+assert.equal(store.getState().source,'CSV');
+assert.equal(store.getState().revision,0);
+mock.replayRetired(retired);
+assert.equal(store.getState().source,'CSV');
+assert.equal(store.getStats().rejectedByReason.retired_session,1);
+mock.disconnect();
+assert.equal(store.getState().source,'OFFLINE');
+assert.equal(store.getState().connected,false);
+assert.deepEqual(store.getState().values,{});
+client.stop();
+console.log('state-store: PASS',store.getStats());

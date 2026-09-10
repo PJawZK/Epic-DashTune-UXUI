@@ -1,0 +1,10 @@
+const assert=require('assert');
+const C=require('../web/js/render-coordinator.js');
+const calls={dashboard:0,diagnostics:0,tables:0};
+const pages=Object.fromEntries(Object.keys(calls).map(k=>[k,{onActivate(){calls[k]++},onSnapshot(){calls[k]++}}]));
+const c=C.create(pages,'dashboard');
+c.onSnapshot({revision:1});c.onSnapshot({revision:2});
+assert.deepEqual(calls,{dashboard:2,diagnostics:0,tables:0});
+c.setActivePage('diagnostics',{revision:2});c.onSnapshot({revision:3});
+assert.deepEqual(calls,{dashboard:2,diagnostics:2,tables:0});
+console.log('render-boundary: PASS',calls);

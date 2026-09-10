@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://epicdash.local/schemas/app-info.schema.json",
+  "title": "EpicDash host app information",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["app", "version"],
+  "properties": {
+    "app": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "minLength": 1},
+    "profile": {"type": ["string", "null"]},
+    "ecu": {"type": ["string", "null"]},
+    "readOnly": {"const": true}
+  }
+}

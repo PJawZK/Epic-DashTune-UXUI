@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>EpicDash UX Layout Lab</title>
+<style>
+:root{
+  --bg:#02080d;
+  --surface:#061017;
+  --surface-2:#08151d;
+  --surface-3:#0a1821;
+  --line:#132a35;
+  --line-soft:#0b202a;
+  --cyan:#00bdf4;
+  --cyan-bright:#4fdcff;
+  --green:#80d500;
+  --amber:#ff9a00;
+  --red:#ff3728;
+  --white:#e9edf0;
+  --muted:#7f9099;
+  --track:#18242b;
+  --shadow:0 0 24px rgba(0,177,230,.045);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#01070b;color:var(--white);font-family:Arial,Helvetica,sans-serif}
+body{background:radial-gradient(circle at 50% -18%,#0a2230 0,#020a10 36%,#01060a 100%)}
+body[data-theme="darker"]{--surface:#040b10;--surface-2:#061017;--surface-3:#07131a;--line:#10242d;--line-soft:#091a22;--track:#121c22;background:radial-gradient(circle at 50% -18%,#071720 0,#01070b 38%,#000407 100%)}
+body[data-theme="oled"]{--bg:#000;--surface:#020609;--surface-2:#03090d;--surface-3:#040b10;--line:#10212a;--line-soft:#07151b;--track:#10181d;--shadow:none;background:#000}
+body[data-theme="oled"] .header,body[data-theme="oled"] .tabs,body[data-theme="oled"] .card,body[data-theme="oled"] .pCard{background:#020609}
+body.reducedMotion *,body.reducedMotion *:before,body.reducedMotion *:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+button{font:inherit;color:inherit}
+svg{display:block}
+.app{
+  width:100%;height:100%;padding:0 9px 8px;
+  display:grid;grid-template-rows:66px 38px minmax(0,1fr);gap:7px;
+}
+.header{
+  min-width:0;padding:0 13px;display:flex;align-items:center;
+  border-bottom:1px solid #0c222c;
+  background:linear-gradient(180deg,rgba(6,20,28,.98),rgba(2,9,14,.96));
+}
+.brand{display:flex;align-items:center;min-width:390px}
+.logo{width:38px;height:38px;border-radius:50%;margin-right:10px;position:relative;background:conic-gradient(from 35deg,var(--cyan) 0 27%,transparent 27% 34%,#ff7d22 34% 60%,transparent 60% 68%,#df2028 68% 91%,transparent 91%);box-shadow:0 0 15px rgba(0,189,244,.18)}
+.logo:after{content:"";position:absolute;inset:9px;border-radius:50%;border:4px solid #102733}
+.brandTitle{font-size:24px;font-weight:760;letter-spacing:.1px;white-space:nowrap}
+.brandTitle b{color:#ff7d23}
+.brandSub{margin-top:2px;color:#81919a;font-size:10px;letter-spacing:1.9px;white-space:nowrap}
+.headerRight{margin-left:auto;display:flex;align-items:center;gap:7px;min-width:0}
+.pill,.headBtn{
+  height:35px;padding:0 13px;border:1px solid #132b36;border-radius:7px;
+  background:#061119;color:#a8b4ba;font-size:12px;display:flex;align-items:center;gap:8px;white-space:nowrap;
+}
+.pill.good{color:var(--green)}
+.pill.readOnly{color:#9fb0b9}
+.pill .dot{width:10px;height:10px;border:2px solid currentColor;border-radius:50%;box-shadow:0 0 7px currentColor}
+.headBtn{cursor:pointer}
+.headBtn:active{transform:translateY(1px)}
+.headBtn.demoOn{background:var(--green);border-color:var(--green);color:#071005;font-weight:800}
+.tabs{display:flex;align-items:stretch;border-bottom:1px solid #0e2630;background:rgba(3,13,19,.93)}
+.tab{border:0;background:transparent;color:#8b989f;padding:0 20px;font-size:12px;letter-spacing:.35px;cursor:pointer;border-radius:6px 6px 0 0}
+.tab.active{color:var(--cyan);background:#07202c;box-shadow:inset 0 -2px var(--cyan)}
+.dashboard{
+  min-height:0;display:grid;
+  grid-template-rows:minmax(260px,2.15fr) minmax(124px,.98fr) minmax(88px,.7fr) minmax(118px,.94fr);
+  gap:8px;
+}
+.dashboard.hidden{display:none}
+.row{display:grid;gap:8px;min-height:0}
+.row.top{grid-template-columns:1.82fr repeat(5,1fr)}
+.row.secondary{grid-template-columns:repeat(8,1fr)}
+.row.compact{grid-template-columns:repeat(8,1fr)}
+.row.outputs{grid-template-columns:1.05fr 1.05fr 1.05fr 1.05fr 2.35fr 2.35fr 1.55fr}
+.card{
+  position:relative;min-width:0;min-height:0;overflow:hidden;
+  border:1px solid var(--line);border-radius:9px;
+  background:linear-gradient(145deg,rgba(7,20,28,.97),rgba(2,9,14,.99));
+  box-shadow:var(--shadow);
+}
+.card:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(125deg,rgba(255,255,255,.018),transparent 36%)}
+.icon{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.icon.fill{fill:currentColor;stroke:none}
+.primaryGauge{display:grid;grid-template-rows:34px minmax(0,1fr) 32px;padding:8px 9px 8px}
+.primaryHead{display:flex;align-items:center;justify-content:center;gap:7px;color:#d7dfe3;min-width:0}
+.primaryHead .icon{width:31px;height:31px;color:var(--cyan)}
+.primaryHead .gaugeLabel{font-size:10px;letter-spacing:1.25px;color:#7f919a;font-weight:700}
+.dial{--pct:40;--accent:var(--cyan);position:relative;width:min(96%,210px);aspect-ratio:1;margin:auto}
+.dialArc,.dialZones,.dialTicks{position:absolute;inset:0;border-radius:50%;-webkit-mask:radial-gradient(circle,transparent 0 69%,#000 70% 83%,transparent 84%);mask:radial-gradient(circle,transparent 0 69%,#000 70% 83%,transparent 84%)}
+.dialArc{background:conic-gradient(from 135deg,var(--accent) 0 calc(var(--pct)*2.7deg),var(--track) calc(var(--pct)*2.7deg) 270deg,transparent 270deg)}
+.dialZones{background:conic-gradient(from 135deg,transparent 0 198deg,var(--amber) 198deg 230deg,var(--red) 230deg 270deg,transparent 270deg)}
+.dialZones.cool{background:conic-gradient(from 135deg,transparent 0 205deg,var(--amber) 205deg 234deg,var(--red) 234deg 270deg,transparent 270deg)}
+.dialZones.oil{background:conic-gradient(from 135deg,var(--red) 0 23deg,transparent 23deg 270deg)}
+.dialZones.fuel{background:conic-gradient(from 135deg,var(--red) 0 28deg,var(--amber) 28deg 54deg,transparent 54deg 270deg)}
+.dialTicks{inset:1.2%;background:repeating-conic-gradient(from 135deg,rgba(224,232,235,.55) 0 .75deg,transparent .75deg 8.9deg);-webkit-mask:radial-gradient(circle,transparent 0 83%,#000 84% 88%,transparent 89%);mask:radial-gradient(circle,transparent 0 83%,#000 84% 88%,transparent 89%)}
+.dialCore{position:absolute;inset:18%;border-radius:50%;background:radial-gradient(circle at 50% 42%,#071923,#031018 65%,#020b11 100%);border:1px solid #0b2029}
+.dialReadout{position:absolute;left:10%;right:10%;top:36%;z-index:4;text-align:center}
+.dialValue{font-size:clamp(30px,3.7vh,51px);line-height:.95;font-weight:780;letter-spacing:-1.3px;white-space:nowrap}
+.dialUnit{margin-top:8px;color:var(--cyan);font-size:clamp(13px,1.45vh,19px)}
+.dialScale{position:absolute;left:6%;right:6%;bottom:14%;z-index:4;display:flex;justify-content:space-between;color:#8a989f;font-size:10px}
+.status{height:31px;border:1px solid #1c5366;border-radius:5px;background:rgba(0,78,103,.08);display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:13px;font-weight:760;letter-spacing:.7px}
+.status.ok{color:var(--green);border-color:#4a8200;background:rgba(78,132,0,.11)}
+.status.warn{color:var(--amber);border-color:#8c5c00;background:rgba(138,87,0,.12)}
+.status.bad{color:var(--red);border-color:#8d2a23;background:rgba(137,36,28,.11)}
+.tachCard{padding:10px 14px 8px;display:grid;grid-template-rows:minmax(0,1fr) 26px}
+.tachWrap{position:relative;min-height:0}
+.tachDial{--rpmPct:10;position:relative;width:min(96%,390px);aspect-ratio:1;margin:auto}
+.tachTrack,.tachActive,.tachZones,.tachTicks{position:absolute;inset:0;border-radius:50%;-webkit-mask:radial-gradient(circle,transparent 0 80%,#000 81% 90%,transparent 91%);mask:radial-gradient(circle,transparent 0 80%,#000 81% 90%,transparent 91%)}
+.tachTrack{background:conic-gradient(from 130deg,var(--track) 0 260deg,transparent 260deg)}
+.tachActive{background:conic-gradient(from 130deg,var(--cyan) 0 calc(var(--rpmPct)*2.6deg),transparent calc(var(--rpmPct)*2.6deg) 360deg);filter:drop-shadow(0 0 5px rgba(0,189,244,.35))}
+.tachZones{background:conic-gradient(from 130deg,transparent 0 188deg,var(--red) 188deg 260deg,transparent 260deg)}
+.tachTicks{inset:0;background:repeating-conic-gradient(from 130deg,#76dfff 0 .6deg,transparent .6deg 4.1deg);-webkit-mask:radial-gradient(circle,transparent 0 88%,#000 88.6% 92%,transparent 92.5%);mask:radial-gradient(circle,transparent 0 88%,#000 88.6% 92%,transparent 92.5%)}
+.tachInner{position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle at 50% 40%,#071a24,#031018 66%,#020b10 100%);border:1px solid #0b202a}
+.tachReadout{position:absolute;left:8%;right:8%;top:45%;z-index:5;text-align:center}
+.tachValue{font-size:clamp(50px,6vh,78px);font-weight:800;line-height:.9;letter-spacing:-2.5px}
+.tachUnit{margin-top:10px;color:var(--cyan);font-size:20px;line-height:1}
+.tachSubUnit{margin-top:3px;color:var(--cyan);font-size:12px}
+.tachScale{position:absolute;inset:0;z-index:4;color:#d4dadd;font-size:clamp(14px,1.6vh,20px);pointer-events:none}
+.tachScale span{position:absolute}
+.tachMeta{display:flex;justify-content:center;gap:72px;color:#84939b;font-size:11px;letter-spacing:.35px}
+.tachMeta b{margin-left:9px;color:#cbd3d7;font-size:15px}
+.secondaryCard{padding:8px 8px 7px;display:grid;grid-template-rows:43px minmax(0,1fr) 12px 26px;gap:5px}
+.secondaryHead{display:flex;align-items:center;gap:8px;min-width:0}
+.secondaryHead .icon{width:33px;height:33px;color:#dbe2e6}
+.secondaryText{min-width:0}
+.secondaryLabel{font-size:9px;letter-spacing:.9px;color:#7e9099;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.secondaryValue{margin-top:2px;color:var(--cyan);font-size:clamp(18px,2.15vh,28px);font-weight:740;white-space:nowrap}
+.secondaryValue small{font-size:11px}
+.bar{height:9px;position:relative;background:repeating-linear-gradient(90deg,#18242b 0 14%,#0a141a 14% 16%)}
+.bar:before{content:"";position:absolute;left:0;top:1px;bottom:1px;width:calc(var(--bar,0)*1%);background:linear-gradient(90deg,#00aee6,#18c8f7);box-shadow:0 0 5px rgba(0,189,244,.3)}
+.bar.green:before{background:linear-gradient(90deg,#5eaa00,#8ed900);box-shadow:0 0 5px rgba(128,213,0,.26)}
+.bar.amber:before{background:linear-gradient(90deg,#db7b00,#ffad12)}
+.bar.red:before{background:linear-gradient(90deg,#c52c22,#ff4b36)}
+.barScale{display:flex;justify-content:space-between;color:#73838b;font-size:9px}
+.miniStatus{height:26px;border:1px solid #4a8100;border-radius:5px;background:rgba(76,129,0,.1);display:flex;align-items:center;justify-content:center;color:var(--green);font-size:11px;font-weight:780;letter-spacing:.45px}
+.miniStatus.warn{border-color:#8a5b00;color:var(--amber);background:rgba(136,87,0,.1)}
+.miniStatus.bad{border-color:#8e2c23;color:var(--red);background:rgba(137,37,28,.1)}
+.compactCard{padding:7px 9px 6px;display:grid;grid-template-rows:38px 9px 12px;gap:5px}
+.compactHead{display:flex;align-items:center;gap:8px;min-width:0}
+.compactHead .icon{width:29px;height:29px;color:#d8e0e4}
+.compactLabel{font-size:8px;color:#7e8f98;letter-spacing:.8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.compactValue{margin-top:1px;color:var(--cyan);font-size:clamp(15px,1.8vh,24px);font-weight:730;white-space:nowrap}
+.compactValue small{font-size:10px}
+.outputCard{padding:9px 10px 7px;display:grid;grid-template-rows:minmax(0,1fr) 23px 9px;gap:5px}
+.outputCard.first{padding-left:39px}
+.outputsTag{position:absolute;left:0;top:0;bottom:0;width:29px;border-right:1px solid #102733;display:flex;align-items:center;justify-content:center;color:#9ba8ae;font-size:11px;letter-spacing:1px;writing-mode:vertical-rl;transform:rotate(180deg)}
+.outputMain{display:flex;align-items:center;justify-content:center;gap:9px;color:var(--cyan)}
+.outputMain .icon{width:34px;height:34px;color:#dbe2e5}
+.outputState{font-size:clamp(18px,2.15vh,27px);font-weight:750;white-space:nowrap}
+.outputDesc{text-align:center;color:#82939b;font-size:9px;letter-spacing:.35px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cylinderCard{padding:7px 8px 6px;display:grid;grid-template-rows:minmax(0,1fr) 20px}.cylinderIcons{display:grid;grid-template-columns:repeat(var(--cylinder-cols,4),minmax(0,1fr));grid-auto-rows:minmax(34px,1fr);align-items:center;justify-items:center;gap:2px}.cylinderUnit{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:#e4e9eb;opacity:.76}.cylinderUnit b{font-size:8px;color:#9faeb4}.cylinderUnit .icon{width:clamp(18px,2.05vw,31px);height:clamp(18px,2.05vw,31px)}.cylinderUnit.pulse{color:var(--cyan);filter:drop-shadow(0 0 4px rgba(0,189,244,.45));opacity:1}.cylinderUnit.fault{color:var(--red);filter:drop-shadow(0 0 5px rgba(255,55,40,.56));opacity:1}.cylinderUnit.fault b{color:#ff7469}.cylinderLabel{text-align:center;color:#70858e;font-size:9px;letter-spacing:.55px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cylinderLabel.ok{color:var(--green)}.cylinderLabel.bad{color:var(--red)}.cylinderLabel.warn{color:var(--amber)}
+.okCard{display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--green)}
+.okCircle{width:50px;height:50px;border:3px solid currentColor;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:29px;line-height:1}
+.okCard b{margin-top:7px;font-size:20px}
+.okCard span{margin-top:4px;font-size:13px}
+.panelPage{display:none;min-height:0;overflow:auto;border:1px solid var(--line);border-radius:9px;background:#041018;padding:18px}
+.panelPage.active{display:block}
+.panelPage h2{color:var(--cyan);margin:0 0 10px}
+.panelPage p,.panelPage pre{color:#a6b5bc}
+.panelPage pre{white-space:pre-wrap;word-break:break-word;font-size:12px}
+.panelActions{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.panelActions button{background:#092231;border:1px solid #18506a;border-radius:6px;padding:9px 14px;color:var(--cyan)}
+.hiddenDefs{position:absolute;width:0;height:0;overflow:hidden}
+@media(max-width:1500px){
+  .brand{min-width:325px}.brandTitle{font-size:20px}.brandSub{font-size:9px}.headerRight .readOnly{display:none}
+  .row.top{grid-template-columns:1.72fr repeat(5,1fr)}
+  .tab{padding:0 15px}.secondaryLabel,.compactLabel{display:none}
+}
+@media(max-height:900px){
+  .app{grid-template-rows:57px 34px minmax(0,1fr);gap:6px}
+  .dashboard{grid-template-rows:minmax(220px,2.05fr) minmax(108px,.98fr) minmax(76px,.7fr) minmax(102px,.92fr);gap:6px}
+  .row{gap:6px}.primaryGauge{padding:6px 7px}.primaryHead{height:27px}.primaryHead .icon{width:27px;height:27px}
+  .status{height:27px;font-size:11px}.secondaryCard{grid-template-rows:36px minmax(0,1fr) 10px 23px;padding:6px}
+  .secondaryHead .icon{width:28px;height:28px}.miniStatus{height:23px}.compactCard{grid-template-rows:32px 8px 10px;padding:5px 7px}
+  .outputCard{padding:6px 8px}.tachCard{padding:7px 11px}.tachMeta{font-size:10px}.tachMeta b{font-size:13px}
+}
+
+/* ---- Layout coverage pages: r3 ---- */
+.panelPage{padding:0;overflow:hidden;border:0;background:transparent}
+#panelContent{height:100%;min-height:0}
+.expPage{height:100%;min-height:0;display:grid;gap:7px;color:var(--white);font-size:11px}
+.pCard{min-width:0;min-height:0;overflow:hidden;border:1px solid var(--line);border-radius:8px;background:linear-gradient(145deg,rgba(6,18,26,.98),rgba(2,9,14,.99));box-shadow:var(--shadow)}
+.pCardTitle{height:29px;padding:0 10px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line-soft);color:#9babb3;font-size:10px;font-weight:800;letter-spacing:.9px;text-transform:uppercase}
+.pCardTitle .liveDot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.pMuted{color:#71828b}.pCyan{color:var(--cyan)}.pGreen{color:var(--green)}.pAmber{color:var(--amber)}.pRed{color:var(--red)}
+.pRow{display:flex;align-items:center;gap:7px;min-width:0}.pBetween{justify-content:space-between}.pStack{display:grid;gap:5px;min-height:0}
+.pInput,.pSelect,.pButton{height:26px;border:1px solid #17313d;border-radius:5px;background:#06131a;color:#c2cbd0;padding:0 8px;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+.pInput{justify-content:space-between;min-width:0}.pInput b{color:#e3e8eb}.pSelect:after{content:'⌄';color:#6f818a;margin-left:auto;padding-left:12px}
+.pButton{cursor:pointer;color:#a9bac2}.pButton.active{border-color:#007c9e;color:var(--cyan);background:#06222e}.pButton.green{border-color:#4f8200;color:var(--green)}.pButton.amber{border-color:#8d5800;color:var(--amber)}.pButton.red{border-color:#8b2e26;color:var(--red)}
+.pButton.disabled{opacity:.38;pointer-events:none}
+.moreOverlay{position:fixed;inset:0;z-index:1400;background:rgba(0,4,7,.54);display:flex;justify-content:flex-end;align-items:flex-start;padding:58px 11px 10px}.moreOverlay.hidden{display:none}.morePanel{width:min(390px,94vw);max-height:calc(100vh - 70px);overflow:auto;border:1px solid #1b4251;border-radius:9px;background:#031018;box-shadow:0 18px 55px rgba(0,0,0,.55),0 0 32px rgba(0,189,244,.1)}.moreHead{height:42px;display:flex;align-items:center;padding:0 11px;border-bottom:1px solid #12303c}.moreHead b{font-size:14px}.moreHead span{margin-left:8px;color:#71858e;font-size:9px}.moreClose{margin-left:auto;width:30px;height:28px;border:1px solid #1a3946;background:#061820;color:#a8b6bc;border-radius:4px}.moreSection{padding:9px 11px;border-bottom:1px solid #0f2833}.moreSection:last-child{border-bottom:0}.moreSectionTitle{color:#8fa1a9;font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:7px}.moreSetting{min-height:32px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;border-bottom:1px solid #0b222c}.moreSetting:last-child{border-bottom:0}.moreSetting>span{color:#a9b6bb}.moreChoice{display:flex;gap:4px}.moreChoice .pButton{height:25px;font-size:8px}.moreRange{display:grid;grid-template-columns:1fr 58px;gap:8px;align-items:center}.moreRange input{width:100%;accent-color:var(--cyan)}.moreRange b{color:var(--cyan);text-align:right}.moreDiagnostics{display:grid;grid-template-columns:1fr 1fr;gap:5px}.moreDiagItem{border:1px solid #102b36;border-radius:5px;padding:6px;color:#71858e;min-width:0}.moreDiagItem b{display:block;color:#c8d3d7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}.moreActions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px}
+.pButton.ro{opacity:.55;cursor:default}.pButton.ro:after{content:' • READ ONLY';font-size:8px;color:#788991;margin-left:5px}
+.pToggle{width:34px;height:17px;border-radius:20px;background:#18303a;position:relative;flex:none}.pToggle:after{content:'';position:absolute;width:13px;height:13px;top:2px;left:2px;border-radius:50%;background:#82949c}.pToggle.on{background:#075d76}.pToggle.on:after{left:19px;background:var(--cyan);box-shadow:0 0 7px rgba(0,189,244,.7)}
+.pMetric{font-size:22px;font-weight:800;letter-spacing:-.4px}.pMetric small{font-size:10px;color:var(--cyan);font-weight:500;letter-spacing:0}
+.pTiny{font-size:9px;color:#7e8e96}.pDivider{height:1px;background:var(--line-soft)}
+.pTable{width:100%;border-collapse:collapse}.pTable th,.pTable td{border-bottom:1px solid #0d2530;padding:5px 7px;text-align:left}.pTable th{color:#82949d;font-size:9px;letter-spacing:.6px}.pTable td{color:#b9c4c9}.pTable tr:last-child td{border-bottom:0}
+.pSpark{width:100%;height:100%;min-height:0}.pSpark svg{width:100%;height:100%}.pGraphGrid{stroke:#102630;stroke-width:1}.pGraphLine{fill:none;stroke:var(--cyan);stroke-width:1.6;vector-effect:non-scaling-stroke}.pGraphLine.green{stroke:var(--green)}.pGraphLine.amber{stroke:var(--amber)}.pGraphLine.red{stroke:var(--red)}.pGraphLine.purple{stroke:#a15cff}.pGraphLine.blue{stroke:#4e91ff}
+.pToolbar{height:38px;display:flex;align-items:center;gap:6px;padding:5px 8px}.pToolbar .spacer{flex:1}.pToolbarLabel{color:#7f9098;font-size:9px;letter-spacing:.6px}
+.pSidebar{padding:7px;display:flex;flex-direction:column;gap:6px}.pSearch{height:29px;border:1px solid #17303b;border-radius:5px;color:#71838c;padding:0 9px;display:flex;align-items:center}.pNavGroup{color:#8fa0a8;font-size:9px;letter-spacing:.8px;font-weight:800;padding:5px 6px 2px}.pNavItem{height:28px;padding:0 8px;border-radius:5px;display:flex;align-items:center;gap:7px;color:#a7b4ba}.pNavItem.active{background:#006b82;color:#e4faff}.pNavItem .navIcon{color:var(--cyan);width:15px;text-align:center}.pNavItem .badge{margin-left:auto;color:var(--amber)}
+.pStatusStrip{height:25px;border-top:1px solid #0d2630;display:flex;align-items:center;padding:0 9px;color:#81929a}.pStatusStrip b{color:#bcc7cc;margin-left:5px}.pStatusStrip .right{margin-left:auto}
+
+/* Tuning — INI/MSQ-backed local draft editor */
+.tuningPage{grid-template-columns:208px minmax(0,1fr) 310px;grid-template-rows:minmax(0,1fr);gap:7px}
+.tuneCatalogSide{grid-column:1;grid-row:1;padding:7px;display:flex;flex-direction:column;gap:6px}
+.tuneProjectMeta{padding:7px;border:1px solid #102a35;border-radius:5px;background:#041219;color:#8d9da5;line-height:1.45}.tuneProjectMeta b{color:#d3dde1}.tuneProjectMeta code{display:block;color:var(--cyan);font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tuneSearchInput{height:30px;width:100%;border:1px solid #17313d;border-radius:5px;background:#04131a;color:#d1dadd;padding:0 9px;outline:none}.tuneSearchInput:focus{border-color:#0085a8;box-shadow:0 0 0 1px #0085a8}
+.tuneKindRow{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}.tuneKind{height:24px;border:1px solid #14303c;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#82949d;font-size:8px;cursor:pointer}.tuneKind.active{background:#073444;border-color:#008eb4;color:var(--cyan)}
+.tuneCategoryList{min-height:0;overflow:auto;padding-right:2px}.tuneCategory{height:27px;padding:0 7px;border-radius:5px;display:grid;grid-template-columns:17px minmax(0,1fr) auto;align-items:center;gap:5px;color:#9aaab1;cursor:pointer}.tuneCategory:hover{background:#071d26}.tuneCategory.active{background:#006e87;color:#e9fbff}.tuneCategory i{font-style:normal;color:var(--cyan)}.tuneCategory b{font-size:9px;color:#72858e}.tuneCategory.active b{color:#c3eef7}
+.tuneWorkspace{grid-column:2;grid-row:1;display:grid;grid-template-rows:39px minmax(0,1fr) 27px}
+.tuneToolbar{display:flex;align-items:center;gap:7px;padding:5px 8px;border-bottom:1px solid var(--line-soft)}.tuneToolbarTitle{font-size:14px;font-weight:800;color:#dce4e7}.tuneToolbar .spacer{flex:1}.tuneCountBadge{height:24px;padding:0 8px;border:1px solid #17313d;border-radius:4px;display:flex;align-items:center;color:#8798a0}.tuneCountBadge b{color:var(--cyan);margin-right:4px}.tuneModifiedBadge{color:var(--amber)}
+.tuneList{overflow:auto;padding:7px;scrollbar-width:thin}.tuneGroupBlock{border:1px solid #112b36;border-radius:6px;margin-bottom:7px;overflow:hidden;background:#031018}.tuneGroupHead{height:29px;padding:0 8px;background:#061a23;display:grid;grid-template-columns:16px minmax(0,1fr) auto auto;align-items:center;gap:6px;color:#9aabb2;font-size:9px;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;user-select:none}.tuneGroupHead:hover{background:#08242f}.tuneGroupChevron{color:var(--cyan);font-size:12px;transform:rotate(90deg);transition:transform .12s ease}.tuneGroupBlock.collapsed .tuneGroupChevron{transform:rotate(0deg)}.tuneGroupCount{color:#667b84}.tuneGroupChanged{color:var(--amber);font-size:8px}.tuneGroupBody{border-top:1px solid #112b36}.tuneGroupBlock.collapsed .tuneGroupBody{display:none}
+.tuneSetting{min-height:43px;display:grid;grid-template-columns:minmax(160px,1fr) minmax(190px,.82fr) 64px;align-items:center;gap:7px;padding:4px 7px;border-bottom:1px solid #0d2530;cursor:pointer}.tuneSetting:last-child{border-bottom:0}.tuneSetting:hover,.tuneSetting.selected{background:#06202a}.tuneSetting.changed{box-shadow:inset 3px 0 var(--amber)}
+.tuneLabel{min-width:0}.tuneLabel strong{display:block;color:#c1ccd1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px}.tuneLabel small{display:block;color:#627781;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:8px;margin-top:2px}.tuneUnit{color:#718690;font-size:8px;text-align:right;white-space:nowrap}
+.tuneControl{height:29px;display:grid;grid-template-columns:27px minmax(0,1fr) 27px}.tuneControl input,.tuneControl select,.tuneTextInput{min-width:0;width:100%;height:29px;border:1px solid #1a3743;background:#06151d;color:#d9e1e4;text-align:center;padding:0 5px;outline:none}.tuneControl input:focus,.tuneControl select:focus,.tuneTextInput:focus{border-color:#00a7d1}.tuneControl button{border:1px solid #1a3743;background:#071820;color:#8ea0a8;font-weight:800}.tuneControl button+input,.tuneControl input+button{border-left:0}.tuneControl select{grid-column:1/4;text-align:left}.tuneTextInput{text-align:left;border-radius:4px}
+.tuneBool{height:28px;border:1px solid #1a3743;border-radius:5px;display:flex;align-items:center;justify-content:center;gap:7px;color:#84979f;cursor:pointer}.tuneBool i{width:31px;height:15px;border-radius:20px;background:#1a3039;position:relative}.tuneBool i:after{content:'';position:absolute;width:11px;height:11px;top:2px;left:2px;border-radius:50%;background:#788b94}.tuneBool.on{color:var(--green);border-color:#416b0b;background:rgba(91,145,0,.08)}.tuneBool.on i{background:#356900}.tuneBool.on i:after{left:18px;background:var(--green)}
+.tuneArrayButton{height:29px;border:1px solid #1a3743;border-radius:4px;background:#06151d;color:var(--cyan);display:flex;align-items:center;justify-content:space-between;padding:0 8px;cursor:pointer}.tuneArrayButton small{color:#72858e}.tuneRowActions{display:grid;grid-template-columns:1fr 1fr;gap:4px}.tuneQuickOne,.tuneRevertOne{height:26px;border:1px solid #1a3743;border-radius:4px;background:#06151d;color:#73868f;cursor:pointer}.tuneQuickOne{border:1px solid #1a3743;border-radius:4px;background:#06151d;color:#607984;cursor:pointer}.tuneQuickOne.active{color:var(--green);border-color:#4f8200;background:rgba(82,132,0,.08)}.tuneSetting.changed .tuneRevertOne{color:var(--amber);border-color:#7d5108}
+.tuneMore{height:31px;border:1px solid #17506a;border-radius:5px;background:#06202b;color:var(--cyan);display:flex;align-items:center;justify-content:center;cursor:pointer;margin:5px 7px}.tuneEmpty{padding:40px;text-align:center;color:#6d8089}
+.tuneStatusLine{border-top:1px solid #102a35;padding:0 8px;display:flex;align-items:center;gap:12px;color:#71848d;font-size:9px}.tuneStatusLine b{color:#b8c4c9}.tuneStatusLine .safe{margin-left:auto;color:var(--green)}
+.tuneRight{grid-column:3;grid-row:1;display:grid;grid-template-rows:1.2fr .92fr .62fr;gap:7px}.tuneQuickCard,.tuneInspectorCard,.tuneDraftCard{padding-bottom:6px}.tuneQuickCard>.pCardTitle{gap:5px}.tuneQuickTitleActions{margin-left:auto;display:flex;gap:4px}.tuneQuickTitleActions .pButton{height:21px;padding:0 7px;font-size:8px}.tuneQuickBody{padding:5px 7px;overflow:auto;height:calc(100% - 29px)}.tuneQuickHint{padding:5px 6px;margin-bottom:4px;border:1px solid #194052;border-radius:4px;color:#7f949d;font-size:8px;line-height:1.3}.tuneQuickLine{min-height:34px;display:grid;grid-template-columns:minmax(0,1fr) 130px;align-items:center;gap:6px;border-bottom:1px solid #0d2530}.tuneQuickLine.editing{grid-template-columns:minmax(0,1fr) 130px 25px}.tuneQuickLine:last-child{border-bottom:0}.tuneQuickLine>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#9babb2}.tuneQuickRemove{height:24px;border:1px solid #6d2c28;border-radius:4px;background:#171011;color:var(--red);cursor:pointer}.tuneQuickReset{margin-top:6px}
+.tuneInspectorBody{padding:7px 9px;overflow:auto;height:calc(100% - 29px)}.tuneInspectorName{font-size:13px;color:#d8e1e4;font-weight:800}.tuneInspectorTech{font-family:monospace;color:var(--cyan);font-size:9px;margin-top:3px;word-break:break-all}.tuneInspectorGrid{display:grid;grid-template-columns:1fr 1fr;gap:5px 10px;margin:8px 0}.tuneInspectorGrid div{display:flex;justify-content:space-between;color:#71858e;border-bottom:1px solid #0d2530;padding-bottom:3px}.tuneInspectorGrid b{color:#bac7cc}.tuneHelp{color:#899ba3;font-size:9px;white-space:pre-wrap;line-height:1.35}.tuneCondition{margin-top:6px;padding:5px;border:1px solid #4d3e13;border-radius:4px;color:#c8ad4a;font-family:monospace;font-size:8px}.tuneInspectActions{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px}.tuneInspectActions.three{grid-template-columns:repeat(3,1fr)}
+.tuneDraftBody{padding:7px 9px}.tuneDraftStats{display:grid;grid-template-columns:1fr 1fr;gap:5px}.tuneDraftStat{border:1px solid #102a35;border-radius:4px;padding:5px;color:#778a92}.tuneDraftStat b{display:block;color:#d1dbdf;font-size:16px}.tuneDraftActions{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:6px}
+.tuneModal{position:fixed;inset:0;z-index:1000;background:rgba(0,4,7,.86);display:flex;align-items:center;justify-content:center;padding:22px}.tuneModal.hidden{display:none}.tuneModalBox{width:min(1180px,97vw);height:min(690px,95vh);border:1px solid #1c4658;border-radius:9px;background:#031018;box-shadow:0 0 50px rgba(0,189,244,.16);display:grid;grid-template-rows:42px auto minmax(0,1fr) 39px}.tuneModalHead{display:flex;align-items:center;padding:0 11px;border-bottom:1px solid #12303c}.tuneModalHead b{font-size:14px}.tuneModalHead code{margin-left:10px;color:var(--cyan);font-size:9px}.tuneModalHead button{margin-left:auto;width:30px;height:28px;border:1px solid #1a3946;background:#061820;color:#a8b6bc;border-radius:4px}.tuneArrayTools{min-height:42px;border-bottom:1px solid #12303c;padding:5px 7px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}.tuneArrayTools .pButton{height:27px;padding:0 8px;font-size:8px}.tuneArrayToolLabel{color:#71858e;font-size:8px;letter-spacing:.5px;margin-left:4px}.tuneArrayOperand{width:62px;height:27px;border:1px solid #1a3743;border-radius:4px;background:#06151d;color:#d9e1e4;text-align:center}.tuneArrayZoomValue{width:46px;color:var(--cyan);text-align:center;font-size:9px}.tuneArrayGridWrap{overflow:auto;padding:8px;--cell-w:73px;--cell-h:30px;--cell-font:11px}.tuneArrayGrid{display:grid;gap:2px;min-width:max-content}.tuneArrayCell{width:var(--cell-w);height:var(--cell-h);font-size:var(--cell-font);border:1px solid #16323e;background:#06151c;color:#d5dee1;text-align:center}.tuneArrayCell:focus{border-color:#00bdf4;outline:none}.tuneArrayCell.selected{background:#093345;border-color:#00bdf4;box-shadow:inset 0 0 0 1px #00bdf4}.tuneArrayCell.rangeAnchor{background:#49320a;border-color:var(--amber);box-shadow:inset 0 0 0 2px var(--amber)}.tuneArrayIndex.selectable{cursor:pointer;user-select:none}.tuneArrayIndex.selectable:hover{background:#07303d;color:var(--cyan)}.tuneArrayIndex{height:22px;color:#71858e;display:flex;align-items:center;justify-content:center;font-size:8px;background:#04131a}.tuneArrayIndex.colHead{position:sticky;top:0;z-index:3}.tuneArrayIndex.rowHead{position:sticky;left:0;z-index:2}.tuneArrayIndex.corner{position:sticky;top:0;left:0;z-index:5}.tuneModalFoot{border-top:1px solid #12303c;display:flex;align-items:center;gap:7px;padding:5px 8px}.tuneModalFoot .spacer{flex:1}.tuneArrayHelp{width:100%;padding:2px 3px 0;color:#6f838c;font-size:8px;letter-spacing:.2px}.tuneChangesBox{width:min(650px,94vw);height:min(620px,88vh);border:1px solid #1c4658;border-radius:9px;background:#031018;box-shadow:0 0 50px rgba(0,189,244,.16);display:grid;grid-template-rows:42px 42px minmax(0,1fr) 39px}.tuneChangesSummary{padding:0 11px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #12303c;color:#7f929a}.tuneChangesSummary b{color:var(--amber)}.tuneChangesList{overflow:auto;padding:8px}.tuneChangeJump{width:100%;min-height:46px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:9px;padding:6px 9px;margin-bottom:5px;border:1px solid #153440;border-radius:5px;background:#05151c;color:#bdc8cd;text-align:left}.tuneChangeJump:hover{background:#07232e;border-color:#007e9e}.tuneChangeJump span{min-width:0}.tuneChangeJump strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tuneChangeJump small{display:block;color:#70858e;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tuneChangeJump b{color:var(--cyan);font-size:9px}.tuneChangesEmpty{display:flex;height:100%;align-items:center;justify-content:center;flex-direction:column;color:#71858e}.tuneChangesEmpty b{color:var(--green);font-size:18px;margin-bottom:6px}
+@media(max-width:1200px){.tuningPage{grid-template-columns:190px minmax(0,1fr) 280px}.tuneSetting{grid-template-columns:minmax(140px,1fr) minmax(165px,.8fr) 60px}.tuneQuickLine{grid-template-columns:minmax(0,1fr) 115px}.tuneQuickLine.editing{grid-template-columns:minmax(0,1fr) 115px 24px}}
+@media(max-height:760px){.tuneSetting{min-height:38px}.tuneRight{grid-template-rows:1.1fr .86fr .56fr}.tuneProjectMeta{display:none}.tuneModal{padding:8px}.tuneModalBox{height:97vh}.tuneArrayTools{padding:4px}}
+
+/* Tables */
+.tablesPage{grid-template-columns:225px minmax(0,1fr) 320px;grid-template-rows:minmax(0,1fr) 175px}
+.tableSidebar{grid-column:1;grid-row:1/3}.tableWorkspace{grid-column:2;grid-row:1;display:grid;grid-template-rows:38px 34px minmax(0,1fr) 38px}.tableTitle{font-size:15px;font-weight:800;color:#d8dfe2}.tableTabs{display:flex;gap:4px;padding:4px 8px;border-bottom:1px solid var(--line-soft)}.tableTabs span{padding:7px 12px;color:#8b9aa1}.tableTabs span.active{background:#06313f;color:var(--cyan);border-radius:4px}.veWrap{padding:5px 8px;overflow:hidden}.veGrid{height:100%;display:grid;grid-template-columns:48px repeat(15,1fr);grid-template-rows:24px repeat(13,1fr);gap:1px;background:#0b1f29}.veCell{min-width:0;display:flex;align-items:center;justify-content:center;background:#0b2430;color:#dce5e8;font-size:9px}.veCell.head{background:#071820;color:#8d9ca3}.veCell.sel{outline:2px solid #f5efaf;z-index:2}.veScale{height:5px;margin:0 55px;background:linear-gradient(90deg,#063255,#007f8a,#72a129,#f0be00,#ec6b00,#9c1515)}
+.tableSelection{padding:4px 9px;display:grid;grid-template-columns:1fr repeat(5,45px) 110px;align-items:center;gap:6px}.tableRight{grid-column:3;grid-row:1;display:grid;grid-template-rows:1.1fr .95fr .75fr;gap:7px}.surfacePanel{padding:4px 7px}.surfaceSvg{width:100%;height:calc(100% - 29px)}.mapInfo{padding:6px 9px}.infoLine{height:23px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #0d2630}.infoLine:last-child{border-bottom:0}.opGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:7px}.tableBottom{grid-column:2/4;grid-row:2;display:grid;grid-template-columns:1.4fr 1.15fr .9fr;gap:7px}.bottomGraph{padding:7px 9px;display:grid;grid-template-rows:22px 1fr}.historyList{padding:6px 9px}.historyRow{height:23px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #0d2630}.liveAtSelection{padding:6px 9px}.liveAtSelection div{height:20px;display:flex;justify-content:space-between}.liveAtSelection b{color:#d3dce0}
+
+/* Map editor */
+.mapPage{grid-template-columns:215px minmax(0,1fr) 285px;grid-template-rows:minmax(0,1fr) 158px}.mapSidebar{grid-column:1;grid-row:1/3}.mapWorkspace{grid-column:2;grid-row:1;display:grid;grid-template-rows:38px minmax(0,1fr) 40px}.mapMain{display:grid;grid-template-columns:1.05fr .95fr;gap:7px;padding:0 7px 7px}.map3d,.map2d{border:1px solid #102936;border-radius:5px;overflow:hidden;min-height:0}.map2dGrid{height:100%;display:grid;grid-template-columns:46px repeat(10,1fr);grid-template-rows:24px repeat(10,1fr);gap:1px;background:#0b2029;padding:4px}.mapRight{grid-column:3;grid-row:1;display:grid;grid-template-rows:1.02fr .95fr;gap:7px}.selectedCell{padding:7px 9px}.selectedCell .pInput{margin-bottom:5px}.adjustGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:8px}.editGrid{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:7px}.mapBottom{grid-column:2/4;grid-row:2;display:grid;grid-template-columns:1fr .9fr 1.05fr 1.05fr;gap:7px}.changeLog{padding:5px 8px}.changeLine{height:24px;display:grid;grid-template-columns:78px 12px 1fr;align-items:center;border-bottom:1px solid #0d2630}.changeLine i{width:7px;height:7px;border-radius:50%;background:var(--cyan)}
+
+/* Logging */
+.loggingPage{grid-template-columns:205px minmax(0,1fr) 305px;grid-template-rows:minmax(0,1fr) 180px}.logSidebar{grid-column:1;grid-row:1/3}.channelItem{height:24px;padding:0 7px;display:grid;grid-template-columns:15px 1fr 20px;align-items:center;color:#a8b5ba}.channelItem .check{width:11px;height:11px;border:1px solid #1d6b83;background:#00677f;position:relative}.channelItem .check:after{content:'✓';font-size:9px;position:absolute;left:1px;top:-2px;color:#d5f8ff}.channelItem.off .check{background:transparent;border-color:#48606b}.channelItem.off{color:#6f8089}.logGraphs{grid-column:2;grid-row:1;display:grid;grid-template-rows:36px repeat(9,1fr);padding:0 8px 7px}.recordBar{display:flex;align-items:center;gap:10px}.rec{color:var(--red);font-weight:800}.graphRow{min-height:0;display:grid;grid-template-columns:120px 1fr 55px;border-top:1px solid #0d2630}.graphLabel{padding:5px 7px;color:#b4c0c5}.graphLabel b{display:block;color:#dce3e6}.graphNow{display:flex;align-items:center;justify-content:flex-end;color:var(--cyan);font-size:15px;font-weight:800}.logRight{grid-column:3;grid-row:1;display:grid;grid-template-rows:1fr .7fr .55fr;gap:7px}.currentTiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:7px}.currentTile{border:1px solid #102b37;border-radius:5px;padding:6px;text-align:center}.currentTile .lab{color:#82939b;font-size:9px}.currentTile .num{font-size:21px;font-weight:800;margin-top:5px}.cursorInfo{padding:7px 9px}.cursorInfo .infoLine{height:22px}.logInfo{padding:7px 9px;display:grid;grid-template-columns:1fr 1fr;gap:6px}.logInfo div{display:flex;justify-content:space-between;color:#81929a}.logBottom{grid-column:2/4;grid-row:2;display:grid;grid-template-columns:1.1fr 1.8fr .8fr .8fr;gap:7px}.eventList{padding:5px 8px}.eventLine{height:24px;display:grid;grid-template-columns:75px 25px 1fr;align-items:center;border-bottom:1px solid #0d2630}.eventLine b{color:var(--cyan)}.markerControls{padding:7px;display:grid;grid-template-rows:repeat(3,1fr);gap:6px}.exportControls{padding:7px;display:grid;grid-template-rows:repeat(4,1fr);gap:5px}.playControls{padding:7px;display:grid;grid-template-rows:38px 1fr;gap:7px}.playButtons{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}.timeline{position:relative;margin:8px;height:70px}.timeline:before{content:'';position:absolute;left:0;right:0;top:40px;height:1px;background:#2b4b5a}.timeline .eventPin{position:absolute;top:13px;width:2px;height:42px;background:var(--cyan)}.timeline .eventPin:before{content:attr(data-label);position:absolute;top:-12px;left:-8px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#062c38;color:var(--cyan);font-size:9px}
+
+/* Diagnostics */
+.diagnosticsPage{grid-template-columns:205px minmax(0,1fr);grid-template-rows:74px minmax(0,1fr) 180px}.diagSidebar{grid-column:1;grid-row:1/4}.diagSummary{grid-column:2;grid-row:1;display:grid;grid-template-columns:repeat(9,1fr);gap:6px}.summaryTile{padding:6px 7px;display:grid;grid-template-columns:26px 1fr;align-items:center}.summaryIcon{font-size:20px;color:var(--cyan)}.summaryTile b{display:block;font-size:14px}.summaryTile small{display:block;color:var(--green);font-size:8px;margin-top:2px}.diagMiddle{grid-column:2;grid-row:2;display:grid;grid-template-columns:1.05fr .95fr;grid-template-rows:1.08fr .92fr;gap:7px}.triggerPanel{grid-column:1;grid-row:1}.faultPanel{grid-column:2;grid-row:1}.sensorPanel{grid-column:1;grid-row:2}.commPanel{grid-column:2;grid-row:2}.waveWrap{height:calc(100% - 29px);display:grid;grid-template-rows:1fr 80px;padding:6px}.waveSvg{width:100%;height:100%}.triggerStats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.statBox{border:1px solid #102b37;border-radius:5px;padding:6px}.statBox div{height:18px;display:flex;justify-content:space-between}.faultBody{height:calc(100% - 29px);padding:7px;display:flex;flex-direction:column}.faultEmpty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#a6b4ba}.faultEmpty .circle{width:42px;height:42px;border:2px solid var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--green);font-size:24px}.sensorTable{padding:4px 8px}.sensorRow{height:22px;display:grid;grid-template-columns:1.2fr .7fr .9fr 45px 1fr;align-items:center;border-bottom:1px solid #0d2630}.sensorRow .ok{color:var(--green)}.commGrid{padding:7px 9px;display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.commGrid div{height:22px;display:flex;justify-content:space-between;border-bottom:1px solid #0d2630}.diagBottom{grid-column:2;grid-row:3;display:grid;grid-template-columns:1.05fr 1.25fr 1fr;gap:7px}.eventHistory{padding:5px 8px}.diagTrend{padding:6px 8px;display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.testResults{padding:6px 8px}.testLine{height:26px;display:grid;grid-template-columns:22px 1fr 50px 55px;align-items:center;border-bottom:1px solid #0d2630}.testLine .pass{color:var(--green)}
+
+/* Settings */
+.settingsPage{grid-template-columns:205px minmax(0,1fr)}.settingsSidebar{grid-column:1}.settingsGrid{grid-column:2;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1.1fr .92fr .92fr;gap:7px;min-height:0}.settingsCard{padding-bottom:5px}.settingsBody{padding:6px 9px;display:grid;gap:4px}.settingLine{height:25px;display:grid;grid-template-columns:1fr minmax(92px,46%);align-items:center;gap:6px}.settingLine .pInput,.settingLine .pSelect{height:23px}.settingsPreview{height:78px;border:1px solid #102b37;border-radius:5px;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:8px}.previewDial{width:60px;height:60px;border-radius:50%;margin:auto;background:conic-gradient(from 135deg,var(--cyan) 0 170deg,var(--red) 170deg 220deg,#1a2930 220deg 270deg,transparent 270deg);position:relative}.previewDial:after{content:'14.7';position:absolute;inset:10px;border-radius:50%;background:#061119;display:flex;align-items:center;justify-content:center;font-weight:800}.shortcutGrid{padding:7px;display:grid;grid-template-columns:1fr 1fr;gap:6px}.shortcut{height:36px;border:1px solid #102b37;border-radius:5px;padding:4px 7px;display:flex;align-items:center;gap:8px;color:#abb8bd}.shortcut .ico{font-size:17px;color:var(--cyan)}.shortcut.ro{opacity:.5}.perfGrid{padding:7px 9px;display:grid;grid-template-columns:1fr 1fr;gap:7px}.perfChart{height:58px;border:1px solid #102b37;border-radius:5px;padding:4px}.importList{padding:6px 8px}.importLine{height:29px;display:grid;grid-template-columns:1fr 85px;align-items:center;border-bottom:1px solid #0d2630}
+
+@media(max-width:1200px){
+ .tuningPage{grid-template-columns:minmax(0,1fr) 270px}.tablesPage{grid-template-columns:205px minmax(0,1fr) 285px}.mapPage{grid-template-columns:195px minmax(0,1fr) 260px}.loggingPage{grid-template-columns:190px minmax(0,1fr) 275px}.diagnosticsPage,.settingsPage{grid-template-columns:190px minmax(0,1fr)}
+ .tuneLine{grid-template-columns:1fr 45px 46px}.pButton{padding:0 5px}.veCell{font-size:8px}.summaryTile{padding:4px}.summaryTile b{font-size:12px}.pCardTitle{font-size:9px}.pMetric{font-size:19px}
+}
+
+
+/* r8 compact single-row header and demo scenario menu */
+.app{grid-template-rows:60px minmax(0,1fr);gap:7px}
+.compactHeader{gap:8px;padding:0 10px}
+.brandNav{height:48px;min-width:245px;max-width:285px;border:1px solid transparent;border-radius:7px;background:transparent;color:inherit;padding:0 7px;cursor:pointer;text-align:left}
+.brandNav.active{border-color:#12506a;background:rgba(0,110,140,.1);box-shadow:inset 0 -2px var(--cyan)}
+.brandCopy{min-width:0;display:block}.brandNav .brandTitle{display:block;font-size:22px}.brandNav .brandSub{display:block;font-size:8px;letter-spacing:1.35px}
+.headerTabs{display:flex;align-items:stretch;height:48px;min-width:0;flex:1}.headerTabs .tab{flex:1;min-width:78px;padding:0 10px;border-radius:6px}
+.headerRight{margin-left:0}.headerRight .headBtn{height:38px;padding:0 16px}
+.demoScenarioOverlay{position:fixed;inset:0;z-index:1500;background:rgba(0,4,7,.68);display:flex;justify-content:flex-end;align-items:flex-start;padding:62px 78px 10px 10px}.demoScenarioOverlay.hidden{display:none}
+.demoScenarioPanel{width:min(520px,94vw);border:1px solid #1b4556;border-radius:9px;background:#031018;box-shadow:0 18px 58px rgba(0,0,0,.62),0 0 34px rgba(0,189,244,.12)}
+.demoScenarioHead{height:44px;display:flex;align-items:center;padding:0 11px;border-bottom:1px solid #12303c}.demoScenarioHead b{font-size:13px}.demoScenarioHead span{margin-left:9px;color:#71858e;font-size:8px}.demoScenarioHead button{margin-left:auto;width:30px;height:28px;border:1px solid #1a3946;border-radius:4px;background:#061820;color:#a8b6bc}
+.demoScenarioGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:10px}.demoScenarioGrid button{min-height:62px;border:1px solid #153642;border-radius:6px;background:#05151d;color:#b8c5ca;text-align:left;padding:9px;cursor:pointer}.demoScenarioGrid button:active{border-color:var(--cyan);background:#07303e}.demoScenarioGrid b{display:block;color:var(--cyan);font-size:11px}.demoScenarioGrid span{display:block;color:#71858e;font-size:8px;margin-top:5px}.demoScenarioFoot{padding:8px 11px;border-top:1px solid #102a35;color:#71858e;font-size:8px}
+.moreOverlay{padding-top:62px}
+@media(max-width:1200px){.brandNav{min-width:205px;max-width:225px}.brandNav .brandTitle{font-size:19px}.brandNav .brandSub{font-size:7px}.headerTabs .tab{min-width:65px;font-size:10px;padding:0 6px}.headerRight .headBtn{padding:0 11px}}
+
+.gaugeQuickOverlay{position:fixed;inset:0;z-index:2050;background:rgba(0,3,5,.74);display:flex;align-items:center;justify-content:center;padding:16px}.gaugeQuickOverlay.hidden{display:none}.gaugeQuickPanel{width:min(430px,94vw);border:1px solid #1a5268;border-radius:9px;background:#031018;box-shadow:0 18px 60px rgba(0,0,0,.62),0 0 30px rgba(0,189,244,.12);overflow:hidden}.gaugeQuickHead{height:44px;display:flex;align-items:center;padding:0 11px;border-bottom:1px solid #12303c}.gaugeQuickHead b{font-size:14px;color:#d9e5e9}.gaugeQuickHead span{margin-left:8px;color:var(--cyan);font-size:8px}.gaugeQuickHead button{margin-left:auto;width:31px;height:29px;border:1px solid #1a3946;border-radius:4px;background:#061820;color:#a8b6bc}.gaugeQuickBody{padding:11px;display:grid;grid-template-columns:1fr 1fr;gap:9px}.gaugeQuickField{display:grid;gap:5px}.gaugeQuickField label{font-size:8px;color:#81949c;font-weight:800;letter-spacing:.5px}.gaugeQuickField input{height:34px;border:1px solid #1b4657;border-radius:5px;background:#06151d;color:#e1e8eb;text-align:center;font-size:14px;outline:0}.gaugeQuickField input:focus{border-color:var(--cyan)}.gaugeQuickHint{grid-column:1/3;color:#657b84;font-size:8px;line-height:1.45}.gaugeQuickError{grid-column:1/3;min-height:16px;color:#ff6d62;font-size:8px}.gaugeQuickFoot{min-height:48px;border-top:1px solid #12303c;padding:7px 10px;display:flex;align-items:center;gap:6px}.gaugeQuickFoot .spacer{flex:1}.gaugeQuickFoot .pButton{height:31px}.radialGauge,.radialPrimaryCard,.radialReadout,.radialValue,.radialUnit,.radialSubUnit,.conceptScaleLabel{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}.radialGauge{cursor:pointer}
+.warningOverlay{position:fixed;inset:0;z-index:2100;background:rgba(0,2,4,.76);display:flex;align-items:center;justify-content:center;padding:18px}.warningOverlay.hidden{display:none}.warningPanel{width:min(620px,94vw);border:1px solid #9b2e24;border-radius:10px;background:linear-gradient(145deg,#160806,#070d11);box-shadow:0 0 62px rgba(255,47,31,.24);overflow:hidden}.warningHead{height:54px;display:flex;align-items:center;gap:10px;padding:0 15px;border-bottom:1px solid #5d211d;color:#ff5a4d}.warningHead .warningIcon{width:32px;height:32px;border:2px solid currentColor;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:900}.warningHead b{font-size:17px;letter-spacing:.7px}.warningHead span{margin-left:auto;color:#a87872;font-size:8px}.warningList{padding:10px 14px}.warningItem{min-height:48px;border:1px solid #44211f;border-radius:6px;background:#110908;margin-bottom:7px;padding:8px 10px}.warningItem:last-child{margin-bottom:0}.warningItem strong{display:block;color:#ff776c;font-size:12px}.warningItem span{display:block;color:#b19a96;font-size:9px;margin-top:4px}.warningFoot{height:52px;border-top:1px solid #4b201d;display:flex;align-items:center;justify-content:flex-end;padding:7px 12px}.warningAck{height:34px;min-width:150px;border:1px solid #ff5145;border-radius:5px;background:#35100d;color:#ffd8d4;font-weight:850;letter-spacing:.55px}.warningAck:active{background:#651b15}.brandNav{cursor:default}.headerTabs .tab[data-page="dashboard"]{min-width:88px}
+button,.pButton,[role="button"],[data-action],[data-app-action],[data-demo-action],[data-demo-scenario],.tab,.headBtn{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+
+/* r16 settings-driven global presentation. */
+.app{filter:brightness(var(--ux-brightness,1))}
+body.uxAnimationsOff *,body.uxAnimationsOff *::before,body.uxAnimationsOff *::after{animation:none!important;transition:none!important}
+body[data-ux-density="compact"] .app{gap:4px;padding-bottom:4px}
+body[data-ux-density="compact"] .card{border-radius:5px}
+body[data-ux-density="compact"] .dashboard{gap:4px}
+body[data-ux-density="compact"] .row{gap:4px}
+body[data-ux-density="compact"] .pCardTitle,body[data-ux-density="compact"] .tableTopToolbar,body[data-ux-density="compact"] .logToolbar{min-height:28px;padding-top:3px;padding-bottom:3px}
+body[data-ux-density="compact"] .secondaryCard,body[data-ux-density="compact"] .compactCard{padding-top:4px;padding-bottom:4px}
+</style>
+<link rel="stylesheet" href="tables_page.css">
+<link rel="stylesheet" href="logging_page.css">
+<link rel="stylesheet" href="diagnostics_page.css">
+<link rel="stylesheet" href="settings_page.css">
+<link rel="stylesheet" href="responsive_layout.css">
+<link rel="stylesheet" href="radial_gauges.css">
+<link rel="stylesheet" href="r29_theme.css">
+</head>
+<body>
+<svg class="hiddenDefs" aria-hidden="true" focusable="false">
+  <defs>
+
+    <!-- r24 approved radial-gauge symbol family. Visual gate selections locked:
+         A2 turbo, B1 lambda, C6 coolant, D1 oil pressure, E6 fuel level.
+         RPM and all radial-gauge geometry remain unchanged. -->
+    <symbol id="p-turbo" viewBox="0 0 64 64">
+      <path d="M48 17h10v15H47c-1 13-11 23-25 23C10 55 3 47 3 36 3 22 14 12 29 12c7 0 13 2 19 5Z"/>
+      <circle cx="25" cy="35" r="13"/>
+      <circle cx="25" cy="35" r="4"/>
+      <path d="M25 22v9M25 39v9M12 35h9M29 35h9M16 26l6 6M28 38l6 6M34 26l-6 6M22 38l-6 6"/>
+      <path d="M47 17h11M58 19v11"/>
+    </symbol>
+    <symbol id="p-lambda" viewBox="0 0 64 64">
+      <path d="M18 55 34 10h9l-8 22 13 23H37L30 42l-5 13H18Z"/>
+      <path d="M34 10 46 10"/>
+    </symbol>
+    <symbol id="p-coolant" viewBox="0 0 64 64">
+      <path d="M27 10a6 6 0 0 1 12 0v27a13 13 0 1 1-12 0V10Z"/>
+      <path d="M33 17v25M39 18h8M39 25h8M39 32h8"/>
+      <circle cx="33" cy="48" r="5"/>
+      <path d="M5 48c4-4 8-4 12 0s8 4 12 0M5 57c4-4 8-4 12 0s8 4 12 0M39 48c4-4 8-4 12 0s8 4 12 0M39 57c4-4 8-4 12 0s8 4 12 0"/>
+    </symbol>
+    <symbol id="p-oil" viewBox="0 0 64 64">
+      <path d="M7 31 17 20l7 5h24l8-5 5 4-8 7-9 15H18L7 31Z"/>
+      <path d="M24 25v-8h17v8M29 17v-5h8v5M7 31 2 27l4-9 11 5"/>
+      <path d="M61 45c0 4-3 7-6 7s-6-3-6-7c0-3 6-10 6-10s6 7 6 10Z"/>
+    </symbol>
+    <symbol id="p-fuel" viewBox="0 0 64 64">
+      <path d="M11 8h30v48H11Z"/>
+      <path d="M17 14h18v15H17ZM8 56h38"/>
+      <path d="M41 17h6l9 10v20a5 5 0 0 0 10 0V30l-7-8M56 10v16"/>
+      <path d="M55 10h7v8h-7"/>
+    </symbol>
+    <symbol id="i-turbo" viewBox="0 0 48 48"><circle cx="22" cy="25" r="13"/><circle cx="22" cy="25" r="6"/><path d="M22 19c7-5 14-3 17 2M28 25c5 7 2 14-2 17M22 31c-7 4-14 1-17-3M16 25c-4-7-1-14 4-17M35 14h9v7M35 14l9 7"/></symbol>
+    <symbol id="i-lambda" viewBox="0 0 48 48"><path d="M15 40 28 9M20 26h15M28 9l7 31"/></symbol>
+    <symbol id="i-coolant" viewBox="0 0 48 48"><path d="M4 28c4-4 8-4 12 0s8 4 12 0 8-4 12 0M4 36c4-4 8-4 12 0s8 4 12 0 8-4 12 0"/><path d="M34 7v21a8 8 0 1 0 8 0V7a4 4 0 0 0-8 0Z"/><path d="M38 13v18"/></symbol>
+    <symbol id="i-oil" viewBox="0 0 48 48"><path d="M7 27h23l6-8h7v8h-5l-4 9H13l-6-9Z"/><path d="M13 27v-8h12l5 8"/><path d="M42 34c0 3-2 5-5 5s-5-2-5-5c0-2 5-8 5-8s5 6 5 8Z"/></symbol>
+    <symbol id="i-fuel" viewBox="0 0 48 48"><rect x="8" y="7" width="20" height="34" rx="2"/><path d="M13 12h10v9H13zM28 14h5l5 6v17a4 4 0 0 0 8 0V22l-5-5M8 41h24"/><path d="M39 8v9"/></symbol>
+    <symbol id="i-airtemp" viewBox="0 0 48 48"><path d="M4 16h19M4 23h15M4 30h19"/><path d="M30 8v21a8 8 0 1 0 8 0V8a4 4 0 0 0-8 0Z"/><path d="M34 15v17"/></symbol>
+    <symbol id="i-oiltemp" viewBox="0 0 48 48"><path d="M5 25h21l5-7h6v7h-4l-4 8H11l-6-8Z"/><path d="M11 25v-7h11l5 7"/><path d="M38 8v20a7 7 0 1 0 6 0V8a3 3 0 0 0-6 0Z"/></symbol>
+    <symbol id="i-fuelpressure" viewBox="0 0 48 48"><path d="M7 7h18v34H7zM11 12h10v9H11M25 15h5l5 6v17"/><circle cx="38" cy="28" r="8"/><path d="M38 28l4-4M38 20v2M31 28h2M43 28h2"/></symbol>
+    <symbol id="i-delta" viewBox="0 0 48 48"><path d="M5 16h38M5 32h38M11 10l-6 6 6 6M37 26l6 6-6 6"/><path d="M14 25c0 4 3 7 7 7s7-3 7-7c0-3-7-11-7-11s-7 8-7 11Z"/></symbol>
+    <symbol id="i-battery" viewBox="0 0 48 48"><rect x="5" y="13" width="38" height="27" rx="2"/><path d="M14 13V8h7v5M27 13V8h7v5M12 25h9M16.5 20.5v9M28 25h9"/></symbol>
+    <symbol id="i-ignition" viewBox="0 0 48 48"><path d="M6 11h10v10H6zM19 11h10v10H19zM32 11h10v10H32z"/><path d="M11 27h26M16 33h16M22 39h4"/><path d="M23 22l-5 8h6l-3 8 10-12h-6l3-4"/></symbol>
+    <symbol id="i-injector" viewBox="0 0 48 48"><path d="M17 6h15l4 7-7 7-4-4-4 4-7-7 3-7Z"/><path d="M18 20l12 12M14 24l10 10M28 34l-4 8M33 33l7 2M35 38l7 2"/><path d="M9 38h5v4H9z"/></symbol>
+    <symbol id="i-knock" viewBox="0 0 48 48"><path d="M12 23c0-9 5-15 12-15 8 0 13 7 13 15 0 7-4 10-8 12-3 2-4 5-4 8"/><path d="M17 23c0-5 3-9 7-9 5 0 8 4 8 9 0 4-2 6-5 8M17 42h8"/><path d="M39 13l-4 7h5l-3 7 8-10h-5l3-4"/></symbol>
+    <symbol id="i-speed" viewBox="0 0 48 48"><path d="M8 36a18 18 0 1 1 32 0"/><path d="M24 29l9-9M11 31h4M13 19l4 3M24 12v5M35 19l-4 3"/><circle cx="24" cy="29" r="2"/></symbol>
+    <symbol id="i-vss" viewBox="0 0 48 48"><path d="M5 12h20v19H5zM25 22h5"/><path d="M28 36a12 12 0 1 1 12-12"/><path d="M28 24l8-8"/></symbol>
+    <symbol id="i-engine" viewBox="0 0 48 48"><path d="M8 19h8l4-5h12l4 5h6v16H8zM4 24h4M42 24h3M13 35v5M37 35v5"/><path d="M17 19v-5h6M25 14h7"/></symbol>
+    <symbol id="i-solenoid" viewBox="0 0 48 48"><path d="M5 29h11l5-10h16l6 6-6 6H21l-5 10H5z"/><path d="M27 17V8M34 17V8M22 12h17"/></symbol>
+    <symbol id="i-ethanol" viewBox="0 0 48 48"><path d="M8 7h24v34H8zM13 12h14v10H13M32 15h5l5 5v18"/><path d="M17 34c0-4 5-10 5-10s5 6 5 10a5 5 0 1 1-10 0Z"/></symbol>
+    <symbol id="i-fan" viewBox="0 0 48 48"><circle cx="24" cy="24" r="4"/><path d="M24 20c-2-9 2-14 8-13 7 1 8 9 3 13-4 3-7 4-11 4M28 24c9-2 14 2 13 8-1 7-9 8-13 3-3-4-4-7-4-11M24 28c2 9-2 14-8 13-7-1-8-9-3-13 4-3 7-4 11-4M20 24c-9 2-14-2-13-8 1-7 9-8 13-3 3 4 4 7 4 11"/></symbol>
+    <symbol id="i-coil" viewBox="0 0 48 48"><path d="M13 7h22v10H13zM17 17v15M31 17v15M14 32h20v9H14z"/><path d="M23 19l-4 7h5l-3 7 9-10h-5l3-4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 48 48"><path d="M11 25l8 8 18-19"/></symbol>
+  </defs>
+</svg>
+<div class="app">
+  <header class="header compactHeader">
+    <div class="brand brandNav" aria-label="EpicDash UX">
+      <span class="logo"></span>
+      <span class="brandCopy">
+        <span class="brandTitle">EpicDash UX</span>
+        <span class="brandSub">DASHBOARD • UNOFFICIAL • READ-ONLY</span>
+      </span>
+    </div>
+    <nav class="headerTabs" aria-label="Primary pages">
+      <button class="tab active" data-page="dashboard">DASHBOARD</button>
+      <button class="tab" data-page="tuning">TUNING</button>
+      <button class="tab" data-page="tables">TABLES</button>
+      <button class="tab" data-page="logging">LOGGING</button>
+      <button class="tab" data-page="diagnostics">DIAGNOSTICS</button>
+      <button class="tab" data-page="settings">SETTINGS</button>
+    </nav>
+    <div class="headerRight">
+      <button class="headBtn demoOn" id="demoBtn" aria-haspopup="true" aria-controls="demoScenarioOverlay">DEMO</button>
+      <button class="headBtn" id="moreBtn">MORE ⋮</button>
+    </div>
+  </header>
+
+  <main class="dashboard" id="dashboard">
+    <div class="row top radialPrimaryRow">
+      <section class="card tachCard radialHeroCard">
+        <h2 class="visuallyHidden">Engine speed</h2>
+        <div class="radialGauge radialGaugeHero" id="rpmDial" data-gauge="rpm" data-min="0" data-max="8000" data-major="1000" data-minor="250">
+          <svg class="radialSvg conceptRadialSvg" viewBox="0 0 360 226" aria-hidden="true"></svg>
+          <div class="radialReadout radialHeroReadout"><div class="radialValue radialHeroValue" id="rpm">821</div><div class="radialUnit radialHeroUnit">RPM</div><div class="radialSubUnit">x1000</div></div>
+          <div class="radialScale radialHeroScale"><span>0</span><span>4</span><span>8</span></div>
+        </div>
+        <div class="tachMeta"><span>IAC DUTY <b id="rpmIac">24 %</b></span><span>TPS <b id="rpmTps">1.5 %</b></span></div>
+      </section>
+
+      <section class="card primaryGauge radialPrimaryCard">
+        <div class="primaryHead conceptPrimaryHead" aria-label="Boost"><svg class="icon conceptPrimaryIcon"><use href="#p-turbo"/></svg><span class="gaugeLabel">BOOST</span></div>
+        <div class="radialGauge radialGaugeSmall" id="boostDial" data-gauge="boost" data-min="-1" data-max="2" data-major="0.5" data-minor="0.1">
+          <svg class="radialSvg conceptRadialSvg" viewBox="0 0 240 158" aria-hidden="true"></svg>
+          <div class="radialReadout"><div class="radialValue" id="boost">−0.48</div><div class="radialUnit">bar</div></div>
+          <div class="radialScale"><span>−1.0</span><span>0</span><span>2.0</span></div>
+        </div>
+        <div class="status" id="boostStatus">VACUUM</div>
+      </section>
+
+      <section class="card primaryGauge radialPrimaryCard">
+        <div class="primaryHead conceptPrimaryHead" aria-label="AFR Gas Scale"><svg class="icon conceptPrimaryIcon"><use href="#p-lambda"/></svg><span class="gaugeLabel">AFR GAS SCALE</span></div>
+        <div class="radialGauge radialGaugeSmall" id="afrDial" data-gauge="afr" data-min="9" data-max="20" data-major="1" data-minor="0.5">
+          <svg class="radialSvg conceptRadialSvg" viewBox="0 0 240 158" aria-hidden="true"></svg>
+          <div class="radialReadout"><div class="radialValue" id="afr">13.8</div><div class="radialUnit">AFR</div></div>
+          <div class="radialScale"><span>9.0</span><span>14.7</span><span>20.0</span></div>
+        </div>
+        <div class="status ok" id="afrStatus">IN RANGE</div>
+      </section>
+
+      <section class="card primaryGauge radialPrimaryCard">
+        <div class="primaryHead conceptPrimaryHead" aria-label="Coolant"><svg class="icon conceptPrimaryIcon"><use href="#p-coolant"/></svg><span class="gaugeLabel">COOLANT</span></div>
+        <div class="radialGauge radialGaugeSmall" id="cltDial" data-gauge="clt" data-min="40" data-max="120" data-major="20" data-minor="10">
+          <svg class="radialSvg conceptRadialSvg" viewBox="0 0 240 158" aria-hidden="true"></svg>
+          <div class="radialReadout"><div class="radialValue" id="clt">82</div><div class="radialUnit">°C</div></div>
+          <div class="radialScale"><span>40</span><span>80</span><span>120</span></div>
+        </div>
+        <div class="status ok" id="cltStatus">NORMAL</div>
+      </section>
+
+      <section class="card primaryGauge radialPrimaryCard">
+        <div class="primaryHead conceptPrimaryHead" aria-label="Oil Pressure"><svg class="icon conceptPrimaryIcon"><use href="#p-oil"/></svg><span class="gaugeLabel">OIL PRESSURE</span></div>
+        <div class="radialGauge radialGaugeSmall" id="oilDial" data-gauge="oil" data-min="0" data-max="10" data-major="2" data-minor="1">
+          <svg class="radialSvg conceptRadialSvg" viewBox="0 0 240 158" aria-hidden="true"></svg>
+          <div class="radialReadout"><div class="radialValue" id="oil">4.5</div><div class="radialUnit">bar</div></div>
+          <div class="radialScale"><span>0</span><span>5</span><span>10</span></div>
+        </div>
+        <div class="status ok" id="oilStatus">NORMAL</div>
+      </section>
+
+      <section class="card primaryGauge radialPrimaryCard">
+        <div class="primaryHead conceptPrimaryHead" aria-label="Fuel Level"><svg class="icon conceptPrimaryIcon"><use href="#p-fuel"/></svg><span class="gaugeLabel">FUEL LEVEL</span></div>
+        <div class="radialGauge radialGaugeSmall" id="fuelDial" data-gauge="fuel" data-min="0" data-max="100" data-major="25" data-minor="12.5">
+          <svg class="radialSvg conceptRadialSvg" viewBox="0 0 240 158" aria-hidden="true"></svg>
+          <div class="radialReadout"><div class="radialValue" id="fuelLevel">24</div><div class="radialUnit">%</div></div>
+          <div class="radialScale"><span>0</span><span>50</span><span>100</span></div>
+        </div>
+        <div class="status warn" id="fuelStatus">LOW</div>
+      </section>
+    </div>
+
+    <div class="row secondary" id="secondaryRow"></div>
+    <div class="row compact" id="compactRow"></div>
+
+    <div class="row outputs">
+      <section class="card outputCard first">
+        <div class="outputsTag">OUTPUTS</div>
+        <div class="outputMain"><svg class="icon"><use href="#i-fan"/></svg><span class="outputState" id="fanOut">ON</span></div>
+        <div class="outputDesc"><span id="fanTemp">82</span> °C • ON @ 85 °C</div>
+        <div class="bar green" id="fanBar" style="--bar:82"></div>
+      </section>
+      <section class="card outputCard">
+        <div class="outputMain"><svg class="icon"><use href="#i-fuel"/></svg><span class="outputState" id="pumpOut">ON</span></div>
+        <div class="outputDesc"><span id="pumpVolt">13.9</span> V • RPM &gt; 400</div>
+        <div class="bar" id="pumpBar" style="--bar:86"></div>
+      </section>
+      <section class="card outputCard">
+        <div class="outputMain"><svg class="icon"><use href="#i-turbo"/></svg><span class="outputState" id="boostDutyOut">16 %</span></div>
+        <div class="outputDesc">BOOST CONTROL</div>
+        <div class="bar" id="boostDutyBar" style="--bar:16"></div>
+      </section>
+      <section class="card outputCard">
+        <div class="outputMain"><svg class="icon"><use href="#i-solenoid"/></svg><span class="outputState" id="auxDutyOut">0 %</span></div>
+        <div class="outputDesc">AUX OUTPUT</div>
+        <div class="bar" id="auxDutyBar" style="--bar:0"></div>
+      </section>
+      <section class="card cylinderCard">
+        <div class="cylinderIcons" id="ignitionCylinders"></div>
+        <div class="cylinderLabel" id="ignitionCylinderLabel">IGNITION • STATUS UNKNOWN</div>
+      </section>
+      <section class="card cylinderCard">
+        <div class="cylinderIcons" id="injectorCylinders"></div>
+        <div class="cylinderLabel" id="injectorCylinderLabel">INJECTION • STATUS UNKNOWN</div>
+      </section>
+      <section class="card okCard" id="okCard"><div class="okCircle"><svg class="icon" style="width:31px;height:31px;color:currentColor"><use href="#i-check"/></svg></div><b id="okTitle">OK</b><span id="errorText">No Error</span></section>
+    </div>
+  </main>
+
+  <section class="panelPage" id="panelPage"><div id="panelContent"></div></section>
+
+</div>
+
+<div class="gaugeQuickOverlay hidden" id="gaugeQuickOverlay"><div class="gaugeQuickPanel" role="dialog" aria-modal="true" aria-labelledby="gaugeQuickTitle"><div class="gaugeQuickHead"><b id="gaugeQuickTitle">GAUGE LIMITS</b><span>LONG-PRESS SETTINGS</span><button data-gauge-quick="close">×</button></div><div class="gaugeQuickBody"><div class="gaugeQuickField"><label for="gaugeQuickMin">MINIMUM</label><input id="gaugeQuickMin" type="number" inputmode="decimal"></div><div class="gaugeQuickField"><label for="gaugeQuickMax">MAXIMUM</label><input id="gaugeQuickMax" type="number" inputmode="decimal"></div><div class="gaugeQuickField gaugeQuickPrecisionField"><label for="gaugeQuickPrecision">PRECISION</label><select id="gaugeQuickPrecision"><option value="-1">USE GLOBAL</option><option value="0">0 DECIMALS</option><option value="1">1 DECIMAL</option><option value="2">2 DECIMALS</option><option value="3">3 DECIMALS</option></select></div><div class="gaugeQuickHint" id="gaugeQuickHint">Scale changes are local display settings only.</div><div class="gaugeQuickError" id="gaugeQuickError"></div></div><div class="gaugeQuickFoot"><button class="pButton" data-gauge-quick="allSettings">ALL DASHBOARD SETTINGS</button><span class="spacer"></span><button class="pButton" data-gauge-quick="reset">RESET</button><button class="pButton" data-gauge-quick="close">CANCEL</button><button class="pButton active" data-gauge-quick="apply">APPLY</button></div></div></div>
+<div class="warningOverlay hidden" id="warningOverlay"><div class="warningPanel" role="alertdialog" aria-modal="true" aria-labelledby="warningTitle"><div class="warningHead"><div class="warningIcon">!</div><b id="warningTitle">WARNING STATE</b><span>EPICDASH UX • READ-ONLY DISPLAY</span></div><div class="warningList" id="warningList"></div><div class="warningFoot"><button class="warningAck" id="warningAck">ACKNOWLEDGE</button></div></div></div>
+
+<div class="demoScenarioOverlay hidden" id="demoScenarioOverlay">
+  <div class="demoScenarioPanel" role="dialog" aria-modal="true" aria-label="Demo scenarios">
+    <div class="demoScenarioHead"><b>DEMO SCENARIOS</b><span>Tap a scenario to activate it</span><button data-demo-action="close">×</button></div>
+    <div class="demoScenarioGrid">
+      <button data-demo-scenario="idle"><b>IDLE</b><span>Warm stable idle</span></button>
+      <button data-demo-scenario="cruise"><b>CRUISE</b><span>Steady road load</span></button>
+      <button data-demo-scenario="pull"><b>BOOST PULL</b><span>Repeated acceleration sweep</span></button>
+      <button data-demo-scenario="overrun"><b>OVERRUN</b><span>Closed-throttle deceleration</span></button>
+      <button data-demo-scenario="hot"><b>HOT COOLANT</b><span>Fan and warning states</span></button>
+      <button data-demo-scenario="fault"><b>SENSOR FAULT</b><span>Low voltage, oil and errors</span></button>
+    </div>
+    <div class="demoScenarioFoot">Short-tap DEMO to toggle. Hold DEMO to reopen this menu.</div>
+  </div>
+</div>
+
+<div class="moreOverlay hidden" id="moreOverlay">
+  <div class="morePanel" role="dialog" aria-modal="true" aria-label="EpicDash UX app settings and tools">
+    <div class="moreHead"><b>APP SETTINGS & TOOLS</b><span>EpicDash UX only</span><button class="moreClose" data-app-action="closeMore">×</button></div>
+    <section class="moreSection">
+      <div class="moreSectionTitle">Appearance</div>
+      <div class="moreSetting"><span>Theme</span><div class="moreChoice themeChoiceR29"><div class="pButton" data-app-action="theme" data-value="dark">DEFAULT</div><div class="pButton" data-app-action="theme" data-value="oled">OLED</div><div class="pButton" data-app-action="theme" data-value="darker">STEEL</div><div class="pButton" data-app-action="theme" data-value="arctic">ARCTIC</div><div class="pButton" data-app-action="theme" data-value="amber">AMBER</div></div></div>
+      <div class="moreSetting"><span>Reduced motion</span><div class="pButton" data-app-action="toggleMotion" id="moreMotion">OFF</div></div>
+      <div class="moreSetting"><span>Keep screen awake</span><div class="pButton" data-app-action="toggleAwake" id="moreAwake">ON</div></div>
+    </section>
+    <section class="moreSection">
+      <div class="moreSectionTitle">Page navigation</div>
+      <div class="moreSetting"><span>Swipe between pages</span><div class="pButton" data-app-action="toggleSwipe" id="moreSwipe">ON</div></div>
+      <div class="moreSetting"><span>Swipe sensitivity</span><div class="moreRange"><input id="moreSwipeRange" type="range" min="45" max="180" step="5" value="90"><b id="moreSwipeValue">90 px</b></div></div>
+      <div class="pTiny" style="margin-top:6px">Lower distance is more sensitive. Horizontal page swipes are recognized by direction and velocity; vertical scrolling, sliders, graphs, tables and 3D gestures keep their own native actions.</div>
+    </section>
+    <section class="moreSection">
+      <div class="moreSectionTitle">App diagnostics</div>
+      <div class="moreDiagnostics" id="moreDiagnostics"></div>
+      <div class="moreActions"><div class="pButton active" data-app-action="copyDiagnostics">COPY DIAGNOSTICS</div><div class="pButton" data-app-action="openDiagnostics">DIAGNOSTICS PAGE</div><div class="pButton" data-app-action="openSettings">FULL SETTINGS PAGE</div><div class="pButton red" data-app-action="resetAppPrefs">RESET APP PREFS</div></div>
+    </section>
+  </div>
+</div>
+
+<script src="tune_catalog.js"></script>
+<script src="tunerstudio_order.js"></script>
+<script src="table_catalog.js"></script>
+<script src="tables_page.js"></script>
+<script src="logging_page.js"></script>
+<script src="diagnostics_page.js"></script>
+<script src="settings_page.js"></script>
+<script src="responsive_layout.js"></script>
+<script src="concept_radial_gauges.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const finite=v=>Number.isFinite(Number(v));
+const state={
+  rpm:821,map:52,baro:100,afr:13.8,clt:82,iat:24,oilTemp:96,
+  fuelPressure:320,fuelDelta:300,batt:13.9,ign:16,oilPressure:4.5,
+  tps:1.5,idleDuty:24,boostDuty:16,auxDuty:0,vehicleSpeed:0,gpsSpeed:0,
+  displaySpeed:0,gear:0,knockRetard:0,engineLoad:0,injMs:2.4,injectorDuty:2.8,
+  ethanol:2.8,fuelLevel:24,idleError:0,fanOutput:1,fuelPumpOutput:1,
+  syncOk:1,errorCount:0,cylindersCount:4,maxCylindersCount:12,ignitionFault:0,injectorFault:0,currentIgnitionMode:0,currentInjectionMode:0
+};
+let demo=true,liveSeen=false,phase='demo',measuredHz=0,cylinderPhase=0,demoScenario='idle',warningActiveKey='',warningAcknowledgedKey='',warningNativeNotice='',lastLiveUpdateMs=0;
+const LIVE_STATE_KEYS=[...Object.keys(state),'ignitionFaultMask','injectorFaultMask'];
+function signalAvailable(){return !!demo||(!!liveSeen&&lastLiveUpdateMs>0&&Date.now()-lastLiveUpdateMs<=1600)}
+function clearLiveState(){for(const key of LIVE_STATE_KEYS)if(key!=='cylindersCount'&&key!=='maxCylindersCount')state[key]=NaN}
+
+const APP_PREF_KEY='epicdashUX.appPrefs.v1';
+const APP_VERSION='0.12.28-ux-state-30';
+let currentPage='dashboard';
+let appPrefs={theme:'dark',swipeEnabled:true,swipeThreshold:90,reducedMotion:false,keepAwake:true};
+function loadAppPrefs(){try{const saved=JSON.parse(localStorage.getItem(APP_PREF_KEY)||'{}');if(saved&&typeof saved==='object')appPrefs={...appPrefs,...saved}}catch(_){}appPrefs.theme=['dark','darker','oled','arctic','amber'].includes(appPrefs.theme)?appPrefs.theme:'dark';appPrefs.swipeThreshold=clamp(Number(appPrefs.swipeThreshold)||90,45,180)}
+function saveAppPrefs(){try{localStorage.setItem(APP_PREF_KEY,JSON.stringify(appPrefs))}catch(_){}applyAppPrefs();try{window.SettingsUX?.syncFromAppPrefs?.()}catch(_){}}
+function applyAppPrefs(){document.body.dataset.theme=appPrefs.theme;document.body.classList.toggle('reducedMotion',!!appPrefs.reducedMotion);try{window.EpicDashAndroid?.setKeepScreenAwake?.(!!appPrefs.keepAwake)}catch(_){}renderMoreMenu()}
+function setActiveTab(page){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.page===page))}
+const panelPageCache=new Map(),panelPageScroll=new Map(),panelPageWired=new Set();
+function savePageScroll(page=currentPage){try{if(page==='dashboard')panelPageScroll.set(page,$('dashboard')?.scrollTop||0);else panelPageScroll.set(page,$('panelPage')?.scrollTop||0)}catch(_){}}
+function restorePageScroll(page){const set=()=>{try{const n=page==='dashboard'?$('dashboard'):$('panelPage');if(n)n.scrollTop=panelPageScroll.get(page)||0}catch(_){}};set();requestAnimationFrame(()=>requestAnimationFrame(set))}
+function navigateToPage(page){if(!PAGE_SWIPE_PAGES.includes(page)||page===currentPage)return;savePageScroll(currentPage);if(page!=='tables'){tableFullscreen=false;document.body.classList.remove('tableFullscreen');try{closeTableSurface()}catch(_){}}currentPage=page;setActiveTab(page);if(page==='dashboard'){$('dashboard').classList.remove('hidden');$('panelPage').classList.remove('active')}else showPanel(page);restorePageScroll(page)}
+function appDiagnosticsObject(){let native={};try{native=JSON.parse(window.EpicDashAndroid?.getDiagnosticsJson?.()||'{}')}catch(_){}return{app:'EpicDash UX',version:APP_VERSION,package:'com.buttonbox.ble.ul',page:currentPage,theme:appPrefs.theme,swipeEnabled:!!appPrefs.swipeEnabled,swipeThreshold:appPrefs.swipeThreshold,reducedMotion:!!appPrefs.reducedMotion,keepAwake:!!appPrefs.keepAwake,viewport:`${innerWidth}×${innerHeight}`,devicePixelRatio:Number(devicePixelRatio||1),demo,liveSeen,connectionPhase:phase,measuredHz,tuneSettings:tuneSettings?.length||0,localTuneChanges:Object.keys(tuneDraft||{}).length,quickTuneItems:tuneQuickNames?.length||0,logging:window.LoggingUX?.diagnostics?.()||null,diagnostics:window.DiagnosticsUX?.diagnostics?.()||null,native}}
+function renderMoreMenu(){const box=$('moreDiagnostics');if(!box)return;document.querySelectorAll('[data-app-action="theme"]').forEach(x=>x.classList.toggle('active',x.dataset.value===appPrefs.theme));const setToggle=(id,on)=>{const n=$(id);if(n){n.textContent=on?'ON':'OFF';n.classList.toggle('green',on)}};setToggle('moreMotion',appPrefs.reducedMotion);setToggle('moreAwake',appPrefs.keepAwake);setToggle('moreSwipe',appPrefs.swipeEnabled);if($('moreSwipeRange'))$('moreSwipeRange').value=appPrefs.swipeThreshold;if($('moreSwipeValue'))$('moreSwipeValue').textContent=`${appPrefs.swipeThreshold} px`;const d=appDiagnosticsObject();box.innerHTML=[['Version',d.version],['Page',d.page],['Viewport',d.viewport],['DPR',d.devicePixelRatio],['Tune settings',d.tuneSettings.toLocaleString()],['Local changes',d.localTuneChanges]].map(x=>`<div class="moreDiagItem">${x[0]}<b>${tuneEsc?.(x[1])??x[1]}</b></div>`).join('')}
+function openMoreMenu(){$('moreOverlay')?.classList.remove('hidden');renderMoreMenu()}
+function closeMoreMenu(){$('moreOverlay')?.classList.add('hidden')}
+loadAppPrefs();
+
+const secondaryDefs=[
+  {key:'iat',icon:'i-airtemp',label:'INTAKE AIR',unit:'°C',min:-10,max:60,status:secondaryStatusIat},
+  {key:'oilTemp',icon:'i-oiltemp',label:'OIL TEMP',unit:'°C',min:50,max:150,status:secondaryStatusOilTemp},
+  {key:'fuelPressure',icon:'i-fuelpressure',label:'FUEL PRESSURE',unit:'bar',min:0,max:7,display:v=>v/100,status:secondaryStatusFuelPressure},
+  {key:'fuelDelta',icon:'i-delta',label:'FUEL ΔP',unit:'kPa',min:0,max:1000,status:secondaryStatusFuelDelta},
+  {key:'batt',icon:'i-battery',label:'BATTERY',unit:'V',min:10,max:16,status:secondaryStatusBattery},
+  {key:'ign',icon:'i-ignition',label:'IGNITION ADV.',unit:'°',min:-20,max:40,status:()=>['NORMAL','ok']},
+  {key:'injMs',icon:'i-injector',label:'INJECTOR PW',unit:'ms',min:0,max:15,status:()=>['OK','ok']},
+  {key:'knockRetard',icon:'i-knock',label:'KNOCK RETARD',unit:'°',min:0,max:12,status:secondaryStatusKnock}
+];
+const compactDefs=[
+  {key:'gpsSpeed',icon:'i-speed',label:'GPS SPEED',unit:'km/h',min:0,max:300},
+  {key:'vehicleSpeed',icon:'i-vss',label:'VSS SPEED',unit:'km/h',min:0,max:300},
+  {key:'gear',icon:'i-knock',label:'GEAR',unit:'',min:0,max:6,display:v=>v<=0?'N':Math.round(v)},
+  {key:'engineLoad',icon:'i-engine',label:'ENGINE LOAD',unit:'%',min:0,max:100},
+  {key:'boostDuty',icon:'i-solenoid',label:'BOOST DUTY',unit:'%',min:0,max:100},
+  {key:'injectorDuty',icon:'i-injector',label:'INJ. DUTY',unit:'%',min:0,max:100},
+  {key:'ethanol',icon:'i-ethanol',label:'ETHANOL',unit:'%',min:0,max:100},
+  {key:'displaySpeed',icon:'i-speed',label:'DISPLAY SPEED',unit:'km/h',min:0,max:300}
+];
+
+function num(v,d=1){return finite(v)?Number(v).toFixed(d):'—'}
+function uxPresent(kind,v,d){try{return window.SettingsUX?.present?.(kind,v,d)||{text:num(v,d??1),unit:'',value:Number(v)}}catch(_){return{text:num(v,d??1),unit:'',value:Number(v)}}}
+function setValueUnit(id,p){text(id,p.text);const el=$(id),unit=el?.parentElement?.querySelector('small,.dialUnit');if(unit)unit.textContent=p.unit}
+function defPresentation(def,raw){if(!finite(raw))return{text:'—',unit:def.unit,value:NaN};if(def.key==='iat'||def.key==='oilTemp')return uxPresent('temperature',raw);if(['gpsSpeed','vehicleSpeed','displaySpeed'].includes(def.key))return uxPresent('speed',raw);if(def.key==='fuelPressure')return uxPresent('pressureBar',Number(raw)/100);if(def.key==='fuelDelta')return uxPresent('pressureKpa',raw);if(def.key==='batt')return uxPresent('voltage',raw);const value=def.display?def.display(Number(raw)):Number(raw);return{text:typeof value==='number'?formatNumber(value,def):String(value),unit:def.unit,value:Number(value)}}
+function text(id,v){const n=$(id);if(n)n.textContent=v}
+function classState(el,base,kind){if(el)el.className=base+(kind?' '+kind:'')}
+function pct(v,min,max){return finite(v)?clamp((Number(v)-min)/(max-min)*100,0,100):0}
+function setRadialGauge(id,value,min,max){window.ConceptRadialGauge?.update(id,value,min,max)}
+function setDial(id,value,min,max){setRadialGauge(id,value,min,max)}
+function initRadialGauge(gauge){window.ConceptRadialGauge?.build(gauge)}
+function initRadialGauges(){window.ConceptRadialGauge?.initAll()}
+function setBar(id,value,min,max,kind=''){const n=$(id);if(!n)return;n.style.setProperty('--bar',pct(value,min,max));n.className='bar'+(kind?' '+kind:'')}
+function displayValue(def,raw){if(!finite(raw))return '—';if(def.display){const out=def.display(Number(raw));return typeof out==='number'?formatNumber(out,def):String(out)}return formatNumber(Number(raw),def)}
+function formatNumber(v,def){if(def.unit==='bar'||def.unit==='V'||def.unit==='ms'||def.unit==='km/h')return num(v,1);if(def.key==='gear')return v<=0?'N':String(Math.round(v));return String(Math.round(v))}
+function makeSvg(id){return `<svg class="icon"><use href="#${id}"/></svg>`}
+
+function addSecondary(def){
+  const el=document.createElement('section');el.className='card secondaryCard dashboardGaugeTarget';el.id=`secGauge_${def.key}`;el.dataset.gaugeQuickId=el.id;
+  el.innerHTML=`<div class="secondaryHead">${makeSvg(def.icon)}<div class="secondaryText"><div class="secondaryLabel">${def.label}</div><div class="secondaryValue"><span id="sec_${def.key}">—</span> <small>${def.unit}</small></div></div></div><div></div><div><div class="bar" id="secbar_${def.key}" style="--bar:0"></div><div class="barScale"><span id="secmin_${def.key}">${def.min}</span><span id="secmax_${def.key}">${def.max}</span></div></div><div class="miniStatus" id="secstatus_${def.key}">—</div>`;
+  $('secondaryRow').appendChild(el);
+}
+function addCompact(def){
+  const el=document.createElement('section');el.className='card compactCard dashboardGaugeTarget';el.id=`cmpGauge_${def.key}`;el.dataset.gaugeQuickId=el.id;
+  el.innerHTML=`<div class="compactHead">${makeSvg(def.icon)}<div><div class="compactLabel">${def.label}</div><div class="compactValue"><span id="cmp_${def.key}">—</span> <small>${def.unit}</small></div></div></div><div class="bar" id="cmpbar_${def.key}" style="--bar:0"></div><div class="barScale"><span id="cmpmin_${def.key}">${def.min}</span><span id="cmpmax_${def.key}">${def.max}</span></div>`;
+  $('compactRow').appendChild(el);
+}
+secondaryDefs.forEach(addSecondary);compactDefs.forEach(addCompact);
+
+function secondaryStatusIat(v){if(!finite(v))return['NO CHANNEL','warn'];if(v<45)return['NORMAL','ok'];if(v<60)return['HOT','warn'];return['VERY HOT','bad']}
+function secondaryStatusOilTemp(v){if(!finite(v))return['NO CHANNEL','warn'];if(v<110)return['NORMAL','ok'];if(v<125)return['HOT','warn'];return['OVERHEAT','bad']}
+function secondaryStatusFuelPressure(v){if(!finite(v))return['NO CHANNEL','warn'];const bar=v/100;if(bar>=2.5&&bar<=4.5)return['NORMAL','ok'];if(bar>=2&&bar<=5)return['CHECK','warn'];return['FAULT','bad']}
+function secondaryStatusFuelDelta(v){if(!finite(v))return['NO CHANNEL','warn'];if(v>=250&&v<=400)return['NORMAL','ok'];if(v>=200&&v<=450)return['CHECK','warn'];return['FAULT','bad']}
+function secondaryStatusBattery(v){if(!finite(v))return['NO CHANNEL','warn'];if(v>=13.2&&v<=14.8)return['GOOD','ok'];if(v>=12&&v<=15.2)return['CHECK','warn'];return['FAULT','bad']}
+function secondaryStatusKnock(v){if(!finite(v))return['NO CHANNEL','warn'];if(v<=1)return['NORMAL','ok'];if(v<=3)return['ACTIVE','warn'];return['HIGH','bad']}
+
+function renderSecondary(){
+  secondaryDefs.forEach(def=>{
+    const raw=state[def.key],p=defPresentation(def,raw),val=$('sec_'+def.key);text('sec_'+def.key,p.text);if(val?.nextElementSibling)val.nextElementSibling.textContent=p.unit;
+    setBar('secbar_'+def.key,def.display&&finite(raw)?def.display(Number(raw)):raw,def.min,def.max);
+    const [label,kind]=def.status(raw);text('secstatus_'+def.key,label);classState($('secstatus_'+def.key),'miniStatus',kind==='ok'?'':kind);
+  });
+}
+function renderCompact(){
+  compactDefs.forEach(def=>{
+    const raw=state[def.key],p=defPresentation(def,raw),val=$('cmp_'+def.key);text('cmp_'+def.key,p.text);if(val?.nextElementSibling)val.nextElementSibling.textContent=p.unit;
+    const numeric=def.display&&finite(raw)&&typeof def.display(Number(raw))==='number'?def.display(Number(raw)):raw;setBar('cmpbar_'+def.key,numeric,def.min,def.max);
+  });
+}
+function cylinderCount(){
+  let n=Number(state.cylindersCount);if(!Number.isFinite(n)||n<1)try{n=Number(tuneValue?.(tuneByName?.get?.('cylindersCount')))}catch(_){}return clamp(Math.round(Number(n)||4),1,12)
+}
+function faultMask(kind){const keys=kind==='ignition'?['ignitionFaultMask','coilFaultMask','sparkFaultMask']:['injectorFaultMask','injectionFaultMask'];for(const k of keys){const n=Number(state[k]);if(Number.isFinite(n)&&n>0)return Math.trunc(n)}return 0}
+function wastedSparkMode(){const m=state.currentIgnitionMode;return typeof m==='string'?/wasted/i.test(m):Number(m)===2}
+function expandedIgnitionFaults(mask,count){const bad=new Set();for(let i=0;i<count;i++)if(mask&(1<<i)){bad.add(i);if(wastedSparkMode()&&count%2===0)bad.add((i+count/2)%count)}return bad}
+function renderCylinderBank(kind){
+  const count=cylinderCount(),box=$(kind==='ignition'?'ignitionCylinders':'injectorCylinders'),label=$(kind==='ignition'?'ignitionCylinderLabel':'injectorCylinderLabel');if(!box||!label)return;
+  if(!signalAvailable()){const cols=count<=6?count:6;box.style.setProperty('--cylinder-cols',String(cols));box.innerHTML=Array.from({length:count},(_,i)=>`<span class="cylinderUnit noSignal" title="Cylinder ${i+1} — no ECU signal"><b>${i+1}</b><svg class="icon"><use href="#${kind==='ignition'?'i-coil':'i-injector'}"/></svg></span>`).join('');label.textContent=`${kind.toUpperCase()} • NO SIGNAL`;label.className='cylinderLabel';return}
+  const globalFault=Number(state[kind==='ignition'?'ignitionFault':'injectorFault'])!==0,mask=faultMask(kind),specific=mask?kind==='ignition'?expandedIgnitionFaults(mask,count):new Set(Array.from({length:count},(_,i)=>i).filter(i=>mask&(1<<i))):new Set(),unknown=globalFault&&!specific.size;
+  const cols=count<=6?count:6;box.style.setProperty('--cylinder-cols',String(cols));
+  box.innerHTML=Array.from({length:count},(_,i)=>{const fault=unknown||specific.has(i),pulse=!fault&&!globalFault&&i===cylinderPhase%count;return`<span class="cylinderUnit ${fault?'fault':pulse?'pulse':''}" title="Cylinder ${i+1}${fault?' fault':''}"><b>${i+1}</b><svg class="icon"><use href="#${kind==='ignition'?'i-coil':'i-injector'}"/></svg></span>`}).join('');
+  if(globalFault){label.textContent=`${kind.toUpperCase()} • FAULT${unknown?' • CYLINDER NOT REPORTED':''}`;label.className='cylinderLabel bad'}else{label.textContent=`${kind.toUpperCase()} • ECU REPORTS OK`;label.className='cylinderLabel ok'}
+}
+function renderCylinders(){renderCylinderBank('ignition');renderCylinderBank('injector')}
+
+function activeWarnings(){const out=[],rpm=Number(state.rpm)||0,map=Number(state.map)||0,tps=Number(state.tps)||0,cfg=window.SettingsUX?.warningConfig?.()||{};if(cfg.enabled===false)return out;const cltWarn=Number(cfg.coolantWarning??95),cltCritical=Number(cfg.coolantCritical??105),oilWarn=Number(cfg.oilWarning??1.2),oilCritical=Number(cfg.oilCritical??.7),battLow=Number(cfg.batteryLow??11.5),battHigh=Number(cfg.batteryHigh??15.2),boostWarn=Number(cfg.boostWarning??1.4),afrLean=Number(cfg.afrLean??15.5),fuelDeltaLow=Number(cfg.fuelDeltaLow??200),knockHigh=Number(cfg.knockHigh??3);const add=(id,title,detail,severity='warning')=>out.push({id,title,detail,severity});if(finite(state.syncOk)&&Number(state.syncOk)<=0)add('sync','ENGINE SYNC LOST','Crank/cam synchronization is not valid.','critical');if(finite(state.errorCount)&&Number(state.errorCount)>0)add('ecu-errors','ECU ERROR STATE',`${Math.round(Number(state.errorCount))} active error${Number(state.errorCount)===1?'':'s'} reported.`,'critical');if(finite(state.clt)){const v=Number(state.clt);if(v>=cltCritical)add('clt-critical','COOLANT OVERHEAT',`${num(v,0)} °C exceeds the ${num(cltCritical,0)} °C critical display threshold.`,'critical');else if(v>=cltWarn)add('clt-hot','COOLANT HOT',`${num(v,0)} °C exceeds the ${num(cltWarn,0)} °C warning threshold.`)}if(finite(state.oilPressure)&&rpm>500){const v=Number(state.oilPressure);if(v<=oilCritical)add('oil-critical','OIL PRESSURE CRITICAL',`${num(v,2)} bar while the engine is running.`,'critical');else if(v<=oilWarn)add('oil-low','OIL PRESSURE LOW',`${num(v,2)} bar while the engine is running.`)}if(finite(state.batt)){const v=Number(state.batt);if(v<battLow||v>battHigh)add('voltage-fault','SYSTEM VOLTAGE FAULT',`${num(v,1)} V is outside the configured display range.`,'critical')}if(finite(state.knockRetard)&&Number(state.knockRetard)>knockHigh)add('knock-high','HIGH KNOCK RETARD',`${num(state.knockRetard,1)}° retard is active.`,'critical');if(finite(state.fuelDelta)&&Number(state.fuelDelta)<fuelDeltaLow)add('fuel-delta','FUEL PRESSURE DIFFERENTIAL LOW',`${num(state.fuelDelta,0)} kPa differential pressure.`,'critical');if(finite(state.afr)&&map>105&&tps>45&&Number(state.afr)>afrLean)add('lean-load','LEAN UNDER LOAD',`AFR ${num(state.afr,1)} at ${num(map,0)} kPa and ${num(tps,0)}% TPS.`,'critical');if(finite(state.map)&&finite(state.baro)&&((Number(state.map)-Number(state.baro))/100)>boostWarn)add('boost-high','BOOST WARNING',`${num((Number(state.map)-Number(state.baro))/100,2)} bar exceeds the configured warning threshold.`,'warning');if(warningNativeNotice)add('native-notice','ECU / APP NOTICE',warningNativeNotice,'warning');return out}
+function renderWarningPopup(){const warnings=activeWarnings(),overlay=$('warningOverlay'),cfg=window.SettingsUX?.warningConfig?.()||{};if(!overlay)return;if(!warnings.length){warningActiveKey='';warningAcknowledgedKey='';overlay.classList.add('hidden');return}const key=warnings.map(x=>x.id).sort().join('|');warningActiveKey=key;if(cfg.popupEnabled===false||key===warningAcknowledgedKey){overlay.classList.add('hidden');return}$('warningTitle').textContent=warnings.some(x=>x.severity==='critical')?'CRITICAL WARNING':'WARNING STATE';$('warningList').innerHTML=warnings.map(x=>`<div class="warningItem"><strong>${tuneEsc(x.title)}</strong><span>${tuneEsc(x.detail)}</span></div>`).join('');overlay.classList.remove('hidden');if(key!==overlay.dataset.warnKey){try{window.LoggingUX?.addWarningMarker?.(key,warnings.map(x=>x.title).join(' + '))}catch(_){}}if(cfg.vibrate&&key!==overlay.dataset.warnKey){try{navigator.vibrate?.([120,70,120])}catch(_){}}overlay.dataset.warnKey=key}
+function acknowledgeWarnings(){warningAcknowledgedKey=warningActiveKey;warningNativeNotice='';$('warningOverlay')?.classList.add('hidden')}
+function render(){
+  const hasSignal=signalAvailable();
+  const rpm=hasSignal&&finite(state.rpm)?Number(state.rpm):NaN;
+  const map=finite(state.map)?Number(state.map):NaN;
+  const baro=hasSignal&&finite(state.baro)?Number(state.baro):NaN;
+  const boost=finite(map)&&finite(baro)?(map-baro)/100:NaN; // Explicit MAP-minus-baro display conversion to bar.
+  const oil=finite(state.oilPressure)?Number(state.oilPressure):NaN;
+  const fuel=finite(state.fuelLevel)?Number(state.fuelLevel):NaN;
+  const clt=finite(state.clt)?Number(state.clt):NaN;
+  const afr=finite(state.afr)?Number(state.afr):NaN;
+
+  text('rpm',finite(rpm)?Math.round(rpm):'—');setRadialGauge('rpmDial',rpm,0,8000);
+  text('rpmIac',finite(state.idleDuty)?num(state.idleDuty,0)+' %':'—');text('rpmTps',finite(state.tps)?num(state.tps,1)+' %':'—');
+
+  const boostP=uxPresent('pressureBar',boost);text('boost',finite(boost)?(boostP.value<0?'−':'')+Math.abs(boostP.value).toFixed(boostP.unit==='kPa'?1:2):'—');const boostUnit=$('boost')?.parentElement?.querySelector('.radialUnit,.dialUnit');if(boostUnit)boostUnit.textContent=boostP.unit;setDial('boostDial',boost,-1,2);
+  const boostState=!finite(boost)?['NO DATA','warn']:boost<0?['VACUUM','']:boost<1.1?['BOOST','ok']:boost<1.35?['HIGH BOOST','warn']:['OVERBOOST','bad'];
+  text('boostStatus',boostState[0]);classState($('boostStatus'),'status',boostState[1]);
+
+  const afrP=uxPresent('afr',afr);text('afr',afrP.text);const afrUnit=$('afr')?.parentElement?.querySelector('.radialUnit,.dialUnit');if(afrUnit)afrUnit.textContent=afrP.unit;const afrLabel=$('afr')?.closest('.primaryGauge')?.querySelector('.gaugeLabel');if(afrLabel)afrLabel.textContent=afrP.unit==='λ'?'LAMBDA':'AFR GAS SCALE';setDial('afrDial',afr,9,20);
+  const afrState=!finite(afr)?['NO DATA','warn']:afr>=11&&afr<=15.5?['IN RANGE','ok']:afr>15.5?['LEAN','warn']:afr>=10?['RICH','warn']:['VERY RICH','bad'];
+  text('afrStatus',afrState[0]);classState($('afrStatus'),'status',afrState[1]);
+
+  const cltP=uxPresent('temperature',clt);text('clt',cltP.text);const cltUnit=$('clt')?.parentElement?.querySelector('.radialUnit,.dialUnit');if(cltUnit)cltUnit.textContent=cltP.unit;setDial('cltDial',clt,40,120);
+  const cltState=!finite(clt)?['NO DATA','warn']:clt<95?['NORMAL','ok']:clt<105?['HOT','warn']:['OVERHEAT','bad'];
+  text('cltStatus',cltState[0]);classState($('cltStatus'),'status',cltState[1]);
+
+  const oilP=uxPresent('pressureBar',oil);text('oil',oilP.text);const oilUnit=$('oil')?.parentElement?.querySelector('.radialUnit,.dialUnit');if(oilUnit)oilUnit.textContent=oilP.unit;setDial('oilDial',oil,0,10);
+  const oilState=!finite(oil)?['NO DATA','warn']:oil>1.2?['NORMAL','ok']:oil>.7?['LOW','warn']:['CRITICAL','bad'];
+  text('oilStatus',oilState[0]);classState($('oilStatus'),'status',oilState[1]);
+
+  text('fuelLevel',num(fuel,0));setDial('fuelDial',fuel,0,100);
+  const fuelState=!finite(fuel)?['NO DATA','warn']:fuel>=25?['NORMAL','ok']:fuel>=15?['LOW','warn']:['CRITICAL','bad'];
+  text('fuelStatus',fuelState[0]);classState($('fuelStatus'),'status',fuelState[1]);
+
+  renderSecondary();renderCompact();renderCylinders();
+
+  const fanOn=hasSignal&&finite(state.fanOutput)?Number(state.fanOutput)>0:false;
+  const pumpOn=hasSignal&&finite(state.fuelPumpOutput)?Number(state.fuelPumpOutput)>0:false;
+  text('fanOut',hasSignal?(fanOn?'ON':'OFF'):'—');text('fanTemp',hasSignal?uxPresent('temperature',clt).text:'—');setBar('fanBar',hasSignal?clt:NaN,40,110,fanOn?'green':'');
+  text('pumpOut',hasSignal?(pumpOn?'ON':'OFF'):'—');text('pumpVolt',hasSignal?uxPresent('voltage',state.batt).text:'—');setBar('pumpBar',hasSignal?state.batt:NaN,10,16,pumpOn?'':'');
+  text('boostDutyOut',finite(state.boostDuty)?num(state.boostDuty,0)+' %':'—');setBar('boostDutyBar',state.boostDuty,0,100);
+  text('auxDutyOut',finite(state.auxDuty)?num(state.auxDuty,0)+' %':'—');setBar('auxDutyBar',state.auxDuty,0,100);
+
+  const hasError=hasSignal&&finite(state.errorCount)&&Number(state.errorCount)>0;
+  $('okCard').style.color=!hasSignal?'var(--muted)':hasError?'var(--red)':'var(--green)';text('okTitle',!hasSignal?'NO SIGNAL':hasError?'ERROR':'OK');text('errorText',!hasSignal?'ECU data not received':hasError?`${Math.round(state.errorCount)} active`:'No Error');
+
+  const mapP=uxPresent('pressureKpa',map),iatP=uxPresent('temperature',state.iat),battP=uxPresent('voltage',state.batt),fuelP=uxPresent('pressureBar',finite(state.fuelPressure)?Number(state.fuelPressure)/100:NaN);text('sRpm',finite(rpm)?Math.round(rpm):'—');text('sMap',`${mapP.text} ${mapP.unit}`);text('sBoost',finite(boost)?`${boostP.value<0?'−':''}${Math.abs(boostP.value).toFixed(boostP.unit==='kPa'?1:2)} ${boostP.unit}`:'—');
+  text('sAfr',`${afrP.text} ${afrP.unit}`);text('sIat',`${iatP.text} ${iatP.unit}`);text('sClt',`${cltP.text} ${cltP.unit}`);text('sBatt',`${battP.text} ${battP.unit}`);
+  text('sFuel',finite(state.fuelPressure)?`${fuelP.text} ${fuelP.unit}`:'—');text('sOil',finite(oil)?`${oilP.text} ${oilP.unit}`:'—');text('sTps',finite(state.tps)?num(state.tps,1)+' %':'—');text('sIac',finite(state.idleDuty)?num(state.idleDuty,0)+' %':'—');
+  refreshExperimentalPage();renderWarningPopup();
+}
+
+function setCommonDemoValues(){
+  state.baro=100;state.ethanol=2.8;state.fuelLevel=24;state.auxDuty=0;state.syncOk=1;
+}
+function demoTick(t){
+  if(!demo)return;
+  const s=t/1000*(Number(window.uxDemoRate)||1);
+  setCommonDemoValues();
+  if(demoScenario==='cruise'){
+    state.rpm=2520+Math.sin(s*.7)*75;state.map=56+Math.sin(s*.45)*4;state.afr=14.7+Math.sin(s*.7)*.12;
+    state.clt=82+Math.sin(s*.1)*.5;state.iat=25+Math.sin(s*.2)*.5;state.oilTemp=98;state.fuelPressure=355+Math.sin(s*.4)*5;state.fuelDelta=300;
+    state.batt=14.0;state.ign=32+Math.sin(s*.5)*2;state.oilPressure=4.1;state.tps=18+Math.sin(s*.35)*2;state.idleDuty=0;
+    state.boostDuty=8;state.knockRetard=0;state.engineLoad=38;state.injMs=3.1;state.injectorDuty=12;state.gpsSpeed=92;state.vehicleSpeed=91;state.displaySpeed=91;state.gear=5;
+    state.fanOutput=0;state.fuelPumpOutput=1;state.errorCount=0;
+  }else if(demoScenario==='pull'){
+    const cycle=(s%8)/8,up=cycle<.72?cycle/.72:(1-cycle)/.28,p=clamp(up,0,1);
+    state.rpm=1800+p*4400;state.map=65+p*130;state.afr=14.2-p*3.0;state.clt=84;state.iat=28+p*10;state.oilTemp=101;
+    state.fuelPressure=365+p*125;state.fuelDelta=300;state.batt=13.8;state.ign=28-p*12;state.oilPressure=3.8+p*1.8;state.tps=8+p*92;state.idleDuty=0;
+    state.boostDuty=15+p*55;state.knockRetard=p>.88?1.2:0;state.engineLoad=35+p*65;state.injMs=2.8+p*8.5;state.injectorDuty=12+p*70;
+    state.gpsSpeed=45+p*75;state.vehicleSpeed=44+p*76;state.displaySpeed=44+p*76;state.gear=3;state.fanOutput=0;state.fuelPumpOutput=1;state.errorCount=0;
+  }else if(demoScenario==='overrun'){
+    const p=(Math.sin(s*.45)+1)/2;state.rpm=1800+p*2200;state.map=24+Math.sin(s*.6)*2;state.afr=18.5;state.clt=82;state.iat=24;state.oilTemp=97;
+    state.fuelPressure=325;state.fuelDelta=300;state.batt=14.1;state.ign=8;state.oilPressure=3.6+p;state.tps=0;state.idleDuty=0;state.boostDuty=0;
+    state.knockRetard=0;state.engineLoad=10;state.injMs=0;state.injectorDuty=0;state.gpsSpeed=72-p*18;state.vehicleSpeed=72-p*18;state.displaySpeed=72-p*18;state.gear=3;
+    state.fanOutput=0;state.fuelPumpOutput=1;state.errorCount=0;
+  }else if(demoScenario==='hot'){
+    state.rpm=840+Math.sin(s*.8)*30;state.map=54;state.afr=13.9;state.clt=108+Math.sin(s*.15)*2;state.iat=46;state.oilTemp=118;
+    state.fuelPressure=320;state.fuelDelta=300;state.batt=13.8;state.ign=14;state.oilPressure=3.2;state.tps=1.6;state.idleDuty=34;state.boostDuty=0;
+    state.knockRetard=0;state.engineLoad=31;state.injMs=2.7;state.injectorDuty=3.4;state.gpsSpeed=0;state.vehicleSpeed=0;state.displaySpeed=0;state.gear=0;
+    state.fanOutput=1;state.fuelPumpOutput=1;state.errorCount=0;
+  }else if(demoScenario==='fault'){
+    state.rpm=780+Math.sin(s*.75)*55;state.map=58;state.afr=16.8;state.clt=88;state.iat=39;state.oilTemp=105;
+    state.fuelPressure=210;state.fuelDelta=150;state.batt=11.2;state.ign=10;state.oilPressure=.55;state.tps=2.1;state.idleDuty=48;state.boostDuty=0;
+    state.knockRetard=4.2;state.engineLoad=35;state.injMs=3.2;state.injectorDuty=5;state.gpsSpeed=0;state.vehicleSpeed=0;state.displaySpeed=0;state.gear=0;
+    state.fanOutput=1;state.fuelPumpOutput=1;state.errorCount=3;
+  }else{
+    state.rpm=821+Math.sin(s*.85)*34;state.map=52+Math.sin(s*.57)*3;state.afr=13.8+Math.sin(s*.82)*.16;
+    state.clt=82+Math.sin(s*.11)*.8;state.iat=24+Math.sin(s*.18)*.45;state.oilTemp=96+Math.sin(s*.08)*.65;
+    state.fuelPressure=320+Math.sin(s*.41)*4;state.fuelDelta=300+Math.sin(s*.38)*5;state.batt=13.9+Math.sin(s*.31)*.07;
+    state.ign=16+Math.sin(s*.62)*1.2;state.oilPressure=4.5+Math.sin(s*.66)*.1;state.tps=1.5+Math.max(0,Math.sin(s*.25))*1.1;
+    state.idleDuty=24+Math.sin(s*.48)*1.8;state.boostDuty=16+Math.sin(s*.37)*1.8;state.knockRetard=0;state.engineLoad=28+Math.sin(s*.34)*2;
+    state.injMs=2.4+Math.sin(s*.59)*.16;state.injectorDuty=2.8+Math.sin(s*.43)*.25;state.gpsSpeed=0;state.vehicleSpeed=0;state.displaySpeed=0;state.gear=0;
+    state.fanOutput=state.clt>=85?1:0;state.fuelPumpOutput=1;state.errorCount=0;
+  }
+  cylinderPhase=Math.floor(s*4)%4;render();
+}
+setInterval(()=>demoTick(performance.now()),50);
+
+function setConnection(){
+  const b=$('demoBtn');if(!b)return;b.classList.toggle('demoOn',demo);b.title=demo?`Demo active: ${demoScenario}. Hold for scenarios.`:'Demo disabled. Hold for scenarios.';
+}
+function resetOptionalLiveState(){['oilTemp','fuelDelta','gpsSpeed','displaySpeed','knockRetard','engineLoad','injectorDuty','ethanol','fuelLevel','auxDuty','fanOutput','fuelPumpOutput','errorCount'].forEach(k=>state[k]=NaN)}
+function openDemoScenarios(){$('demoScenarioOverlay')?.classList.remove('hidden')}
+function closeDemoScenarios(){$('demoScenarioOverlay')?.classList.add('hidden')}
+function chooseDemoScenario(name){demoScenario=name;demo=true;setConnection();closeDemoScenarios();demoTick(performance.now())}
+const GAUGE_QUICK={
+ rpmDial:{label:'RPM',unit:'rpm',step:100,minPath:'dashboard.gaugeLimits.rpmDial.min',maxPath:'dashboard.gaugeLimits.rpmDial.max',defaults:[0,9000]},
+ boostDial:{label:'BOOST',unit:'bar',step:.1,minPath:'dashboard.gaugeLimits.boostDial.min',maxPath:'dashboard.gaugeLimits.boostDial.max',defaults:[-1,2]},
+ afrDial:{label:'AFR GAS SCALE',unit:'AFR',step:.1,minPath:'dashboard.gaugeLimits.afrDial.min',maxPath:'dashboard.gaugeLimits.afrDial.max',defaults:[9,20]},
+ cltDial:{label:'COOLANT',unit:'°C',step:1,minPath:'dashboard.gaugeLimits.cltDial.min',maxPath:'dashboard.gaugeLimits.cltDial.max',defaults:[40,120]},
+ oilDial:{label:'OIL PRESSURE',unit:'bar',step:.1,minPath:'dashboard.gaugeLimits.oilDial.min',maxPath:'dashboard.gaugeLimits.oilDial.max',defaults:[0,10]},
+ fuelDial:{label:'FUEL LEVEL',unit:'%',step:1,minPath:'dashboard.gaugeLimits.fuelDial.min',maxPath:'dashboard.gaugeLimits.fuelDial.max',defaults:[0,100]}
+};
+let gaugeQuickId=null,gaugeHold=null,gaugeHoldSuppressUntil=0,gaugePointers=new Set();
+function cfgPath(obj,path){return String(path).split('.').reduce((v,k)=>v?.[k],obj)}
+function openGaugeQuick(id){const def=GAUGE_QUICK[id];if(!def)return;gaugeQuickId=id;const cfg=window.SettingsUX?.getConfig?.()||{},min=Number(cfgPath(cfg,def.minPath)),max=Number(cfgPath(cfg,def.maxPath));$('gaugeQuickTitle').textContent=`${def.label} — SCALE LIMITS`;$('gaugeQuickHint').textContent=`Adjust this gauge only • ${def.unit} • local display setting`;$('gaugeQuickError').textContent='';$('gaugeQuickMin').step=String(def.step);$('gaugeQuickMax').step=String(def.step);$('gaugeQuickMin').value=Number.isFinite(min)?min:def.defaults[0];$('gaugeQuickMax').value=Number.isFinite(max)?max:def.defaults[1];$('gaugeQuickOverlay').classList.remove('hidden');try{window.EpicDashAndroid?.performHaptic?.('longpress')}catch(_){}
+}
+function closeGaugeQuick(){$('gaugeQuickOverlay')?.classList.add('hidden');gaugeQuickId=null}
+function applyGaugeQuick(reset=false){const def=GAUGE_QUICK[gaugeQuickId];if(!def)return;const min=reset?def.defaults[0]:Number($('gaugeQuickMin').value),max=reset?def.defaults[1]:Number($('gaugeQuickMax').value);if(!Number.isFinite(min)||!Number.isFinite(max)||max<=min){$('gaugeQuickError').textContent='Maximum must be greater than minimum.';return}window.SettingsUX?.setValues?.({[def.minPath]:min,[def.maxPath]:max});if(reset){$('gaugeQuickMin').value=min;$('gaugeQuickMax').value=max}else closeGaugeQuick()}
+function cancelGaugeHold(){if(gaugeHold?.timer)clearTimeout(gaugeHold.timer);gaugeHold=null}
+document.addEventListener('pointerdown',e=>{const gauge=e.target?.closest?.('.radialGauge');if(!gauge||!GAUGE_QUICK[gauge.id]||e.button>0)return;gaugePointers.add(e.pointerId);if(gaugePointers.size>1){cancelGaugeHold();return}const g=gaugeHold={id:gauge.id,pointerId:e.pointerId,x:e.clientX,y:e.clientY,fired:false,timer:setTimeout(()=>{if(gaugeHold!==g||gaugePointers.size!==1)return;g.fired=true;gaugeHoldSuppressUntil=performance.now()+650;openGaugeQuick(g.id)},560)}},true);
+document.addEventListener('pointermove',e=>{const g=gaugeHold;if(!g||g.pointerId!==e.pointerId)return;if(Math.hypot(e.clientX-g.x,e.clientY-g.y)>9)cancelGaugeHold()},true);
+document.addEventListener('pointerup',e=>{gaugePointers.delete(e.pointerId);const g=gaugeHold;if(g&&g.pointerId===e.pointerId){if(g.timer)clearTimeout(g.timer);if(g.fired){e.preventDefault();e.stopPropagation()}gaugeHold=null}},true);
+document.addEventListener('pointercancel',e=>{gaugePointers.delete(e.pointerId);cancelGaugeHold()},true);
+$('gaugeQuickOverlay').addEventListener('click',e=>{if(e.target===$('gaugeQuickOverlay')){closeGaugeQuick();return}const action=e.target?.closest?.('[data-gauge-quick]')?.dataset.gaugeQuick;if(!action)return;if(action==='close')closeGaugeQuick();else if(action==='apply')applyGaugeQuick(false);else if(action==='reset')applyGaugeQuick(true);else if(action==='allSettings'){closeGaugeQuick();window.SettingsUX?.openCategory?.('dashboard')}});
+$('gaugeQuickOverlay').addEventListener('contextmenu',e=>e.preventDefault());
+let demoHoldTimer=null,demoHeld=false;
+$('demoBtn').addEventListener('pointerdown',e=>{demoHeld=false;clearTimeout(demoHoldTimer);demoHoldTimer=setTimeout(()=>{demoHeld=true;openDemoScenarios()},620);try{$('demoBtn').setPointerCapture(e.pointerId)}catch(_){}});
+$('demoBtn').addEventListener('pointerup',()=>{clearTimeout(demoHoldTimer);if(demoHeld){demoHeld=false;return}demo=!demo;if(!demo)clearLiveState();setConnection();render()});
+$('demoBtn').addEventListener('pointercancel',()=>clearTimeout(demoHoldTimer));
+$('demoBtn').addEventListener('contextmenu',e=>e.preventDefault());
+$('demoScenarioOverlay').addEventListener('click',e=>{if(e.target===$('demoScenarioOverlay')||e.target?.closest?.('[data-demo-action="close"]')){closeDemoScenarios();return}const b=e.target?.closest?.('[data-demo-scenario]');if(b)chooseDemoScenario(b.dataset.demoScenario)});
+$('warningAck').addEventListener('click',acknowledgeWarnings);$('warningOverlay').addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('contextmenu',e=>{if(e.target?.closest?.('button,.pButton,[role=button],[data-action],[data-app-action],[data-demo-action],[data-demo-scenario],[data-table-action],.radialGauge,.radialPrimaryCard')&&!e.target?.closest?.('input,textarea,select,[contenteditable=true]'))e.preventDefault()});document.addEventListener('selectstart',e=>{if(e.target?.closest?.('button,.pButton,[role=button],[data-action],[data-app-action],[data-demo-action],[data-demo-scenario],[data-table-action],.radialGauge,.radialPrimaryCard')&&!e.target?.closest?.('input,textarea,select,[contenteditable=true]'))e.preventDefault()});document.addEventListener('dragstart',e=>{if(e.target?.closest?.('button,.pButton,[role=button],[data-action],[data-app-action],[data-demo-action],[data-demo-scenario],[data-table-action],.radialGauge,.radialPrimaryCard'))e.preventDefault()});
+$('moreBtn').onclick=openMoreMenu;
+document.querySelectorAll('.tab').forEach(btn=>btn.onclick=()=>navigateToPage(btn.dataset.page));
+
+function sparkSvg(kind='cyan',variant=0){
+  const cls=kind==='green'?'green':kind==='amber'?'amber':kind==='red'?'red':kind==='purple'?'purple':kind==='blue'?'blue':'';
+  const points=[
+    '0,62 8,58 16,60 24,50 32,54 40,45 48,48 56,40 64,42 72,34 80,38 88,30 96,32 104,24 112,30 120,27 128,35 136,31 144,38 152,34 160,42 168,37 176,40 184,32 192,36 200,28',
+    '0,50 8,45 16,48 24,40 32,43 40,35 48,38 56,27 64,31 72,24 80,28 88,22 96,29 104,20 112,26 120,35 128,30 136,41 144,38 152,46 160,40 168,52 176,48 184,55 192,50 200,57',
+    '0,58 8,55 16,54 24,57 32,48 40,52 48,46 56,49 64,42 72,45 80,38 88,42 96,36 104,39 112,31 120,35 128,29 136,33 144,27 152,31 160,25 168,28 176,22 184,25 192,20 200,23',
+    '0,42 8,48 16,35 24,51 32,40 40,56 48,43 56,60 64,46 72,58 80,49 88,54 96,41 104,52 112,38 120,45 128,35 136,49 144,32 152,43 160,29 168,40 176,25 184,36 192,22 200,31'
+  ][variant%4];
+  return `<svg viewBox="0 0 200 70" preserveAspectRatio="none"><path class="pGraphGrid" d="M0 17H200M0 35H200M0 53H200M40 0V70M80 0V70M120 0V70M160 0V70"/><polyline class="pGraphLine ${cls}" points="${points}"/></svg>`;
+}
+function surfaceSvg(){
+ return `<svg class="surfaceSvg" viewBox="0 0 320 210" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="surf" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#063b67"/><stop offset=".3" stop-color="#00828b"/><stop offset=".55" stop-color="#a4b31e"/><stop offset=".75" stop-color="#f0a000"/><stop offset="1" stop-color="#e74016"/></linearGradient></defs><path d="M42 152 L128 54 L268 80 L225 173 Z" fill="url(#surf)" stroke="#273f49"/><g stroke="#223b46" fill="none" stroke-width="1"><path d="M57 136L239 158M71 120L246 144M85 104L253 130M99 88L260 116M113 72L267 102"/><path d="M62 150L145 59M84 155L164 64M107 159L184 68M130 163L204 72M153 167L224 76M177 170L244 80M201 173L263 85"/></g><g stroke="#344d57"><path d="M30 177H275"/><path d="M30 177V35"/></g><g fill="#7f9098" font-size="9"><text x="20" y="181">20</text><text x="15" y="145">60</text><text x="10" y="108">100</text><text x="10" y="70">140</text><text x="35" y="195">600</text><text x="128" y="195">3000</text><text x="230" y="195">6500</text></g></svg>`;
+}
+function navGroup(title,items,active){return `<div class="pNavGroup">${title}</div>${items.map((x,i)=>`<div class="pNavItem ${x===active?'active':''}"><span class="navIcon">${['◈','ϟ','◉','⌁','▣','≋'][i%6]}</span>${x}${x===active?'<span class="badge">★</span>':''}</div>`).join('')}`}
+let tuneCatalog=null,tuneSettings=[],tuneByName=new Map(),tuneById=new Map(),tuneDraft={},tuneFilter={category:'All',kind:'all',query:''},tuneSelectedId=null,tuneArrayEditingId=null,tuneOpenGroups=new Set(),tuneGroupVisible=new Map(),tuneQuickNames=[],tuneQuickEdit=false,tuneArrayZoom=1,tuneArraySelection=new Set(),tuneArrayAnchor=null,tuneArraySelectMode='single';
+const TUNE_DRAFT_KEY='epicdashUX.localTuneDraft.v1',TUNE_QUICK_KEY='epicdashUX.quickTune.v1';
+function tuneEsc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function tuneDeepEqual(a,b){return JSON.stringify(a)===JSON.stringify(b)}
+function tuneBase(s){return s?.value}
+function tuneValue(s){return Object.prototype.hasOwnProperty.call(tuneDraft,s.name)?tuneDraft[s.name]:tuneBase(s)}
+function tuneChanged(s){return Object.prototype.hasOwnProperty.call(tuneDraft,s.name)}
+function tuneEnum(s){return s?.enum&&tuneCatalog?.enums?.[s.enum]?tuneCatalog.enums[s.enum]:[]}
+function tuneBoolValue(v){return v===true||v===1||String(v).toLowerCase()==='true'||String(v).toLowerCase()==='on'||String(v).toLowerCase()==='enabled'}
+function tuneFormat(v,s){if(Array.isArray(v))return `${s.rows}×${s.cols} • ${v.length} values`;if(v===null||v===undefined||v==='')return '—';if(typeof v==='number'&&Number.isFinite(v)){const d=Number.isFinite(Number(s.digits))?Math.max(0,Math.min(6,Number(s.digits))):3;return v.toFixed(d).replace(/\.0+$/,'').replace(/(\.\d*?)0+$/,'$1')}return String(v)}
+function tuneLoadDraft(){try{const x=JSON.parse(localStorage.getItem(TUNE_DRAFT_KEY)||'{}');tuneDraft=x&&typeof x==='object'&&!Array.isArray(x)?x:{}}catch(_){tuneDraft={}}}
+function tuneSaveDraft(){try{if(window.SettingsUX?.shouldAutosaveDraft?.()===false)localStorage.removeItem(TUNE_DRAFT_KEY);else localStorage.setItem(TUNE_DRAFT_KEY,JSON.stringify(tuneDraft))}catch(_){}}
+function tuneDefaultQuickNames(){return (tuneCatalog?.quick||[]).map(q=>q.name).filter(name=>tuneByName.has(name))}
+function tuneLoadQuick(){try{const x=JSON.parse(localStorage.getItem(TUNE_QUICK_KEY)||'null');tuneQuickNames=Array.isArray(x)?x.filter(name=>tuneByName.has(name)):tuneDefaultQuickNames()}catch(_){tuneQuickNames=tuneDefaultQuickNames()}if(!tuneQuickNames.length)tuneQuickNames=tuneDefaultQuickNames()}
+function tuneSaveQuick(){try{localStorage.setItem(TUNE_QUICK_KEY,JSON.stringify(tuneQuickNames))}catch(_){}}
+function tuneQuickLabel(s){return (tuneCatalog?.quick||[]).find(q=>q.name===s.name)?.label||s.label}
+function tuneMenuOf(s){return s?.tsMenu||s?.category||'Unlisted / Firmware'}
+function tuneSectionOf(s){return s?.tsSection||s?.group||'Firmware constants & axes'}
+function tuneGroupKey(s){return `${tuneMenuOf(s)}::${tuneSectionOf(s)}`}
+function tuneRoundClamp(s,v){let n=Number(v);if(!Number.isFinite(n))return v;if(Number.isFinite(Number(s.min)))n=Math.max(Number(s.min),n);if(Number.isFinite(Number(s.max)))n=Math.min(Number(s.max),n);const d=Number.isFinite(Number(s.digits))?Math.max(0,Math.min(8,Number(s.digits))):6;return Number(n.toFixed(d))}
+function tuneSet(s,value){if(!s)return;if(tuneDeepEqual(value,tuneBase(s)))delete tuneDraft[s.name];else tuneDraft[s.name]=value;tuneSaveDraft();renderTuneList(false);renderTuneQuick();renderTuneInspector();renderTuneDraftStatus()}
+function tuneStep(s,dir){let v=Number(tuneValue(s));if(!Number.isFinite(v))v=0;let step=Number(s.step);if(!Number.isFinite(step)||step<=0)step=1;v=v+dir*step;if(Number.isFinite(Number(s.min)))v=Math.max(Number(s.min),v);if(Number.isFinite(Number(s.max)))v=Math.min(Number(s.max),v);const d=Number.isFinite(Number(s.digits))?Number(s.digits):6;v=Number(v.toFixed(Math.max(0,Math.min(8,d))));tuneSet(s,v)}
+function tuneSetFromInput(s,raw){if(!s)return;if(s.kind==='string'){tuneSet(s,String(raw));return}const n=Number(raw);if(!Number.isFinite(n))return;let v=n;if(Number.isFinite(Number(s.min)))v=Math.max(Number(s.min),v);if(Number.isFinite(Number(s.max)))v=Math.min(Number(s.max),v);tuneSet(s,v)}
+function tuneFiltered(){if(!tuneCatalog)return[];const q=tuneFilter.query.trim().toLowerCase();return tuneSettings.filter(s=>{if(tuneFilter.category!=='All'&&tuneMenuOf(s)!==tuneFilter.category)return false;if(tuneFilter.kind!=='all'&&s.kind!==tuneFilter.kind)return false;if(q){const hay=`${s.label} ${s.name} ${s.group} ${s.category} ${tuneMenuOf(s)} ${tuneSectionOf(s)} ${s.tsDialog||''} ${s.units} ${s.help}`.toLowerCase();if(!hay.includes(q))return false}return true})}
+function tuneControlHtml(s,compact=false){const v=tuneValue(s),en=tuneEnum(s);if(s.kind==='bits'&&en.length===2&&en.some(o=>String(o.label).toLowerCase()==='false')&&en.some(o=>String(o.label).toLowerCase()==='true')){const on=tuneBoolValue(v);return `<div class="tuneBool ${on?'on':''}" data-action="bool" data-id="${s.id}"><i></i><b>${on?'ON':'OFF'}</b></div>`}if(s.kind==='bits'&&en.length){let selected=en.findIndex(o=>String(v)===String(o.label)||String(v)===String(o.value));if(selected<0)selected=0;return `<div class="tuneControl"><select data-action="enum" data-id="${s.id}">${en.map((o,i)=>`<option value="${i}" ${i===selected?'selected':''}>${tuneEsc(o.label)}</option>`).join('')}</select></div>`}if(s.kind==='array'){const a=Array.isArray(v)?v:[];return `<div class="tuneArrayButton" data-action="array" data-id="${s.id}"><span>${s.rows}×${s.cols}</span><small>${a.length} values • EDIT</small></div>`}if(s.kind==='string'){return `<input class="tuneTextInput" data-action="text" data-id="${s.id}" value="${tuneEsc(v)}">`}const min=Number.isFinite(Number(s.min))?` min="${s.min}"`:'';const max=Number.isFinite(Number(s.max))?` max="${s.max}"`:'';const step=Number.isFinite(Number(s.step))?s.step:'any';return `<div class="tuneControl"><button data-action="step" data-dir="-1" data-id="${s.id}">−</button><input type="number" data-action="number" data-id="${s.id}" value="${tuneEsc(tuneFormat(v,s))}" step="${step}"${min}${max}><button data-action="step" data-dir="1" data-id="${s.id}">+</button></div>`}
+function tuningTemplate(){return `<div class="expPage tuningPage"><aside class="pCard tuneCatalogSide"><div class="pCardTitle">Tune catalog <span style="margin-left:auto" class="pCyan" id="tuneSideCount">…</span></div><div class="tuneProjectMeta" id="tuneProjectMeta">Loading bundled mainController.ini and CurrentTune.msq…</div><input id="tuneSearch" class="tuneSearchInput" type="search" placeholder="Search label, variable, group…"><div class="tuneKindRow" id="tuneKinds">${[['all','ALL'],['scalar','NUM'],['bits','ENUM'],['array','TABLE'],['string','TEXT']].map((x,i)=>`<div class="tuneKind ${i===0?'active':''}" data-kind="${x[0]}">${x[1]}</div>`).join('')}</div><div class="tuneCategoryList" id="tuneCategories"></div></aside><section class="pCard tuneWorkspace"><div class="tuneToolbar"><div class="tuneToolbarTitle" id="tuneToolbarTitle">CURRENT TUNE SETTINGS</div><div class="tuneCountBadge"><b id="tuneResultCount">0</b> matching</div><div class="pButton amber" id="tuneOpenChanges" data-action="openChanges"><b id="tuneModifiedCount">0</b>&nbsp; CHANGES</div><span class="spacer"></span><div class="pButton" id="tuneCollapseAll">COLLAPSE ALL</div><div class="pButton" id="tuneClearFilter">CLEAR FILTER</div><div class="pButton active" id="tuneExport">EXPORT DRAFT</div></div><div class="tuneList" id="tuneList"><div class="tuneEmpty">Loading tune definition…</div></div><div class="tuneStatusLine"><span>Source: <b>CurrentTune.msq</b></span><span>Definition: <b>mainController.ini</b></span><span class="safe">LOCAL DRAFT ONLY • NO ECU WRITES</span></div></section><aside class="tuneRight"><section class="pCard tuneQuickCard"><div class="pCardTitle">Quick tuning — user selection<div class="tuneQuickTitleActions"><div class="pButton" id="tuneQuickAddSelected" data-action="quickAddSelected">+ SELECTED</div><div class="pButton" id="tuneQuickEdit" data-action="quickEdit">EDIT</div></div></div><div class="tuneQuickBody" id="tuneQuick"><div class="tuneEmpty">Loading…</div></div></section><section class="pCard tuneInspectorCard"><div class="pCardTitle">Selected setting</div><div class="tuneInspectorBody" id="tuneInspector"><div class="tuneEmpty">Select a setting</div></div></section><section class="pCard tuneDraftCard"><div class="pCardTitle">Local draft status</div><div class="tuneDraftBody" id="tuneDraftStatus"></div></section></aside><div class="tuneModal hidden" id="tuneModal"><div class="tuneModalBox"><div class="tuneModalHead"><b id="tuneModalTitle">Array editor</b><code id="tuneModalName"></code><button data-action="closeModal">×</button></div><div class="tuneArrayTools"><span class="tuneArrayToolLabel">SELECTION</span><div class="pButton" data-action="arrayMode" data-mode="single">SINGLE</div><div class="pButton" data-action="arrayMode" data-mode="multi">MULTI</div><div class="pButton" data-action="arrayMode" data-mode="range">RANGE</div><div class="pButton" data-action="arraySelectAll">SELECT ALL</div><div class="pButton" data-action="arrayClearSelection">CLEAR</div><span class="tuneArrayToolLabel">ZOOM</span><div class="pButton" data-action="arrayZoom" data-dir="-1">−</div><span class="tuneArrayZoomValue" id="tuneArrayZoomValue">100%</span><div class="pButton" data-action="arrayZoom" data-dir="1">+</div><span class="tuneArrayToolLabel">VALUE / FACTOR</span><input class="tuneArrayOperand" id="tuneArrayOperand" type="number" value="1" step="any"><div class="pButton" data-action="arrayOp" data-op="add">ADD</div><div class="pButton" data-action="arrayOp" data-op="sub">SUBTRACT</div><div class="pButton" data-action="arrayOp" data-op="mul">MULTIPLY</div><div class="pButton" data-action="arrayOp" data-op="div">DIVIDE</div><div class="pButton active" data-action="arraySmooth">SMOOTH</div><div class="pButton active" data-action="arrayInterpolate">INTERPOLATE</div><div class="tuneArrayHelp">SINGLE replaces selection • MULTI toggles individual cells • RANGE: tap two corners • tap row/column headings to select a band</div></div><div class="tuneArrayGridWrap" id="tuneArrayGridWrap"></div><div class="tuneModalFoot"><span id="tuneModalMeta" class="pMuted"></span><span class="spacer"></span><div class="pButton" data-action="revertModal">REVERT ARRAY</div><div class="pButton active" data-action="closeModal">DONE</div></div></div></div><div class="tuneModal hidden" id="tuneChangesModal"><div class="tuneChangesBox"><div class="tuneModalHead"><b>CHANGED SETTINGS</b><code>since CurrentTune.msq baseline</code><button data-action="closeChanges">×</button></div><div class="tuneChangesSummary"><b id="tuneChangesCount">0</b><span>local draft changes since the bundled last-saved tune. Values are intentionally hidden here.</span></div><div class="tuneChangesList" id="tuneChangesList"></div><div class="tuneModalFoot"><span class="pMuted">Tap a setting to jump directly to it.</span><span class="spacer"></span><div class="pButton active" data-action="closeChanges">DONE</div></div></div></div></div>`}
+
+function initTuningPage(){tuneCatalog=window.EPICDASH_TUNE_CATALOG||null;if(!tuneCatalog){$('tuneList').innerHTML='<div class="tuneEmpty pRed">Bundled tune_catalog.js is missing.</div>';return}tuneSettings=window.applyTunerStudioOrder?window.applyTunerStudioOrder(tuneCatalog.settings||[]):(tuneCatalog.settings||[]);tuneByName=new Map(tuneSettings.map(s=>[s.name,s]));tuneById=new Map(tuneSettings.map(s=>[String(s.id),s]));tuneLoadDraft();for(const k of Object.keys(tuneDraft))if(!tuneByName.has(k))delete tuneDraft[k];tuneSaveDraft();tuneLoadQuick();tuneOpenGroups=new Set();tuneGroupVisible=new Map();tuneQuickEdit=false;const p=tuneCatalog.project||{},authority=window.EPICDASH_TS_ORDER||{};$('tuneProjectMeta').innerHTML=`<b>${tuneEsc(p.name||'Mega144H7')}</b><code title="${tuneEsc(p.firmwareSignature)}">${tuneEsc(p.firmwareSignature||'Firmware signature unavailable')}</code><span>${tuneEsc(p.writeDate||'')} • ${Number(p.settingsCount||0).toLocaleString()} settings • ${Number(authority.mappedMenuSettings||0).toLocaleString()} ordered from TunerStudio menus</span>`;$('tuneSideCount').textContent=Number(p.settingsCount||0).toLocaleString();renderTuneCategories();renderTuneList(true);renderTuneQuick();renderTuneInspector();renderTuneDraftStatus();wireTuningPage()}
+function renderTuneCategories(){const box=$('tuneCategories');if(!box)return;const authority=window.EPICDASH_TS_ORDER||{},cats=(authority.menus||['All',...new Set(tuneSettings.map(tuneMenuOf))]).filter((x,i,a)=>a.indexOf(x)===i),counts=tuneSettings.reduce((m,x)=>(m[tuneMenuOf(x)]=(m[tuneMenuOf(x)]||0)+1,m),{}),icons=['◎','▣','ϟ','↗','◌','◇','△','≋','⌁','⚙','⋯','?','…'];box.innerHTML=cats.map((c,i)=>`<div class="tuneCategory ${c===tuneFilter.category?'active':''}" data-category="${tuneEsc(c)}"><i>${icons[i%icons.length]}</i><span>${tuneEsc(c)}</span><b>${c==='All'?tuneSettings.length:(counts[c]||0)}</b></div>`).join('')}
+function renderTuneList(resetVisible=true){const box=$('tuneList');if(!box||!tuneCatalog)return;if(resetVisible){tuneOpenGroups=new Set();tuneGroupVisible=new Map()}const all=tuneFiltered();$('tuneResultCount').textContent=all.length.toLocaleString();$('tuneModifiedCount').textContent=Object.keys(tuneDraft).length;$('tuneToolbarTitle').textContent=tuneFilter.category==='All'?'TUNERSTUDIO-ORDERED SETTINGS':tuneFilter.category.toUpperCase();if(!all.length){box.innerHTML='<div class="tuneEmpty">No settings match the current filters.</div>';return}const groups=new Map();for(const setting of all){const key=tuneGroupKey(setting);if(!groups.has(key))groups.set(key,{key,label:tuneSectionOf(setting),category:tuneMenuOf(setting),items:[]});groups.get(key).items.push(setting)}let html='';for(const g of groups.values()){const open=tuneOpenGroups.has(g.key),limit=tuneGroupVisible.get(g.key)||140,items=g.items.slice(0,limit),changedCount=g.items.filter(tuneChanged).length,displayLabel=tuneFilter.category==='All'?`${g.category} • ${g.label}`:g.label;html+=`<div class="tuneGroupBlock ${open?'':'collapsed'}" data-group-key="${tuneEsc(g.key)}"><div class="tuneGroupHead" data-action="toggleGroup" data-group-key="${tuneEsc(g.key)}"><span class="tuneGroupChevron">›</span><span>${tuneEsc(displayLabel)}</span>${changedCount?`<span class="tuneGroupChanged">${changedCount} MODIFIED</span>`:'<span></span>'}<b class="tuneGroupCount">${g.items.length}</b></div><div class="tuneGroupBody">`;if(open){for(const setting of items){const changed=tuneChanged(setting),selected=String(setting.id)===String(tuneSelectedId),inQuick=tuneQuickNames.includes(setting.name);html+=`<div class="tuneSetting ${changed?'changed':''} ${selected?'selected':''}" data-select-id="${setting.id}"><div class="tuneLabel"><strong>${tuneEsc(setting.label)}</strong><small>${tuneEsc(setting.name)} • ${tuneEsc(tuneMenuOf(setting))} › ${tuneEsc(tuneSectionOf(setting))}</small></div><div>${tuneControlHtml(setting)}</div><div class="tuneRowActions"><button class="tuneQuickOne ${inQuick?'active':''}" data-action="quickToggle" data-id="${setting.id}" title="${inQuick?'Remove from':'Add to'} Quick tuning">${inQuick?'★':'☆'}</button><button class="tuneRevertOne" data-action="revert" data-id="${setting.id}" title="Revert to CurrentTune.msq">↶</button></div></div>`}if(items.length<g.items.length)html+=`<div class="tuneMore" data-action="moreGroup" data-group-key="${tuneEsc(g.key)}">LOAD ${Math.min(140,g.items.length-items.length)} MORE • ${g.items.length-items.length} REMAINING</div>`}html+='</div></div>'}box.innerHTML=html}
+
+function renderTuneQuick(){const box=$('tuneQuick');if(!box||!tuneCatalog)return;const items=tuneQuickNames.map(name=>tuneByName.get(name)).filter(Boolean),selected=tuneById.get(String(tuneSelectedId));const editBtn=$('tuneQuickEdit');if(editBtn){editBtn.textContent=tuneQuickEdit?'DONE':'EDIT';editBtn.classList.toggle('active',tuneQuickEdit)}const addBtn=$('tuneQuickAddSelected');if(addBtn){const inQuick=selected&&tuneQuickNames.includes(selected.name);addBtn.textContent=!selected?'+ SELECTED':inQuick?'− SELECTED':'+ SELECTED';addBtn.classList.toggle('green',!!selected&&!inQuick);addBtn.classList.toggle('amber',!!selected&&inQuick);addBtn.classList.toggle('disabled',!selected)}let html=tuneQuickEdit?'<div class="tuneQuickHint">Use the star on any setting row, or select a setting and press + SELECTED above. Remove current entries with ×.</div>':'';html+=items.map(setting=>`<div class="tuneQuickLine ${tuneQuickEdit?'editing':''}" data-select-id="${setting.id}"><span title="${tuneEsc(setting.name)}">${tuneEsc(tuneQuickLabel(setting))}</span><div>${tuneControlHtml(setting,true)}</div>${tuneQuickEdit?`<button class="tuneQuickRemove" data-action="quickRemove" data-id="${setting.id}" title="Remove from Quick tuning">×</button>`:''}</div>`).join('');if(!items.length)html+='<div class="tuneEmpty">Quick tuning is empty. Use a setting-row star or + SELECTED.</div>';if(tuneQuickEdit)html+='<div class="pButton tuneQuickReset" data-action="quickReset">RESET TO DEFAULT QUICK LIST</div>';box.innerHTML=html}
+
+function renderTuneInspector(){const box=$('tuneInspector');if(!box)return;const setting=tuneById.get(String(tuneSelectedId));if(!setting){box.innerHTML='<div class="tuneEmpty">Select any setting to inspect its exact INI metadata and current MSQ value.</div>';return}const v=tuneValue(setting),base=tuneBase(setting),inQuick=tuneQuickNames.includes(setting.name);box.innerHTML=`<div class="tuneInspectorName">${tuneEsc(setting.label)}</div><div class="tuneInspectorTech">${tuneEsc(setting.name)}</div><div class="tuneInspectorGrid"><div>TS menu <b>${tuneEsc(tuneMenuOf(setting))}</b></div><div>TS section <b>${tuneEsc(tuneSectionOf(setting))}</b></div><div>Source category <b>${tuneEsc(setting.category)}</b></div><div>Type <b>${tuneEsc(setting.kind)}</b></div><div>Current <b>${tuneEsc(tuneFormat(base,setting))}</b></div><div>Draft <b class="${tuneChanged(setting)?'pAmber':''}">${tuneEsc(tuneFormat(v,setting))}</b></div><div>Units <b>${tuneEsc(setting.units||'—')}</b></div><div>Range <b>${setting.min??'—'}…${setting.max??'—'}</b></div><div>Shape <b>${setting.rows}×${setting.cols}</b></div><div>Digits <b>${setting.digits??'—'}</b></div></div>${setting.help?`<div class="tuneHelp">${tuneEsc(setting.help)}</div>`:'<div class="tuneHelp">No INI context help was defined for this setting.</div>'}${setting.condition?`<div class="tuneCondition">TS visibility condition: ${tuneEsc(setting.condition)}</div>`:''}<div class="tuneInspectActions three"><div class="pButton" data-action="revert" data-id="${setting.id}">REVERT</div>${setting.kind==='array'?`<div class="pButton active" data-action="array" data-id="${setting.id}">EDIT TABLE</div>`:`<div class="pButton active" data-action="focusSetting" data-id="${setting.id}">LOCATE</div>`}<div class="pButton ${inQuick?'amber':'green'}" data-action="quickToggle" data-id="${setting.id}">${inQuick?'REMOVE QUICK':'ADD TO QUICK'}</div></div>`}
+function renderTuneDraftStatus(){const box=$('tuneDraftStatus');if(!box)return;const count=Object.keys(tuneDraft).length,arrays=Object.keys(tuneDraft).filter(k=>Array.isArray(tuneDraft[k])).length;box.innerHTML=`<div class="tuneDraftStats"><div class="tuneDraftStat"><b>${count}</b>modified settings</div><div class="tuneDraftStat"><b>${arrays}</b>modified arrays</div></div><div class="tuneDraftActions"><div class="pButton amber" data-action="openChanges">VIEW CHANGES</div><div class="pButton active" data-action="export">COPY JSON</div><div class="pButton red" data-action="resetAll">RESET ALL</div></div><div class="pTiny" style="margin-top:5px">Baseline is the bundled CurrentTune.msq (last saved/burned tune snapshot). Nothing is sent to the ECU.</div>`;renderMoreMenu()}
+function renderTuneChanges(){const list=$('tuneChangesList'),names=Object.keys(tuneDraft).filter(name=>tuneByName.has(name));if($('tuneChangesCount'))$('tuneChangesCount').textContent=names.length;if(!list)return;if(!names.length){list.innerHTML='<div class="tuneChangesEmpty"><b>NO LOCAL CHANGES</b><span>The draft matches CurrentTune.msq.</span></div>';return}names.sort((a,b)=>(tuneByName.get(a)?.tsOrder??1e9)-(tuneByName.get(b)?.tsOrder??1e9)||String(tuneByName.get(a)?.label).localeCompare(String(tuneByName.get(b)?.label)));list.innerHTML=names.map(name=>{const setting=tuneByName.get(name);return `<button class="tuneChangeJump" data-action="jumpChanged" data-id="${setting.id}"><span><strong>${tuneEsc(setting.label)}</strong><small>${tuneEsc(tuneMenuOf(setting))} • ${tuneEsc(tuneSectionOf(setting))} • ${tuneEsc(setting.name)}</small></span><b>OPEN ›</b></button>`}).join('')}
+function openTuneChanges(){renderTuneChanges();$('tuneChangesModal')?.classList.remove('hidden')}
+function closeTuneChanges(){$('tuneChangesModal')?.classList.add('hidden')}
+function jumpToTuneSetting(setting){if(!setting)return;closeTuneChanges();tuneSelectedId=String(setting.id);tuneFilter={category:'All',kind:'all',query:setting.name};if($('tuneSearch'))$('tuneSearch').value=setting.name;document.querySelectorAll('.tuneKind').forEach(x=>x.classList.toggle('active',x.dataset.kind==='all'));renderTuneCategories();renderTuneList(true);tuneOpenGroups.add(tuneGroupKey(setting));renderTuneList(false);renderTuneQuick();renderTuneInspector();setTimeout(()=>document.querySelector(`[data-select-id="${setting.id}"]`)?.scrollIntoView({block:'center',behavior:appPrefs.reducedMotion?'auto':'smooth'}),0)}
+
+function selectTuneSetting(id){tuneSelectedId=String(id);renderTuneList(false);renderTuneQuick();renderTuneInspector()}
+function openTuneArray(id){const setting=tuneById.get(String(id));if(!setting||setting.kind!=='array')return;tuneArrayEditingId=String(id);tuneArrayZoom=1;tuneArraySelection=new Set();tuneArrayAnchor=null;tuneArraySelectMode='single';const values=Array.isArray(tuneValue(setting))?tuneValue(setting).slice():[],rows=Math.max(1,Number(setting.rows)||1),cols=Math.max(1,Number(setting.cols)||1),count=Math.max(rows*cols,values.length);while(values.length<count)values.push(0);$('tuneModalTitle').textContent=setting.label;$('tuneModalName').textContent=setting.name;let head='<div class="tuneArrayIndex corner"></div>'+Array.from({length:cols},(_,c)=>`<div class="tuneArrayIndex colHead selectable" data-action="arraySelectCol" data-col="${c}" title="Select column ${c+1}">C${c+1}</div>`).join(''),cells='';for(let r=0;r<rows;r++){cells+=`<div class="tuneArrayIndex rowHead selectable" data-action="arraySelectRow" data-row="${r}" title="Select row ${r+1}">R${r+1}</div>`;for(let c=0;c<cols;c++){const i=r*cols+c,v=values[i],numeric=typeof v==='number';cells+=`<input class="tuneArrayCell" ${numeric?'type="number" inputmode="decimal"':''} data-array-index="${i}" data-row="${r}" data-col="${c}" value="${tuneEsc(tuneFormat(v,setting))}" ${numeric&&setting.step?`step="${setting.step}"`:''}>`}}$('tuneArrayGridWrap').innerHTML=`<div class="tuneArrayGrid" style="grid-template-columns:38px repeat(${cols},var(--cell-w))">${head}${cells}</div>`;$('tuneModal').classList.remove('hidden');applyTuneArrayZoom();updateTuneArraySelectionUi();updateTuneArrayMeta('single-cell selection ready')}
+function applyTuneArrayZoom(){const wrap=$('tuneArrayGridWrap');if(!wrap)return;const z=clamp(tuneArrayZoom,.55,1.8);wrap.style.setProperty('--cell-w',`${Math.round(73*z)}px`);wrap.style.setProperty('--cell-h',`${Math.round(30*z)}px`);wrap.style.setProperty('--cell-font',`${Math.max(8,Math.round(11*z))}px`);text('tuneArrayZoomValue',`${Math.round(z*100)}%`);wireTuneArrayPinch()}
+function wireTuneArrayPinch(){const wrap=$('tuneArrayGridWrap');if(!wrap||wrap.dataset.pinchBound)return;wrap.dataset.pinchBound='1';let startDist=0,startZoom=1;const dist=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);wrap.addEventListener('touchstart',e=>{if(e.touches.length!==2)return;startDist=dist(e.touches);startZoom=tuneArrayZoom},{passive:true});wrap.addEventListener('touchmove',e=>{if(e.touches.length!==2||!startDist)return;e.preventDefault();tuneArrayZoom=clamp(startZoom*dist(e.touches)/startDist,.55,1.8);applyTuneArrayZoom()},{passive:false});wrap.addEventListener('touchend',e=>{if(e.touches.length<2)startDist=0},{passive:true})}
+function setTuneArrayMode(mode){tuneArraySelectMode=['single','multi','range'].includes(mode)?mode:'single';tuneArrayAnchor=null;updateTuneArraySelectionUi();updateTuneArrayMeta(tuneArraySelectMode==='range'?'range mode: tap first corner':`${tuneArraySelectMode} selection mode`)}
+function updateTuneArraySelectionUi(){document.querySelectorAll('.tuneArrayCell').forEach(cell=>{const i=Number(cell.dataset.arrayIndex);cell.classList.toggle('selected',tuneArraySelection.has(i));cell.classList.toggle('rangeAnchor',tuneArraySelectMode==='range'&&tuneArrayAnchor===i)});document.querySelectorAll('[data-action="arrayMode"]').forEach(x=>x.classList.toggle('active',x.dataset.mode===tuneArraySelectMode))}
+function updateTuneArrayMeta(message=''){const setting=tuneById.get(String(tuneArrayEditingId));if(!setting)return;const selected=tuneArraySelection.size,suffix=message?` • ${message}`:'';text('tuneModalMeta',`${setting.rows} × ${setting.cols} • ${setting.units||'unitless'} • ${selected} selected • ${tuneArraySelectMode.toUpperCase()}${suffix} • LOCAL DRAFT`)}
+function tuneArraySelectCell(cell){const i=Number(cell.dataset.arrayIndex),cols=Number(tuneById.get(String(tuneArrayEditingId))?.cols)||1;if(tuneArraySelectMode==='multi'){if(tuneArraySelection.has(i))tuneArraySelection.delete(i);else tuneArraySelection.add(i);tuneArrayAnchor=i;updateTuneArraySelectionUi();updateTuneArrayMeta('individual cell toggled');return}if(tuneArraySelectMode==='range'){if(tuneArrayAnchor===null){tuneArraySelection=new Set([i]);tuneArrayAnchor=i;updateTuneArraySelectionUi();updateTuneArrayMeta('first corner set — tap opposite corner');return}const a=tuneArrayAnchor,r0=Math.floor(a/cols),c0=a%cols,r1=Math.floor(i/cols),c1=i%cols;tuneArraySelection=new Set();for(let r=Math.min(r0,r1);r<=Math.max(r0,r1);r++)for(let c=Math.min(c0,c1);c<=Math.max(c0,c1);c++)tuneArraySelection.add(r*cols+c);tuneArrayAnchor=null;updateTuneArraySelectionUi();updateTuneArrayMeta('rectangular range selected');return}tuneArraySelection=new Set([i]);tuneArrayAnchor=i;updateTuneArraySelectionUi();updateTuneArrayMeta('single cell selected')}
+function tuneArraySelectBand(kind,index){const ctx=tuneArrayCurrent();if(!ctx)return;const ids=kind==='row'?Array.from({length:ctx.cols},(_,c)=>index*ctx.cols+c):Array.from({length:ctx.rows},(_,r)=>r*ctx.cols+index);if(tuneArraySelectMode==='multi'){const all=ids.every(i=>tuneArraySelection.has(i));for(const i of ids)all?tuneArraySelection.delete(i):tuneArraySelection.add(i)}else tuneArraySelection=new Set(ids);tuneArrayAnchor=null;updateTuneArraySelectionUi();updateTuneArrayMeta(`${kind} ${index+1} ${tuneArraySelectMode==='multi'?'toggled':'selected'}`)}
+
+function tuneArrayCurrent(){const setting=tuneById.get(String(tuneArrayEditingId));if(!setting)return null;const rows=Math.max(1,Number(setting.rows)||1),cols=Math.max(1,Number(setting.cols)||1),vals=Array.isArray(tuneValue(setting))?tuneValue(setting).slice():[];while(vals.length<rows*cols)vals.push(0);return{setting,rows,cols,vals}}
+function tuneArrayIndices(ctx){if(tuneArraySelection.size)return [...tuneArraySelection].filter(i=>i>=0&&i<ctx.rows*ctx.cols);const active=document.activeElement;if(active?.classList?.contains('tuneArrayCell'))return[Number(active.dataset.arrayIndex)];return[]}
+function tuneArrayCommit(ctx,vals,message){tuneSet(ctx.setting,vals.map(v=>typeof v==='number'?tuneRoundClamp(ctx.setting,v):v));document.querySelectorAll('.tuneArrayCell').forEach(cell=>{const i=Number(cell.dataset.arrayIndex);if(i<vals.length)cell.value=tuneFormat(tuneRoundClamp(ctx.setting,vals[i]),ctx.setting)});updateTuneArrayMeta(message)}
+function tuneArrayMath(op){const ctx=tuneArrayCurrent();if(!ctx)return;const ids=tuneArrayIndices(ctx),factor=Number($('tuneArrayOperand')?.value);if(!ids.length){updateTuneArrayMeta('select one or more cells first');return}if(!Number.isFinite(factor)||(op==='div'&&factor===0)){updateTuneArrayMeta(op==='div'?'divide by zero blocked':'enter a numeric value');return}const vals=ctx.vals.slice();for(const i of ids){const v=Number(vals[i]);if(!Number.isFinite(v))continue;vals[i]=op==='add'?v+factor:op==='sub'?v-factor:op==='mul'?v*factor:v/factor}tuneArrayCommit(ctx,vals,`${op.toUpperCase()} ${factor}`)}
+function tuneArraySmooth(){const ctx=tuneArrayCurrent();if(!ctx)return;const ids=tuneArrayIndices(ctx);if(!ids.length){updateTuneArrayMeta('select cells to smooth');return}const src=ctx.vals.map(Number),out=ctx.vals.slice();for(const i of ids){const r=Math.floor(i/ctx.cols),c=i%ctx.cols,neighbors=[];for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const rr=r+dr,cc=c+dc;if(rr>=0&&rr<ctx.rows&&cc>=0&&cc<ctx.cols&&Number.isFinite(src[rr*ctx.cols+cc]))neighbors.push(src[rr*ctx.cols+cc])}if(neighbors.length)out[i]=neighbors.reduce((a,b)=>a+b,0)/neighbors.length}tuneArrayCommit(ctx,out,'SMOOTHED')}
+function tuneArrayInterpolate(){const ctx=tuneArrayCurrent();if(!ctx)return;const ids=tuneArrayIndices(ctx);if(ids.length<2){updateTuneArrayMeta('interpolate needs at least two selected cells');return}const rs=ids.map(i=>Math.floor(i/ctx.cols)),cs=ids.map(i=>i%ctx.cols),r0=Math.min(...rs),r1=Math.max(...rs),c0=Math.min(...cs),c1=Math.max(...cs),expected=(r1-r0+1)*(c1-c0+1),isLine=r0===r1||c0===c1,isRectangle=ids.length===expected;if(!isLine&&!isRectangle){updateTuneArrayMeta('interpolate requires one row, one column, or a complete rectangular range');return}const out=ctx.vals.slice(),num=i=>Number(ctx.vals[i]);tuneArraySelection=new Set();for(let r=r0;r<=r1;r++)for(let c=c0;c<=c1;c++)tuneArraySelection.add(r*ctx.cols+c);if(r0===r1){const a=num(r0*ctx.cols+c0),b=num(r0*ctx.cols+c1);for(let c=c0;c<=c1;c++)out[r0*ctx.cols+c]=a+(b-a)*(c-c0)/Math.max(1,c1-c0)}else if(c0===c1){const a=num(r0*ctx.cols+c0),b=num(r1*ctx.cols+c0);for(let r=r0;r<=r1;r++)out[r*ctx.cols+c0]=a+(b-a)*(r-r0)/Math.max(1,r1-r0)}else{const q00=num(r0*ctx.cols+c0),q01=num(r0*ctx.cols+c1),q10=num(r1*ctx.cols+c0),q11=num(r1*ctx.cols+c1);if(![q00,q01,q10,q11].every(Number.isFinite)){updateTuneArrayMeta('rectangle corner values must be numeric');return}for(let r=r0;r<=r1;r++){const y=(r-r0)/(r1-r0);for(let c=c0;c<=c1;c++){const x=(c-c0)/(c1-c0),top=q00+(q01-q00)*x,bottom=q10+(q11-q10)*x;out[r*ctx.cols+c]=top+(bottom-top)*y}}}tuneArrayCommit(ctx,out,r0===r1?'LINEAR ROW INTERPOLATION':c0===c1?'LINEAR COLUMN INTERPOLATION':'BILINEAR RECTANGLE INTERPOLATION');updateTuneArraySelectionUi()}
+
+function closeTuneModal(){$('tuneModal')?.classList.add('hidden');tuneArrayEditingId=null;tuneArraySelection=new Set();tuneArrayAnchor=null;tuneArraySelectMode='single';renderTuneList(false);renderTuneQuick();renderTuneInspector();renderTuneDraftStatus()}
+function exportTuneDraft(){const payload={format:'EpicDash UX local tuning draft v1',project:tuneCatalog.project,exportedAt:new Date().toISOString(),ecuWritesPerformed:false,changes:Object.keys(tuneDraft).sort().map(name=>({name,base:tuneByName.get(name)?.value,draft:tuneDraft[name]}))};const text=JSON.stringify(payload,null,2);try{window.EpicDashAndroid?.copyText?.('EpicDash UX local tuning draft',text);window.EpicDashNativeNotice?.(`${payload.changes.length} local changes copied as JSON`)}catch(_){navigator.clipboard?.writeText(text)}}
+function resetTuneAll(){if(!Object.keys(tuneDraft).length)return;if(confirm('Reset all local tuning changes to the bundled CurrentTune.msq values?')){tuneDraft={};tuneSaveDraft();renderTuneList(false);renderTuneQuick();renderTuneInspector();renderTuneDraftStatus()}}
+function wireTuningPage(){const panel=$('panelContent');$('tuneSearch').oninput=e=>{tuneFilter.query=e.target.value;renderTuneList(true)};$('tuneClearFilter').onclick=()=>{tuneFilter={category:'All',kind:'all',query:''};$('tuneSearch').value='';document.querySelectorAll('.tuneKind').forEach(x=>x.classList.toggle('active',x.dataset.kind==='all'));renderTuneCategories();renderTuneList(true)};$('tuneCollapseAll').onclick=()=>{tuneOpenGroups=new Set();renderTuneList(false)};$('tuneExport').onclick=exportTuneDraft;$('tuneCategories').onclick=e=>{const n=e.target?.closest?.('[data-category]');if(!n)return;tuneFilter.category=n.dataset.category;renderTuneCategories();renderTuneList(true)};$('tuneKinds').onclick=e=>{const n=e.target?.closest?.('[data-kind]');if(!n)return;tuneFilter.kind=n.dataset.kind;document.querySelectorAll('.tuneKind').forEach(x=>x.classList.toggle('active',x===n));renderTuneList(true)};panel.addEventListener('click',e=>{const action=e.target?.closest?.('[data-action]');if(action){const setting=tuneById.get(String(action.dataset.id));switch(action.dataset.action){case'step':e.stopPropagation();tuneStep(setting,Number(action.dataset.dir));return;case'bool':e.stopPropagation();{const nv=!tuneBoolValue(tuneValue(setting));tuneSet(setting,typeof tuneBase(setting)==='string'?(nv?'true':'false'):nv)}return;case'array':e.stopPropagation();openTuneArray(action.dataset.id);return;case'revert':e.stopPropagation();if(setting){delete tuneDraft[setting.name];tuneSaveDraft();renderTuneList(false);renderTuneQuick();renderTuneInspector();renderTuneDraftStatus()}return;case'toggleGroup':{const key=action.dataset.groupKey;if(tuneOpenGroups.has(key))tuneOpenGroups.delete(key);else tuneOpenGroups.add(key);renderTuneList(false)}return;case'moreGroup':{const key=action.dataset.groupKey;tuneGroupVisible.set(key,(tuneGroupVisible.get(key)||140)+140);renderTuneList(false)}return;case'quickEdit':tuneQuickEdit=!tuneQuickEdit;renderTuneQuick();return;case'quickAddSelected':{const selected=tuneById.get(String(tuneSelectedId));if(selected){if(tuneQuickNames.includes(selected.name))tuneQuickNames=tuneQuickNames.filter(name=>name!==selected.name);else tuneQuickNames.push(selected.name);tuneSaveQuick();renderTuneList(false);renderTuneQuick();renderTuneInspector()}}return;case'quickRemove':if(setting){tuneQuickNames=tuneQuickNames.filter(name=>name!==setting.name);tuneSaveQuick();renderTuneList(false);renderTuneQuick();renderTuneInspector()}return;case'quickToggle':e.stopPropagation();if(setting){if(tuneQuickNames.includes(setting.name))tuneQuickNames=tuneQuickNames.filter(name=>name!==setting.name);else tuneQuickNames.push(setting.name);tuneSaveQuick();renderTuneList(false);renderTuneQuick();renderTuneInspector()}return;case'quickReset':tuneQuickNames=tuneDefaultQuickNames();tuneSaveQuick();renderTuneList(false);renderTuneQuick();renderTuneInspector();return;case'openChanges':openTuneChanges();return;case'closeChanges':closeTuneChanges();return;case'jumpChanged':jumpToTuneSetting(setting);return;case'export':exportTuneDraft();return;case'resetAll':resetTuneAll();return;case'closeModal':closeTuneModal();return;case'revertModal':{const a=tuneById.get(String(tuneArrayEditingId));if(a){delete tuneDraft[a.name];tuneSaveDraft();openTuneArray(a.id)}}return;case'focusSetting':jumpToTuneSetting(setting);return;case'arraySelectAll':{const ctx=tuneArrayCurrent();if(ctx){tuneArraySelection=new Set(Array.from({length:ctx.rows*ctx.cols},(_,i)=>i));tuneArrayAnchor=null;updateTuneArraySelectionUi();updateTuneArrayMeta('all cells selected')}}return;case'arrayClearSelection':tuneArraySelection=new Set();tuneArrayAnchor=null;updateTuneArraySelectionUi();updateTuneArrayMeta('selection cleared');return;case'arrayMode':setTuneArrayMode(action.dataset.mode);return;case'arraySelectRow':tuneArraySelectBand('row',Number(action.dataset.row));return;case'arraySelectCol':tuneArraySelectBand('col',Number(action.dataset.col));return;case'arrayZoom':tuneArrayZoom=clamp(tuneArrayZoom+Number(action.dataset.dir)*.15,.55,1.8);applyTuneArrayZoom();return;case'arrayOp':tuneArrayMath(action.dataset.op);return;case'arraySmooth':tuneArraySmooth();return;case'arrayInterpolate':tuneArrayInterpolate();return}}const cell=e.target?.closest?.('.tuneArrayCell');if(cell){tuneArraySelectCell(cell);return}const selected=e.target?.closest?.('[data-select-id]');if(selected)selectTuneSetting(selected.dataset.selectId)});panel.addEventListener('change',e=>{const target=e.target,setting=tuneById.get(String(target.dataset.id));if(target.dataset.action==='number')tuneSetFromInput(setting,target.value);else if(target.dataset.action==='text')tuneSetFromInput(setting,target.value);else if(target.dataset.action==='enum'){const opts=tuneEnum(setting),o=opts[Number(target.value)];if(o)tuneSet(setting,typeof tuneBase(setting)==='string'?o.label:o.value)}else if(target.dataset.arrayIndex!==undefined&&tuneArrayEditingId!==null){const a=tuneById.get(String(tuneArrayEditingId));if(!a)return;const vals=Array.isArray(tuneValue(a))?tuneValue(a).slice():[],i=Number(target.dataset.arrayIndex),base=Array.isArray(a.value)?a.value[i]:0;vals[i]=typeof base==='number'&&Number.isFinite(Number(target.value))?tuneRoundClamp(a,Number(target.value)):target.value;tuneSet(a,vals);target.value=tuneFormat(vals[i],a);updateTuneArrayMeta('cell updated')}})}
+
+function veGrid(rows=13,cols=15,compact=false){
+ const rpms=[600,800,1000,1200,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500];
+ const loads=[20,25,30,35,40,45,50,60,70,80,90,100,120];
+ let out='<div class="veCell head">kPa</div>'+rpms.slice(0,cols).map(x=>`<div class="veCell head">${x}</div>`).join('');
+ for(let r=0;r<rows;r++){
+   out+=`<div class="veCell head">${loads[r]||20+r*10}</div>`;
+   for(let c=0;c<cols;c++){
+    const v=Math.round(48+r*3.4+Math.sin(c/3)*7+Math.max(0,8-Math.abs(c-7))*1.4);
+    const hue=Math.max(0,205-(v-48)*2.8);const bg=`hsl(${hue} 72% ${compact?24:27}%)`;
+    out+=`<div class="veCell ${(r===7&&c===7)?'sel':''}" style="background:${bg}">${v}</div>`;
+   }
+ }
+ return out;
+}
+function tablesTemplate(){return tablesPageTemplate();}
+function loggingTemplate(){return window.LoggingUX?.template?.()||`<div class="pCard" style="height:100%;padding:20px"><h2>LOGGING</h2><p>Logging workspace unavailable.</p></div>`;}
+function diagnosticsTemplate(){return window.DiagnosticsUX?.template?.()||'<div class="pCard" style="height:100%;padding:20px"><h2>DIAGNOSTICS</h2></div>';}
+function settingsTemplate(){return window.SettingsUX?.template?.()||`<div class="pCard" style="height:100%;padding:20px"><h2>SETTINGS</h2><p>Settings asset unavailable.</p></div>`}
+const pageTemplates={tuning:tuningTemplate,tables:tablesTemplate,logging:loggingTemplate,diagnostics:diagnosticsTemplate,settings:settingsTemplate};
+function ensurePanelShell(page){let shell=panelPageCache.get(page);if(shell)return shell;const host=$('panelContent');shell=document.createElement('div');shell.className='cachedPanelPage';shell.dataset.cachedPage=page;shell.innerHTML=(pageTemplates[page]||(()=>`<div class="pCard" style="height:100%;padding:20px"><h2>${page.toUpperCase()}</h2></div>`))();host.appendChild(shell);panelPageCache.set(page,shell);return shell}
+function showPanel(page){
+  $('dashboard').classList.add('hidden');$('panelPage').classList.add('active');
+  const shell=ensurePanelShell(page);
+  for(const node of panelPageCache.values())node.classList.toggle('active',node===shell);
+  if(!panelPageWired.has(page)){wireExperimentalPage(page);panelPageWired.add(page)}refreshExperimentalPage();
+}
+function prewarmPanelShells(){const pages=Object.keys(pageTemplates);let i=0;const one=deadline=>{while(i<pages.length&&(!deadline||deadline.timeRemaining()>4)){ensurePanelShell(pages[i++])}if(i<pages.length){if(window.requestIdleCallback)requestIdleCallback(one,{timeout:500});else setTimeout(()=>one(null),80)}};if(window.requestIdleCallback)requestIdleCallback(one,{timeout:1200});else setTimeout(()=>one(null),600)}
+function wireExperimentalPage(page){
+  if(page==='tuning'){initTuningPage();return;}
+  if(page==='tables'){initTablesPage();return;}
+  if(page==='logging'){window.LoggingUX?.init?.();return;}
+  if(page==='diagnostics'){window.DiagnosticsUX?.init?.();return;}
+  if(page==='settings'){window.SettingsUX?.init?.();return;}
+  document.querySelectorAll('#panelContent .pToggle').forEach(t=>t.onclick=()=>t.classList.toggle('on'));
+  document.querySelectorAll('#panelContent .filterChip').forEach(t=>t.onclick=()=>{document.querySelectorAll('#panelContent .filterChip').forEach(x=>x.classList.remove('active'));t.classList.add('active')});
+  document.querySelectorAll('#panelContent .pNavItem').forEach(t=>t.onclick=()=>{const box=t.parentElement;box.querySelectorAll('.pNavItem').forEach(x=>x.classList.remove('active'));t.classList.add('active')});
+}
+function refreshExperimentalPage(){
+ const map=finite(state.map)?Number(state.map):NaN,baro=finite(state.baro)?Number(state.baro):100,boost=finite(map)?(map-baro)/100:NaN;
+ const pa=uxPresent('afr',state.afr),pm=uxPresent('pressureKpa',map),pv=uxPresent('voltage',state.batt),po=uxPresent('pressureBar',state.oilPressure),pc=uxPresent('temperature',state.clt),pb=uxPresent('pressureBar',boost),pi=uxPresent('temperature',state.iat),ps=uxPresent('speed',state.vehicleSpeed);const values={pageRpm:finite(state.rpm)?Math.round(state.rpm):'—',pageAfr:`${pa.text} ${pa.unit}`,pageMap:finite(map)?`${pm.text} ${pm.unit}`:'—',pageBatt:`${pv.text} ${pv.unit}`,pageTps:num(state.tps,1)+' %',pageOil:`${po.text} ${po.unit}`,pageClt:`${pc.text} ${pc.unit}`,pageBoost:finite(boost)?`${pb.text} ${pb.unit}`:'—',pageIat:`${pi.text} ${pi.unit}`,pageInjDuty:num(state.injectorDuty,1)+' %',pageVss:`${ps.text} ${ps.unit}`,pageIgn:num(state.ign,1)+' °'};
+ for(const [id,v] of Object.entries(values))text(id,v);if(currentPage==='tables'){try{refreshTablesLive()}catch(_){}}else if(currentPage==='logging'){try{window.LoggingUX?.refresh?.()}catch(_){}}else if(currentPage==='diagnostics'){try{window.DiagnosticsUX?.refresh?.()}catch(_){}}else if(currentPage==='settings'){try{window.SettingsUX?.refresh?.()}catch(_){}}
+}
+function refreshDiag(){try{const raw=window.EpicDashAndroid?.getDiagnosticsJson?.()||'{}';const n=$('diagPre');if(n)n.textContent=JSON.stringify(JSON.parse(raw),null,2)}catch(e){const n=$('diagPre');if(n)n.textContent=String(e)}}
+
+
+
+$('moreOverlay').addEventListener('click',e=>{if(e.target===$('moreOverlay'))closeMoreMenu();const a=e.target?.closest?.('[data-app-action]');if(!a)return;switch(a.dataset.appAction){case'closeMore':closeMoreMenu();break;case'theme':appPrefs.theme=a.dataset.value;saveAppPrefs();break;case'toggleMotion':appPrefs.reducedMotion=!appPrefs.reducedMotion;saveAppPrefs();break;case'toggleAwake':appPrefs.keepAwake=!appPrefs.keepAwake;saveAppPrefs();break;case'toggleSwipe':appPrefs.swipeEnabled=!appPrefs.swipeEnabled;saveAppPrefs();break;case'copyDiagnostics':{const out=JSON.stringify(appDiagnosticsObject(),null,2);try{window.EpicDashAndroid?.copyText?.('EpicDash UX app diagnostics',out)}catch(_){navigator.clipboard?.writeText(out)}}break;case'openDiagnostics':closeMoreMenu();navigateToPage('diagnostics');break;case'openSettings':closeMoreMenu();navigateToPage('settings');break;case'resetAppPrefs':if(confirm('Reset EpicDash UX app-only preferences? Tune draft and Quick Tuning selections will be kept.')){localStorage.removeItem(APP_PREF_KEY);appPrefs={theme:'dark',swipeEnabled:true,swipeThreshold:90,reducedMotion:false,keepAwake:true};saveAppPrefs()}break}});
+$('moreSwipeRange').addEventListener('input',e=>{appPrefs.swipeThreshold=clamp(Number(e.target.value)||90,45,180);$('moreSwipeValue').textContent=`${appPrefs.swipeThreshold} px`});
+$('moreSwipeRange').addEventListener('change',()=>saveAppPrefs());
+const PAGE_SWIPE_PAGES=['dashboard','tuning','tables','logging','diagnostics','settings'];
+let pageSwipe=null,pageSwipeRaf=0,suppressSwipeClickUntil=0;
+function pageSwipeSurface(){return currentPage==='dashboard'?document.querySelector('.dashboard:not(.hidden)'):document.querySelector('.panelPage.active')}
+function pageSwipeHorizontalScroller(target){for(let n=target;n&&n!==document.body;n=n.parentElement){const cs=getComputedStyle(n),overflow=cs.overflowX;if((overflow==='auto'||overflow==='scroll')&&n.scrollWidth>n.clientWidth+2)return n}return null}
+function pageSwipeControlTarget(target){return !!target?.closest?.('input,textarea,select,[contenteditable=true],button,.pButton,.moreOverlay,.demoScenarioOverlay,.tuneModal,.tableCsvModal,.settingsModalV2,.warningOverlay,.gaugeQuickOverlay,.logPresetEditorOverlay,.tableSurfaceModal')}
+function pageSwipeDirectSurface(target){return !!target?.closest?.('.tableSurfaceGesture,.tableSurfaceViewport,.tuneArrayGridWrap,.logGraphCanvas,.logGraphStack,.diagV2Wave,.diagV2Trend canvas')}
+function pageSwipeScrollerConsumes(scroller,dx){if(!scroller)return false;const eps=2;if(dx<0)return scroller.scrollLeft+scroller.clientWidth<scroller.scrollWidth-eps;if(dx>0)return scroller.scrollLeft>eps;return true}
+function pageSwipePrepare(){const surface=pageSwipeSurface();if(surface)surface.classList.add('pageSwipeSurface')}
+function pageSwipePaint(dx){const surface=pageSwipeSurface();if(!surface)return;cancelAnimationFrame(pageSwipeRaf);pageSwipeRaf=requestAnimationFrame(()=>{const limit=Math.min(innerWidth*.055,34),raw=clamp(dx,-limit,limit),limited=raw*(1-Math.min(.18,Math.abs(raw)/Math.max(1,innerWidth)));surface.style.transition='none';surface.style.transform=`translate3d(${limited}px,0,0)`})}
+function pageSwipeClear(surface=pageSwipeSurface(),animated=true){if(!surface)return;surface.style.transition=animated&&!appPrefs.reducedMotion?'transform 115ms cubic-bezier(.2,.82,.25,1)':'none';surface.style.transform='translate3d(0,0,0)';setTimeout(()=>{surface.classList.remove('pageSwipeSurface');surface.style.transition='';surface.style.transform=''},animated&&!appPrefs.reducedMotion?130:0)}
+function pageSwipeFallback(next,dir){navigateToPage(next);const incoming=pageSwipeSurface();if(!incoming||appPrefs.reducedMotion){pageSwipeClear(incoming,false);return}incoming.classList.add('pageSwipeSurface');incoming.style.transition='none';incoming.style.transform=`translate3d(${-dir*Math.min(innerWidth*.045,28)}px,0,0)`;requestAnimationFrame(()=>requestAnimationFrame(()=>pageSwipeClear(incoming,true)))}
+function pageSwipeCommit(dx){const i=PAGE_SWIPE_PAGES.indexOf(currentPage),nextIndex=dx<0?i+1:i-1;if(nextIndex<0||nextIndex>=PAGE_SWIPE_PAGES.length){pageSwipeClear();return}const next=PAGE_SWIPE_PAGES[nextIndex],dir=dx<0?1:-1,old=pageSwipeSurface();pageSwipeClear(old,false);document.body.classList.toggle('pageSwipeForward',dir>0);document.body.classList.toggle('pageSwipeBack',dir<0);const done=()=>{document.body.classList.remove('pageSwipeForward','pageSwipeBack')};if(!appPrefs.reducedMotion&&typeof document.startViewTransition==='function'){try{const transition=document.startViewTransition(()=>navigateToPage(next));transition.finished.finally(done)}catch(_){pageSwipeFallback(next,dir);done()}}else{pageSwipeFallback(next,dir);setTimeout(done,180)}suppressSwipeClickUntil=Date.now()+320}
+function pageSwipeResolveIntent(g,dx,dy,now){const adx=Math.abs(dx),ady=Math.abs(dy);if(Math.max(adx,ady)<8)return'pending';if(g.control)return'local';if(ady>adx*1.12)return'vertical';if(pageSwipeScrollerConsumes(g.scroller,dx))return'local';if(g.direct){const elapsed=Math.max(1,now-g.time),velocity=adx/elapsed;if(adx>=22&&adx>ady*1.55&&velocity>=.58&&elapsed<=165)return'page';if(elapsed>=125||adx>=48)return'local';return'pending'}return adx>ady*1.08?'page':'pending'}
+document.addEventListener('touchstart',e=>{if(!appPrefs.swipeEnabled||e.touches.length!==1){pageSwipe=null;return}const t=e.touches[0],target=e.target;pageSwipe={x:t.clientX,y:t.clientY,time:performance.now(),intent:'pending',target,scroller:pageSwipeHorizontalScroller(target),control:pageSwipeControlTarget(target),direct:pageSwipeDirectSurface(target)};pageSwipePrepare()},{passive:true,capture:true});
+document.addEventListener('touchmove',e=>{if(!pageSwipe||!appPrefs.swipeEnabled||e.touches.length!==1)return;const t=e.touches[0],dx=t.clientX-pageSwipe.x,dy=t.clientY-pageSwipe.y,now=performance.now();if(pageSwipe.intent==='pending')pageSwipe.intent=pageSwipeResolveIntent(pageSwipe,dx,dy,now);if(pageSwipe.intent!=='page'){if(pageSwipe.intent!=='pending')pageSwipeClear(pageSwipeSurface(),false);return}e.preventDefault();e.stopPropagation();pageSwipePaint(dx)},{passive:false,capture:true});
+document.addEventListener('touchend',e=>{if(!pageSwipe)return;const g=pageSwipe;pageSwipe=null;if(g.intent!=='page'){pageSwipeClear(pageSwipeSurface(),false);return}const t=e.changedTouches[0],dx=t.clientX-g.x,dy=t.clientY-g.y,elapsed=Math.max(1,performance.now()-g.time),velocity=Math.abs(dx)/elapsed,threshold=clamp(Number(appPrefs.swipeThreshold)||90,45,180),commit=Math.abs(dx)>=threshold||Math.abs(dx)>=30&&velocity>=.50;if(commit&&Math.abs(dx)>Math.abs(dy)*1.08){e.preventDefault();e.stopPropagation();pageSwipeCommit(dx)}else pageSwipeClear()},{passive:false,capture:true});
+document.addEventListener('touchcancel',()=>{pageSwipe=null;pageSwipeClear()},{passive:true,capture:true});
+document.addEventListener('click',e=>{if(Date.now()<suppressSwipeClickUntil){e.preventDefault();e.stopPropagation()}},true);
+applyAppPrefs();
+try{window.SettingsUX?.applyStored?.()}catch(_){}
+
+let uxReconnectTimer=null;
+function uxScheduleReconnect(){clearTimeout(uxReconnectTimer);const c=window.uxConnectionSettings||{};if(demo||c.autoConnect===false||c.reconnect===false)return;uxReconnectTimer=setTimeout(()=>{try{window.EpicDashAndroid?.setUsbPollHz?.(Number(c.pollHz)||20);window.EpicDashAndroid?.setLiveTransport?.(c.transport||'usb');window.EpicDashAndroid?.usbReconnect?.()}catch(_){}},Math.max(1,Number(c.reconnectDelay)||2)*1000)}
+window.EpicDashNativeUpdate=function(payload){
+  if(!payload)return;
+  phase=payload.connectionPhase||phase;
+  measuredHz=Number(payload.measuredHz||payload.callbackRateHz||0);
+  const d=payload.data||{},l=payload.localData||{},pairs=[...Object.entries(d),...Object.entries(l)],hasFinite=pairs.some(([,v])=>finite(v));
+  if(payload.connected&&hasFinite){liveSeen=true;lastLiveUpdateMs=Date.now();if(!demo){for(const [k,v] of pairs)if(finite(v))state[k]=Number(v);cylinderPhase=(cylinderPhase+1)%Math.max(1,cylinderCount());render()}}
+  else if(!payload.connected){liveSeen=false;lastLiveUpdateMs=0;if(!demo){clearLiveState();render()}uxScheduleReconnect()}
+  setConnection();
+};
+window.EpicDashNativeMslEvent=function(payload){
+  const pairs=Object.entries(payload?.data||{}),hasFinite=pairs.some(([,v])=>finite(v));if(!hasFinite)return;liveSeen=true;lastLiveUpdateMs=Date.now();phase='msl';if(!demo){for(const [k,v] of pairs)if(finite(v))state[k]=Number(v);render()}setConnection();
+};
+setInterval(()=>{if(!demo&&liveSeen&&lastLiveUpdateMs&&Date.now()-lastLiveUpdateMs>1600){liveSeen=false;phase='no_signal';clearLiveState();setConnection();render()}},400);
+window.EpicDashNativeNotice=function(message){warningNativeNotice=String(message||'Notice');text('errorText',warningNativeNotice);renderWarningPopup()};
+window.EpicDashNativeLayoutImport=function(){};
+
+try{
+  window.EpicDashAndroid?.setKeepScreenAwake?.(!!appPrefs.keepAwake);
+  const cs=window.uxConnectionSettings||window.SettingsUX?.getConfig?.()?.connection||{};if(cs.autoConnect!==false){window.EpicDashAndroid?.setLiveTransport?.(cs.transport||'usb');window.EpicDashAndroid?.setUsbPollHz?.(Number(cs.pollHz)||20);}
+  window.EpicDashAndroid?.setUsbRequiredChannels?.(JSON.stringify([
+    'rpm','map','baro','afr','clt','iat','fuelPressure','batt','ign','oilPressure',
+    'tps','idleTarget','idleDuty','boostDuty','vehicleSpeed','gear','cylindersCount','maxCylindersCount','ignitionFault','injectorFault','currentIgnitionMode','currentInjectionMode','ignitionFaultMask','injectorFaultMask'
+  ]));
+}catch(_){ }
+initRadialGauges();render();setConnection();
+try{const previewPage=new URLSearchParams(location.search).get('page');if(previewPage==='dashboard'||pageTemplates[previewPage])navigateToPage(previewPage)}catch(_){ }
+prewarmPanelShells();
+</script>
+<script src="r29_dashboard.js"></script>
+</body>
+</html>

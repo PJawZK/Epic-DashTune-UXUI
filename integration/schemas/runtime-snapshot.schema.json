@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://epicdash.local/schemas/runtime-snapshot.schema.json",
+  "title": "EpicDash authorized runtime snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source", "connected", "session", "revision", "values"],
+  "properties": {
+    "source": {"enum": ["OFFLINE", "LIVE", "DEMO", "MSL", "CSV", "SELF_TEST"]},
+    "connected": {"type": "boolean"},
+    "session": {"type": "string", "minLength": 1, "maxLength": 128},
+    "revision": {"type": "integer", "minimum": 0},
+    "values": {"type": "object", "additionalProperties": {"type": ["number", "string", "boolean", "null"]}}
+  },
+  "allOf": [
+    {"if": {"properties": {"source": {"const": "OFFLINE"}}}, "then": {"properties": {"connected": {"const": false}}}},
+    {"if": {"properties": {"source": {"const": "LIVE"}}}, "then": {"properties": {"connected": {"const": true}}}}
+  ]
+}

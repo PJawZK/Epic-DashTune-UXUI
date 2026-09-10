@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Epic-DashTune Integration Lab</title>
+<link rel="stylesheet" href="css/r31/radial_gauges.css">
+<link rel="stylesheet" href="css/r31/r29_theme.css">
+<link rel="stylesheet" href="css/r31/responsive_layout.css">
+<link rel="stylesheet" href="css/integration.css">
+</head>
+<body>
+<div class="app">
+  <header class="header compactHeader">
+    <div class="brand brandNav"><span class="logo"></span><span class="brandCopy"><span class="brandTitle">EpicDash UX</span><span class="brandSub">STAGE A • TRANSFER LAB • READ-ONLY</span></span></div>
+    <nav class="headerTabs" aria-label="Primary pages">
+      <button class="tab active" data-page="dashboard">DASHBOARD</button><button class="tab" data-page="tuning">TUNING</button><button class="tab" data-page="tables">TABLES</button><button class="tab" data-page="logging">LOGGING</button><button class="tab" data-page="diagnostics">DIAGNOSTICS</button><button class="tab" data-page="settings">SETTINGS</button>
+    </nav>
+    <div class="headerRight"><span class="pill" id="sourceState"><span class="dot"></span><b>OFFLINE</b></span><button class="headBtn demoOn" id="demoBtn">DEMO</button></div>
+  </header>
+
+  <main class="dashboard" id="dashboard">
+    <div class="row top radialPrimaryRow">
+      <section class="card tachCard radialHeroCard"><div class="radialGauge radialGaugeHero" id="rpmDial" data-gauge="rpm" data-min="0" data-max="9000" data-major="1000" data-minor="250"><svg class="radialSvg conceptRadialSvg" viewBox="0 0 360 226"></svg><div class="radialReadout radialHeroReadout"><div class="radialValue radialHeroValue" id="rpm">—</div><div class="radialUnit radialHeroUnit">RPM</div></div><div class="radialScale radialHeroScale"><span>0</span><span>4.5</span><span>9</span></div></div><div class="tachMeta"><span>IAC DUTY <b id="rpmIac">— %</b></span><span>TPS <b id="rpmTps">— %</b></span></div></section>
+      <section class="card primaryGauge radialPrimaryCard"><div class="primaryHead">BOOST</div><div class="radialGauge radialGaugeSmall" id="boostDial" data-gauge="boost" data-min="-1" data-max="2" data-major="0.5" data-minor="0.1"><svg class="radialSvg conceptRadialSvg" viewBox="0 0 240 158"></svg><div class="radialReadout"><div class="radialValue" id="boost">—</div><div class="radialUnit">bar</div></div><div class="radialScale"><span>-1</span><span>0.5</span><span>2</span></div></div><div class="status" id="boostStatus">NO DATA</div></section>
+      <section class="card primaryGauge radialPrimaryCard"><div class="primaryHead">AFR GAS SCALE</div><div class="radialGauge radialGaugeSmall" id="afrDial" data-gauge="afr" data-min="9" data-max="20" data-major="1" data-minor="0.5"><svg class="radialSvg conceptRadialSvg" viewBox="0 0 240 158"></svg><div class="radialReadout"><div class="radialValue" id="afr">—</div><div class="radialUnit">AFR</div></div><div class="radialScale"><span>9</span><span>14.5</span><span>20</span></div></div><div class="status" id="afrStatus">NO DATA</div></section>
+      <section class="card primaryGauge radialPrimaryCard"><div class="primaryHead">COOLANT</div><div class="radialGauge radialGaugeSmall" id="cltDial" data-gauge="clt" data-min="40" data-max="120" data-major="20" data-minor="10"><svg class="radialSvg conceptRadialSvg" viewBox="0 0 240 158"></svg><div class="radialReadout"><div class="radialValue" id="clt">—</div><div class="radialUnit">°C</div></div><div class="radialScale"><span>40</span><span>80</span><span>120</span></div></div><div class="status" id="cltStatus">NO DATA</div></section>
+      <section class="card primaryGauge radialPrimaryCard"><div class="primaryHead">OIL PRESSURE</div><div class="radialGauge radialGaugeSmall" id="oilDial" data-gauge="oil" data-min="0" data-max="10" data-major="2" data-minor="1"><svg class="radialSvg conceptRadialSvg" viewBox="0 0 240 158"></svg><div class="radialReadout"><div class="radialValue" id="oil">—</div><div class="radialUnit">bar</div></div><div class="radialScale"><span>0</span><span>5</span><span>10</span></div></div><div class="status" id="oilStatus">NO DATA</div></section>
+      <section class="card primaryGauge radialPrimaryCard"><div class="primaryHead">FUEL LEVEL</div><div class="radialGauge radialGaugeSmall" id="fuelDial" data-gauge="fuel" data-min="0" data-max="100" data-major="25" data-minor="12.5"><svg class="radialSvg conceptRadialSvg" viewBox="0 0 240 158"></svg><div class="radialReadout"><div class="radialValue" id="fuelLevel">—</div><div class="radialUnit">%</div></div><div class="radialScale"><span>0</span><span>50</span><span>100</span></div></div><div class="status" id="fuelStatus">NO DATA</div></section>
+    </div>
+    <div class="row secondary" id="secondaryRow"></div><div class="row compact" id="compactRow"></div>
+    <div class="row outputs"><section class="card outputCard first"><div class="outputsTag">OUTPUTS</div><div class="outputMain"><span class="outputState" id="fanOut">—</span></div><div class="outputDesc"><span id="fanTemp">—</span> °C • FAN</div><div class="bar" id="fanBar"></div></section><section class="card outputCard"><div class="outputMain"><span class="outputState" id="pumpOut">—</span></div><div class="outputDesc"><span id="pumpVolt">—</span> V • FUEL PUMP</div><div class="bar" id="pumpBar"></div></section><section class="card outputCard"><div class="outputMain"><span class="outputState" id="boostDutyOut">— %</span></div><div class="outputDesc">BOOST CONTROL</div><div class="bar" id="boostDutyBar"></div></section><section class="card outputCard"><div class="outputMain"><span class="outputState" id="auxDutyOut">— %</span></div><div class="outputDesc">AUX OUTPUT</div><div class="bar" id="auxDutyBar"></div></section><section class="card cylinderCard"><div class="cylinderIcons" id="ignitionCylinders"></div><div class="cylinderLabel" id="ignitionCylinderLabel">IGNITION • WAITING</div></section><section class="card cylinderCard"><div class="cylinderIcons" id="injectorCylinders"></div><div class="cylinderLabel" id="injectorCylinderLabel">INJECTION • WAITING</div></section><section class="card okCard" id="okCard"><div class="okCircle">✓</div><b id="okTitle">OK</b><span id="errorText">No signal</span></section></div>
+  </main>
+  <section class="panelPage" id="panelPage"><div id="panelContent"></div></section>
+</div>
+<script src="js/r31/responsive_layout.js"></script><script src="js/r31/concept_radial_gauges.js"></script>
+<script src="js/state-store.js"></script><script src="../bridge/bridge-client.js"></script><script src="../bridge/bridge-mock.js"></script><script src="js/storage.js"></script><script src="js/render-coordinator.js"></script><script src="js/pages.js"></script><script src="js/app.js"></script>
+</body></html>

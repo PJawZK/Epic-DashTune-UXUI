@@ -1,0 +1,15 @@
+<!doctype html><meta charset="utf-8"><title>EpicDash Stage A browser regression</title>
+<pre id="out">running…</pre>
+<script src="../web/js/state-store.js"></script><script src="../bridge/bridge-client.js"></script><script src="../bridge/bridge-mock.js"></script>
+<script>
+(function(){
+ const out=document.getElementById('out'),log=[];function ok(name,pass){log.push(`${pass?'PASS':'FAIL'} ${name}`);if(!pass)throw new Error(name)}
+ const store=EpicDashStateStore.createStore(),mock=EpicDashBridgeMock.create(),client=EpicDashBridgeClient.create({store,bridge:mock});client.start();
+ mock.activate('DEMO');ok('source switch to DEMO',store.getState().source==='DEMO');
+ mock.emit({rpm:1000});ok('increasing revision accepted',store.getState().revision===1&&store.getState().values.rpm===1000);
+ const accepted=store.getStats().accepted;mock.emitStale();ok('stale revision rejected',store.getStats().accepted===accepted&&store.getStats().rejectedByReason.stale_revision===1);
+ const retired=mock.getCurrentSnapshot();mock.activate('MSL');mock.replayRetired(retired);ok('retired session rejected',store.getState().source==='MSL'&&store.getStats().rejectedByReason.retired_session===1);
+ mock.disconnect();ok('disconnect/no-signal becomes OFFLINE',store.getState().source==='OFFLINE'&&!store.getState().connected&&Object.keys(store.getState().values).length===0);
+ client.stop();out.textContent=log.join('\n')+'\n\nALL PASS';
+})()
+</script>

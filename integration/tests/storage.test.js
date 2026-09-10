@@ -1,0 +1,11 @@
+const assert=require('assert');
+const S=require('../web/js/storage.js');
+const mem={v:null,setItem(k,v){this.k=k;this.v=v},getItem(k){return this.k===k?this.v:null}};
+let r=S.restore(mem,JSON.stringify({schemaVersion:1,page:'tables',settings:{theme:'oled'},favorites:['a']}));
+assert.equal(r.ok,true);assert.equal(S.load(mem).page,'tables');
+const prior=mem.v;
+r=S.restore(mem,JSON.stringify({schemaVersion:1,page:'dashboard',dangerousKey:true}));
+assert.equal(r.ok,false);assert.equal(mem.v,prior);
+r=S.restore(mem,'{"schemaVersion":1, bad');
+assert.equal(r.ok,false);assert.equal(mem.v,prior);
+console.log('storage: PASS');

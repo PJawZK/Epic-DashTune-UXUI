@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://epicdash.local/schemas/tune-snapshot.schema.json",
+  "title": "Read-only TuneSnapshot descriptor contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profileId", "revision", "descriptors", "values", "readOnly"],
+  "properties": {
+    "profileId": {"type": "string", "minLength": 1},
+    "revision": {"type": "integer", "minimum": 0},
+    "readOnly": {"const": true},
+    "descriptors": {"type": "array", "items": {"type": "object"}},
+    "values": {"type": "object"}
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "baseCommit": "fa9323cb3fa0be987ffe638b96c98bd6096a2cfd",
+  "sourceRoot": "source/r31/app/src/main/assets",
+  "policy": "Exact Git-blob copies. source/r31 remains immutable.",
+  "copies": [
+    {"integrationPath":"web/css/r31/radial_gauges.css","sourcePath":"source/r31/app/src/main/assets/radial_gauges.css","gitBlob":"8915a060898578671ebe811314b62e223d6e8d8c"},
+    {"integrationPath":"web/css/r31/r29_theme.css","sourcePath":"source/r31/app/src/main/assets/r29_theme.css","gitBlob":"7590c78a5df246a1854c07f8edf3a4bc11c4f601"},
+    {"integrationPath":"web/css/r31/responsive_layout.css","sourcePath":"source/r31/app/src/main/assets/responsive_layout.css","gitBlob":"f40eb0a7f0a85cd0739ef7e6f5fbd9dba8d1e2db"},
+    {"integrationPath":"web/js/r31/responsive_layout.js","sourcePath":"source/r31/app/src/main/assets/responsive_layout.js","gitBlob":"7fdb4327d66b011252e693421225965f3b80438a"},
+    {"integrationPath":"web/js/r31/concept_radial_gauges.js","sourcePath":"source/r31/app/src/main/assets/concept_radial_gauges.js","gitBlob":"5619705e1577c3e1b717ea7629aa29387a06112f"},
+    {"integrationPath":"r31-reference/dashboard_lab.html","sourcePath":"source/r31/app/src/main/assets/dashboard_lab.html","gitBlob":"c4009c7074a49e2c602593c0a75c498263aff2d9"},
+    {"integrationPath":"r31-reference/dashboard_runtime_snapshot.js","sourcePath":"source/r31/app/src/main/assets/dashboard_runtime_snapshot.js","gitBlob":"1dd2cf9fc16d8fd230585752a775e7b185cbe235"},
+    {"integrationPath":"r31-reference/r29_dashboard.js","sourcePath":"source/r31/app/src/main/assets/r29_dashboard.js","gitBlob":"a02964a9be957061bfbe5fe65c1d13731f147115"},
+    {"integrationPath":"r31-reference/diagnostics_page.css","sourcePath":"source/r31/app/src/main/assets/diagnostics_page.css","gitBlob":"feca8d857d5e8803aa006071256bebd8bd531dd8"},
+    {"integrationPath":"r31-reference/diagnostics_page.js","sourcePath":"source/r31/app/src/main/assets/diagnostics_page.js","gitBlob":"6d9776a12fbfd28eab027f387ef8abd89d8e80f5"},
+    {"integrationPath":"r31-reference/logging_page.css","sourcePath":"source/r31/app/src/main/assets/logging_page.css","gitBlob":"64163fe8c93a2855dd8648e5f03b2c5c674fbfa2"},
+    {"integrationPath":"r31-reference/logging_page.js","sourcePath":"source/r31/app/src/main/assets/logging_page.js","gitBlob":"876491becbb69c0155c93a30ded84937d4c34b2f"},
+    {"integrationPath":"r31-reference/settings_page.css","sourcePath":"source/r31/app/src/main/assets/settings_page.css","gitBlob":"ed1b5d60f22cf806855eda42c413675b58a024f1"},
+    {"integrationPath":"r31-reference/settings_page.js","sourcePath":"source/r31/app/src/main/assets/settings_page.js","gitBlob":"1b2fba6da7c6907724fccafe2fc11e2318b0a4d4"},
+    {"integrationPath":"r31-reference/tables_page.css","sourcePath":"source/r31/app/src/main/assets/tables_page.css","gitBlob":"38c4ae35b3438487acdeb4b1fbb450a83d98dd99"},
+    {"integrationPath":"r31-reference/tables_page.js","sourcePath":"source/r31/app/src/main/assets/tables_page.js","gitBlob":"8a36dde60193ecfe0571d6e6ef99d73b9975409b"},
+    {"integrationPath":"demo-data/tune_catalog.js","sourcePath":"source/r31/app/src/main/assets/tune_catalog.js","gitBlob":"560a958a7444eceee551932e4b5ea8e55db0664e"},
+    {"integrationPath":"demo-data/table_catalog.js","sourcePath":"source/r31/app/src/main/assets/table_catalog.js","gitBlob":"cb4816b9238ddf4ac2135503922ca267c56573b9"},
+    {"integrationPath":"demo-data/tunerstudio_order.js","sourcePath":"source/r31/app/src/main/assets/tunerstudio_order.js","gitBlob":"c3e564f814a2a70a95faa43ce1c6d5008b4e0c04"},
+    {"integrationPath":"demo-data/variables.json","sourcePath":"source/r31/app/src/main/assets/variables.json","gitBlob":"b39881b5bb3485d0873f222b15ddba27d6d0f71b"}
+  ]
+}
