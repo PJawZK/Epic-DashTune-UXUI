@@ -1,0 +1,25 @@
+{
+  "candidate": "EpicDash UX r30",
+  "versionName": "0.12.28-ux-state-30",
+  "versionCode": 1228,
+  "profiles": [
+    "tablet-landscape 1600x960",
+    "tablet-portrait 900x1200",
+    "phone-portrait 412x915",
+    "phone-landscape 915x412"
+  ],
+  "checks": {
+    "javascriptExceptions": "0 across all profiles",
+    "tablesSideHandles": "visible in tablet landscape; intentionally hidden in tablet portrait and phone profiles",
+    "pinchFocalPoint": "logical point (480,290) remained (480,290) while zoom changed 1.0 to 1.6",
+    "demoThemes": "active green state confirmed for Default, OLED, Steel, Arctic and Amber",
+    "noSignalDashboard": "RPM/Boost/IAC rendered dash; RPM pointer 0.00%; status NO SIGNAL",
+    "triggerNoSignal": "runtime browser check: NO SIGNAL / PAUSED rendered with zero SVG paths",
+    "typography": "small radial readout remained smaller than RPM hero in all profiles"
+  },
+  "physicalDeviceGate": [
+    "two-finger focal zoom feel",
+    "panel-edge handle touch targets",
+    "native signal timeout transition"
+  ]
+}
