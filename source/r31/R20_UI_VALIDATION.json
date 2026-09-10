@@ -1,0 +1,6 @@
+{
+  "tablet-landscape": {"errors": [],"rpm_before": "842","rpm_after": "854","demo_changed": true,"active_segments_before": 73,"active_segments_after": 73,"profile": "tablet-landscape","contained": true,"issues": [],"scroll": {"bodyW":1600,"bodyH":960,"innerWidth":1600,"innerHeight":960}},
+  "tablet-portrait": {"errors": [],"rpm_before": "838","rpm_after": "855","demo_changed": true,"active_segments_before": 72,"active_segments_after": 73,"profile": "tablet-portrait","contained": true,"issues": [],"scroll": {"bodyW":960,"bodyH":1600,"innerWidth":960,"innerHeight":1600}},
+  "phone-portrait": {"errors": [],"rpm_before": "837","rpm_after": "855","demo_changed": true,"active_segments_before": 72,"active_segments_after": 73,"profile": "phone-portrait","contained": true,"issues": [],"scroll": {"bodyW":412,"bodyH":915,"innerWidth":412,"innerHeight":915}},
+  "phone-landscape": {"errors": [],"rpm_before": "837","rpm_after": "855","demo_changed": true,"active_segments_before": 72,"active_segments_after": 73,"profile": "phone-landscape","contained": true,"issues": [],"scroll": {"bodyW":915,"bodyH":412,"innerWidth":915,"innerHeight":412}}
+}

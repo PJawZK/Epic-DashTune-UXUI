@@ -1,0 +1,10 @@
+{
+  "r20": {"counts":{"zoneSegments":224,"zoneBands":0,"activeArcs":6,"pointerGroups":6,"svgFilters":6,"radialNodes":525},"bench":{"elapsedMs":127,"updates":6000,"usPerUpdate":21.166666666666668},"errors":[]},
+  "r21": {"counts":{"zoneSegments":0,"zoneBands":20,"activeArcs":0,"pointerGroups":6,"svgFilters":0,"radialNodes":273},"bench":{"elapsedMs":11,"updates":6000,"usPerUpdate":1.8333333333333333},"errors":[]},
+  "responsive": {
+    "tablet-landscape":{"bodyWidth":1280,"viewportWidth":1280,"bodyHeight":800,"viewportHeight":800,"profile":"tablet-landscape","gaugeCount":6,"clipped":0,"errors":[]},
+    "tablet-portrait":{"bodyWidth":800,"viewportWidth":800,"bodyHeight":1280,"viewportHeight":1280,"profile":"tablet-portrait","gaugeCount":6,"clipped":0,"errors":[]},
+    "phone-portrait":{"bodyWidth":412,"viewportWidth":412,"bodyHeight":915,"viewportHeight":915,"profile":"phone-portrait","gaugeCount":6,"clipped":0,"errors":[]},
+    "phone-landscape":{"bodyWidth":915,"viewportWidth":915,"bodyHeight":412,"viewportHeight":412,"profile":"phone-landscape","gaugeCount":6,"clipped":0,"errors":[]}
+  }
+}

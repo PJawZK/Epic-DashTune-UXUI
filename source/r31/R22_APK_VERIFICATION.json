@@ -1,0 +1,9 @@
+{
+  "candidate": {"package":"com.buttonbox.ble.ul","app_name":"EpicDash UX","version_name":"0.12.20-ux-symbol22","version_code":1220,"apk_sha256":"16e261622b0ddf3dd5f266f789bca438ecb7dde6837a544dbeb1c4278c4632bf","apk_size":6770827,"signer_certificate_sha256":"cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142"},
+  "zip_integrity": true,
+  "alignment": {"stored_entries":231,"issues":[]},
+  "signature": {"v2":{"verified":true,"digest":"15b10fc5aa16af49bec33a2257af8aaf1a8b5e5a4df2005b087cc9ab19976f4f","certificate_sha256":"cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142","attrs_length":12},"v3":{"verified":true,"digest":"15b10fc5aa16af49bec33a2257af8aaf1a8b5e5a4df2005b087cc9ab19976f4f","certificate_sha256":"cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142","attrs_length":0}},
+  "dex_byte_identical_to_r21": {"classes.dex":true,"classes2.dex":true,"classes3.dex":true,"classes4.dex":true,"classes5.dex":true,"classes6.dex":true},
+  "assets_match_source": {"dashboard_lab.html":true,"radial_gauges.css":true,"whatsnew.txt":true,"concept_radial_gauges.js":true},
+  "scope": {"rpm_symbol_removed":true,"five_radial_symbols_replaced":true,"concept_radial_renderer_byte_identical_to_r21":true,"ecu_writes_added":false}
+}
