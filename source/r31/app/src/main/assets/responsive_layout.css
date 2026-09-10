@@ -1,0 +1,567 @@
+/* EpicDash UX r17 — isolated responsive presentation layer.
+   Desktop/tablet landscape keeps the accepted r16 geometry unchanged.
+   Rules activate only through body[data-ux-viewport]. */
+
+:root{
+  --ux-safe-top:env(safe-area-inset-top,0px);
+  --ux-safe-right:env(safe-area-inset-right,0px);
+  --ux-safe-bottom:env(safe-area-inset-bottom,0px);
+  --ux-safe-left:env(safe-area-inset-left,0px);
+}
+body[data-ux-viewport]{overscroll-behavior:none}
+body[data-ux-viewport] .headerTabs,
+body[data-ux-viewport] .stream,
+body[data-ux-viewport] .settingsNavV2,
+body[data-ux-viewport] .tableViewTabs,
+body[data-ux-viewport] .tuneToolbar,
+body[data-ux-viewport] .logToolbar{
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+body[data-ux-viewport] .headerTabs::-webkit-scrollbar,
+body[data-ux-viewport] .stream::-webkit-scrollbar,
+body[data-ux-viewport] .settingsNavV2::-webkit-scrollbar,
+body[data-ux-viewport] .tableViewTabs::-webkit-scrollbar,
+body[data-ux-viewport] .tuneToolbar::-webkit-scrollbar,
+body[data-ux-viewport] .logToolbar::-webkit-scrollbar{display:none}
+
+/* --------------------------------------------------------------------------
+   Tablet portrait — intended for SM-T500 portrait class viewports.
+   -------------------------------------------------------------------------- */
+body[data-ux-viewport="tablet-portrait"] .app{
+  padding:var(--ux-safe-top) 7px calc(6px + var(--ux-safe-bottom));
+  grid-template-rows:98px minmax(0,1fr);
+  gap:6px;
+}
+body[data-ux-viewport="tablet-portrait"] .compactHeader{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-rows:53px 43px;
+  gap:0 7px;
+  padding:0 7px;
+  align-items:center;
+}
+body[data-ux-viewport="tablet-portrait"] .brandNav{
+  grid-column:1;grid-row:1;
+  width:auto;min-width:0;max-width:none;height:48px;padding:0 5px;
+}
+body[data-ux-viewport="tablet-portrait"] .brandNav .brandTitle{font-size:21px}
+body[data-ux-viewport="tablet-portrait"] .brandNav .brandSub{font-size:7px;letter-spacing:1.15px}
+body[data-ux-viewport="tablet-portrait"] .headerRight{grid-column:2;grid-row:1;gap:5px}
+body[data-ux-viewport="tablet-portrait"] .headerRight .headBtn{height:36px;padding:0 13px}
+body[data-ux-viewport="tablet-portrait"] .headerTabs{
+  grid-column:1/3;grid-row:2;
+  width:100%;height:43px;overflow-x:auto;justify-content:flex-start;
+  border-top:1px solid #0b222c;
+}
+body[data-ux-viewport="tablet-portrait"] .headerTabs .tab{
+  flex:0 0 auto;min-width:132px;height:42px;padding:0 15px;font-size:11px;
+}
+body[data-ux-viewport="tablet-portrait"] .panelPage{overflow-y:auto;overflow-x:hidden}
+body[data-ux-viewport="tablet-portrait"] #panelContent{height:auto;min-height:100%}
+body[data-ux-viewport="tablet-portrait"] .expPage{height:auto;min-height:100%;overflow:visible;align-content:start}
+body[data-ux-viewport="tablet-portrait"] .stream{display:flex;overflow-x:auto;min-width:0}
+body[data-ux-viewport="tablet-portrait"] .streamTitle{flex:0 0 142px;position:sticky;left:0;z-index:3;background:#031017}
+body[data-ux-viewport="tablet-portrait"] .streamItem{flex:0 0 104px;min-width:104px}
+body[data-ux-viewport="tablet-portrait"] .moreOverlay{padding-top:105px}
+body[data-ux-viewport="tablet-portrait"] .demoScenarioOverlay{padding-top:105px;padding-right:14px}
+
+/* Dashboard becomes a readable vertical workspace instead of shrinking all cards. */
+body[data-ux-viewport="tablet-portrait"] .dashboard{
+  display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;
+  min-height:0;gap:7px;padding-right:1px;align-content:initial;
+}
+body[data-ux-viewport="tablet-portrait"] .dashboard.hidden{display:none}
+body[data-ux-viewport="tablet-portrait"] .dashboard .row{flex:none;gap:7px}
+body[data-ux-viewport="tablet-portrait"] .row.top{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:292px}
+body[data-ux-viewport="tablet-portrait"] .row.top .tachCard{grid-column:1/-1;height:430px}
+body[data-ux-viewport="tablet-portrait"] .tachDial{width:min(88%,420px)}
+body[data-ux-viewport="tablet-portrait"] .tachValue{font-size:72px}
+body[data-ux-viewport="tablet-portrait"] .dial{width:min(86%,225px)}
+body[data-ux-viewport="tablet-portrait"] .dialValue{font-size:46px}
+body[data-ux-viewport="tablet-portrait"] .row.secondary{grid-template-columns:repeat(2,minmax(0,1fr))}
+body[data-ux-viewport="tablet-portrait"] .secondaryCard{min-height:158px}
+body[data-ux-viewport="tablet-portrait"] .secondaryLabel{display:block}
+body[data-ux-viewport="tablet-portrait"] .row.compact{grid-template-columns:repeat(2,minmax(0,1fr))}
+body[data-ux-viewport="tablet-portrait"] .compactCard{min-height:105px}
+body[data-ux-viewport="tablet-portrait"] .compactLabel{display:block}
+body[data-ux-viewport="tablet-portrait"] .row.outputs{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:138px;padding-bottom:2px}
+body[data-ux-viewport="tablet-portrait"] .row.outputs .cylinderCard{grid-column:1/-1;min-height:150px}
+body[data-ux-viewport="tablet-portrait"] .row.outputs .okCard{grid-column:1/-1;min-height:145px}
+
+/* Tuning: catalog + list remain together; secondary tools move below. */
+body[data-ux-viewport="tablet-portrait"] .tuningPage{
+  grid-template-columns:218px minmax(0,1fr);
+  grid-template-rows:minmax(820px,calc(100vh - 150px)) auto;
+  align-items:start;
+}
+body[data-ux-viewport="tablet-portrait"] .tuneCatalogSide{grid-column:1;grid-row:1;max-height:calc(100vh - 150px);position:sticky;top:0}
+body[data-ux-viewport="tablet-portrait"] .tuneWorkspace{grid-column:2;grid-row:1;min-height:820px}
+body[data-ux-viewport="tablet-portrait"] .tuneRight{
+  grid-column:1/3;grid-row:2;
+  display:grid;grid-template-columns:1.15fr 1fr .85fr;grid-template-rows:360px;gap:7px;
+}
+body[data-ux-viewport="tablet-portrait"] .tuneQuickCard,
+body[data-ux-viewport="tablet-portrait"] .tuneInspectorCard,
+body[data-ux-viewport="tablet-portrait"] .tuneDraftCard{min-height:0}
+body[data-ux-viewport="tablet-portrait"] .tuneToolbar{overflow-x:auto;white-space:nowrap}
+body[data-ux-viewport="tablet-portrait"] .tuneToolbar .spacer{min-width:8px}
+
+/* Tables: keep a useful wide 2D workspace, move secondary information beneath it. */
+body[data-ux-viewport="tablet-portrait"] .tablesPage{
+  height:auto;min-height:100%;overflow:visible;
+  grid-template-columns:218px minmax(0,1fr);
+  grid-template-rows:minmax(790px,calc(100vh - 150px)) auto auto;
+  grid-template-areas:"left main" "left right" "bottom bottom";
+}
+body[data-ux-viewport="tablet-portrait"] .tablesPage .tableSidebar{grid-area:left;max-height:calc(100vh - 150px);position:sticky;top:0}
+body[data-ux-viewport="tablet-portrait"] .tablesPage .tableWorkspace{grid-area:main;min-height:790px}
+body[data-ux-viewport="tablet-portrait"] .tablesPage .tableRight{
+  grid-area:right;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:300px auto;gap:7px;min-height:0;
+}
+body[data-ux-viewport="tablet-portrait"] .tableRight .tableOpsCard{grid-column:1/3;min-height:310px}
+body[data-ux-viewport="tablet-portrait"] .tablesPage .tableBottom{grid-area:bottom;min-height:220px;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:190px}
+body[data-ux-viewport="tablet-portrait"] .tableViewTabs,
+body[data-ux-viewport="tablet-portrait"] .tableTopToolbar{overflow-x:auto;white-space:nowrap}
+body[data-ux-viewport="tablet-portrait"] .tableSelectionBar{grid-template-columns:minmax(160px,1fr) repeat(4,38px) 90px 70px}
+
+/* Logging: channels and graphs stay side by side; cursor/info and marker tools stack below. */
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2{
+  height:auto;min-height:100%;overflow:visible;
+  grid-template-columns:210px minmax(0,1fr);
+  grid-template-rows:minmax(800px,calc(100vh - 150px)) auto auto;
+}
+body[data-ux-viewport="tablet-portrait"] .logSidebarV2{grid-column:1;grid-row:1/3;max-height:calc(100vh - 150px);position:sticky;top:0}
+body[data-ux-viewport="tablet-portrait"] .logMainV2{grid-column:2;grid-row:1;min-height:800px}
+body[data-ux-viewport="tablet-portrait"] .logRightV2{grid-column:2;grid-row:2;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:330px 260px;gap:7px}
+body[data-ux-viewport="tablet-portrait"] .logRightV2 .logRightCard:last-child{grid-column:1/3}
+body[data-ux-viewport="tablet-portrait"] .logBottomV2{grid-column:1/3;grid-row:3;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:225px}
+body[data-ux-viewport="tablet-portrait"] .logToolbar{overflow-x:auto;white-space:nowrap}
+body[data-ux-viewport="tablet-portrait"] .logGraphRowV2{grid-template-columns:118px minmax(0,1fr) 58px}
+
+/* Diagnostics and settings retain a stable sidebar, but are allowed to scroll naturally. */
+body[data-ux-viewport="tablet-portrait"] .diagnosticsPageV2{
+  height:auto;min-height:100%;overflow:visible;
+  grid-template-columns:210px minmax(0,1fr);
+  grid-template-rows:auto minmax(650px,auto) auto;
+}
+body[data-ux-viewport="tablet-portrait"] .diagV2Sidebar{max-height:calc(100vh - 150px);position:sticky;top:0}
+body[data-ux-viewport="tablet-portrait"] .diagV2Summary{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:60px}
+body[data-ux-viewport="tablet-portrait"] .diagV2SummaryTile:nth-child(n){display:flex}
+body[data-ux-viewport="tablet-portrait"] .diagV2Main{min-height:650px}
+body[data-ux-viewport="tablet-portrait"] .diagV2Bottom{min-height:245px}
+body[data-ux-viewport="tablet-portrait"] .settingsPageV2{height:auto;min-height:100%;grid-template-columns:220px minmax(0,1fr);align-items:start}
+body[data-ux-viewport="tablet-portrait"] .settingsSideV2{max-height:calc(100vh - 150px);position:sticky;top:0}
+body[data-ux-viewport="tablet-portrait"] .settingsWorkspaceV2{min-height:calc(100vh - 150px)}
+body[data-ux-viewport="tablet-portrait"] .settingsSectionV2,
+body[data-ux-viewport="tablet-portrait"] .settingsSectionV2.searchResults{grid-template-columns:1fr}
+
+/* --------------------------------------------------------------------------
+   Phone portrait — dedicated single-column workspace, tuned for SM-A137F class.
+   -------------------------------------------------------------------------- */
+body[data-ux-viewport="phone-portrait"] .app{
+  padding:var(--ux-safe-top) 4px calc(4px + var(--ux-safe-bottom));
+  grid-template-rows:90px minmax(0,1fr);gap:4px;
+}
+body[data-ux-viewport="phone-portrait"] .compactHeader{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:48px 40px;
+  gap:0 4px;padding:0 4px;align-items:center;
+}
+body[data-ux-viewport="phone-portrait"] .brandNav{grid-column:1;grid-row:1;min-width:0;max-width:none;width:auto;height:45px;padding:0 3px}
+body[data-ux-viewport="phone-portrait"] .logo{width:31px;height:31px;margin-right:7px}
+body[data-ux-viewport="phone-portrait"] .logo:after{inset:7px;border-width:3px}
+body[data-ux-viewport="phone-portrait"] .brandNav .brandTitle{font-size:18px}
+body[data-ux-viewport="phone-portrait"] .brandNav .brandSub{font-size:6px;letter-spacing:.8px;max-width:215px;overflow:hidden;text-overflow:ellipsis}
+body[data-ux-viewport="phone-portrait"] .headerRight{grid-column:2;grid-row:1;gap:3px}
+body[data-ux-viewport="phone-portrait"] .headerRight .headBtn{height:34px;padding:0 9px;font-size:10px}
+body[data-ux-viewport="phone-portrait"] .headerTabs{
+  grid-column:1/3;grid-row:2;height:40px;width:100%;overflow-x:auto;justify-content:flex-start;border-top:1px solid #0b222c;
+}
+body[data-ux-viewport="phone-portrait"] .headerTabs .tab{flex:0 0 auto;min-width:91px;height:39px;padding:0 9px;font-size:9px}
+body[data-ux-viewport="phone-portrait"] .panelPage{overflow-y:auto;overflow-x:hidden;border-radius:5px}
+body[data-ux-viewport="phone-portrait"] #panelContent{height:auto;min-height:100%}
+body[data-ux-viewport="phone-portrait"] .expPage{height:auto;min-height:100%;overflow:visible;display:flex;flex-direction:column;gap:5px}
+body[data-ux-viewport="phone-portrait"] .pCard{border-radius:6px}
+body[data-ux-viewport="phone-portrait"] .stream{display:flex;overflow-x:auto;border-radius:4px}
+body[data-ux-viewport="phone-portrait"] .streamTitle{flex:0 0 110px;position:sticky;left:0;z-index:3;background:#031017;padding:0 7px;font-size:8px}
+body[data-ux-viewport="phone-portrait"] .streamItem{flex:0 0 84px;min-width:84px;font-size:8px;gap:4px}
+body[data-ux-viewport="phone-portrait"] .streamItem:before{width:5px;height:5px}
+body[data-ux-viewport="phone-portrait"] .moreOverlay,
+body[data-ux-viewport="phone-portrait"] .demoScenarioOverlay{padding:94px 5px 5px;align-items:flex-start}
+body[data-ux-viewport="phone-portrait"] .morePanel,
+body[data-ux-viewport="phone-portrait"] .demoScenarioPanel{width:100%;max-height:calc(100vh - 100px)}
+body[data-ux-viewport="phone-portrait"] .demoScenarioGrid{grid-template-columns:1fr 1fr}
+
+body[data-ux-viewport="phone-portrait"] .dashboard{
+  display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;gap:5px;padding-right:1px;
+}
+body[data-ux-viewport="phone-portrait"] .dashboard.hidden{display:none}
+body[data-ux-viewport="phone-portrait"] .dashboard .row{flex:none;gap:5px}
+body[data-ux-viewport="phone-portrait"] .row.top{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:228px}
+body[data-ux-viewport="phone-portrait"] .row.top .tachCard{grid-column:1/-1;height:345px;padding:7px 8px}
+body[data-ux-viewport="phone-portrait"] .tachDial{width:min(94%,330px)}
+body[data-ux-viewport="phone-portrait"] .tachValue{font-size:62px}
+body[data-ux-viewport="phone-portrait"] .tachMeta{gap:28px;font-size:9px}
+body[data-ux-viewport="phone-portrait"] .tachMeta b{font-size:12px}
+body[data-ux-viewport="phone-portrait"] .primaryGauge{grid-template-rows:31px minmax(0,1fr) 29px;padding:6px}
+body[data-ux-viewport="phone-portrait"] .primaryHead .icon{width:25px;height:25px}
+body[data-ux-viewport="phone-portrait"] .primaryHead .gaugeLabel{font-size:8px;letter-spacing:.75px}
+body[data-ux-viewport="phone-portrait"] .dial{width:min(98%,175px)}
+body[data-ux-viewport="phone-portrait"] .dialValue{font-size:34px}
+body[data-ux-viewport="phone-portrait"] .dialUnit{font-size:13px;margin-top:5px}
+body[data-ux-viewport="phone-portrait"] .status{height:28px;font-size:10px}
+body[data-ux-viewport="phone-portrait"] .row.secondary{grid-template-columns:repeat(2,minmax(0,1fr))}
+body[data-ux-viewport="phone-portrait"] .secondaryCard{min-height:135px;grid-template-rows:40px minmax(0,1fr) 10px 24px}
+body[data-ux-viewport="phone-portrait"] .secondaryHead .icon{width:28px;height:28px}
+body[data-ux-viewport="phone-portrait"] .secondaryLabel{display:block;font-size:7px}
+body[data-ux-viewport="phone-portrait"] .secondaryValue{font-size:20px}
+body[data-ux-viewport="phone-portrait"] .row.compact{grid-template-columns:repeat(2,minmax(0,1fr))}
+body[data-ux-viewport="phone-portrait"] .compactCard{min-height:94px}
+body[data-ux-viewport="phone-portrait"] .compactLabel{display:block;font-size:7px}
+body[data-ux-viewport="phone-portrait"] .row.outputs{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:122px;padding-bottom:2px}
+body[data-ux-viewport="phone-portrait"] .outputCard.first{padding-left:32px}
+body[data-ux-viewport="phone-portrait"] .outputsTag{width:27px}
+body[data-ux-viewport="phone-portrait"] .row.outputs .cylinderCard,
+body[data-ux-viewport="phone-portrait"] .row.outputs .okCard{grid-column:1/-1;min-height:132px}
+
+/* Phone portrait page workspaces are intentionally independent single-column layouts. */
+body[data-ux-viewport="phone-portrait"] .tuningPage{display:flex;flex-direction:column}
+body[data-ux-viewport="phone-portrait"] .tuneCatalogSide{order:1;display:flex;max-height:none;padding:5px}
+body[data-ux-viewport="phone-portrait"] .tuneProjectMeta{display:none}
+body[data-ux-viewport="phone-portrait"] .tuneCategoryList{max-height:190px}
+body[data-ux-viewport="phone-portrait"] .tuneWorkspace{order:2;display:grid;min-height:720px;grid-template-rows:auto minmax(0,1fr) auto}
+body[data-ux-viewport="phone-portrait"] .tuneRight{order:3;display:flex;flex-direction:column;gap:5px}
+body[data-ux-viewport="phone-portrait"] .tuneQuickCard{height:430px}
+body[data-ux-viewport="phone-portrait"] .tuneInspectorCard{min-height:330px}
+body[data-ux-viewport="phone-portrait"] .tuneDraftCard{min-height:180px}
+body[data-ux-viewport="phone-portrait"] .tuneToolbar{height:auto;min-height:40px;overflow-x:auto;white-space:nowrap;padding:5px}
+body[data-ux-viewport="phone-portrait"] .tuneToolbarTitle{font-size:12px}
+body[data-ux-viewport="phone-portrait"] .tuneToolbar .spacer{display:none}
+body[data-ux-viewport="phone-portrait"] .tuneSetting{grid-template-columns:minmax(105px,1fr) minmax(135px,1fr) 50px;gap:4px;padding:4px}
+body[data-ux-viewport="phone-portrait"] .tuneLabel strong{font-size:9px}
+body[data-ux-viewport="phone-portrait"] .tuneLabel small{font-size:7px}
+body[data-ux-viewport="phone-portrait"] .tuneStatusLine{flex-wrap:wrap;height:auto;min-height:34px;padding:4px 6px;gap:4px 8px}
+body[data-ux-viewport="phone-portrait"] .tuneStatusLine .safe{width:100%;margin-left:0}
+body[data-ux-viewport="phone-portrait"] .tuneModal{padding:3px}
+body[data-ux-viewport="phone-portrait"] .tuneModalBox{width:100%;height:100%;border-radius:4px;grid-template-rows:38px auto minmax(0,1fr) 38px}
+body[data-ux-viewport="phone-portrait"] .tuneArrayTools{max-height:150px;overflow:auto}
+
+body[data-ux-viewport="phone-portrait"] .tablesPage{display:flex;flex-direction:column;height:auto;overflow:visible}
+body[data-ux-viewport="phone-portrait"] .tablesPage .tableSidebar{order:1;display:grid;height:315px;min-height:315px;position:relative}
+body[data-ux-viewport="phone-portrait"] .tablesPage .tableWorkspace{order:2;display:grid;min-height:660px}
+body[data-ux-viewport="phone-portrait"] .tablesPage .tableRight{order:3;display:flex;flex-direction:column;gap:5px}
+body[data-ux-viewport="phone-portrait"] .tableSurfaceCard{height:330px}
+body[data-ux-viewport="phone-portrait"] .tableInfoCard{max-height:270px}
+body[data-ux-viewport="phone-portrait"] .tableOpsCard{min-height:420px}
+body[data-ux-viewport="phone-portrait"] .tablesPage .tableBottom{order:4;display:flex;flex-direction:column;gap:5px;padding-top:17px}
+body[data-ux-viewport="phone-portrait"] .tableBottomCard{height:230px}
+body[data-ux-viewport="phone-portrait"] .tableTopToolbar,
+body[data-ux-viewport="phone-portrait"] .tableViewTabs{overflow-x:auto;white-space:nowrap}
+body[data-ux-viewport="phone-portrait"] .tableSelectionBar{display:grid;grid-template-columns:1fr repeat(2,36px);grid-auto-rows:31px;height:auto}
+body[data-ux-viewport="phone-portrait"] .tableSelectionSummary{grid-column:1/4}
+body[data-ux-viewport="phone-portrait"] .tableSelectionBar input{grid-column:1/3}
+body[data-ux-viewport="phone-portrait"] .tableGridScroll{--tbl-cell-w:54px;--tbl-cell-h:30px;--tbl-font:9px}
+body[data-ux-viewport="phone-portrait"] .tableBottomFoldHandle{min-width:190px}
+body[data-ux-viewport="phone-portrait"] .tableRevealHandle.left,
+body[data-ux-viewport="phone-portrait"] .tableRevealHandle.right{height:95px}
+
+body[data-ux-viewport="phone-portrait"] .loggingPageV2{display:flex;flex-direction:column;height:auto;overflow:visible}
+body[data-ux-viewport="phone-portrait"] .logSidebarV2{order:1;display:grid;height:420px;min-height:420px;position:relative}
+body[data-ux-viewport="phone-portrait"] .logMainV2{order:2;display:grid;min-height:760px}
+body[data-ux-viewport="phone-portrait"] .logRightV2{order:3;display:flex;flex-direction:column;gap:5px}
+body[data-ux-viewport="phone-portrait"] .logRightCard{min-height:260px}
+body[data-ux-viewport="phone-portrait"] .logBottomV2{order:4;display:flex;flex-direction:column;gap:5px}
+body[data-ux-viewport="phone-portrait"] .logEventsV2,
+body[data-ux-viewport="phone-portrait"] .logTimelineCard,
+body[data-ux-viewport="phone-portrait"] .logMarkerCard,
+body[data-ux-viewport="phone-portrait"] .logPlaybackCard{height:260px}
+body[data-ux-viewport="phone-portrait"] .logToolbar{height:auto;min-height:42px;overflow-x:auto;white-space:nowrap}
+body[data-ux-viewport="phone-portrait"] .logGraphRowV2{grid-template-columns:92px minmax(0,1fr) 48px}
+body[data-ux-viewport="phone-portrait"] .logGraphLabelV2{padding:3px}
+body[data-ux-viewport="phone-portrait"] .logGraphNowV2 b{font-size:11px}
+
+body[data-ux-viewport="phone-portrait"] .diagnosticsPageV2{display:flex;flex-direction:column;height:auto;overflow:visible;gap:5px}
+body[data-ux-viewport="phone-portrait"] .diagV2Sidebar{order:1;display:flex;flex-direction:column;max-height:none;position:relative}
+body[data-ux-viewport="phone-portrait"] .diagV2Nav{display:grid;grid-template-columns:1fr 1fr;max-height:none;overflow:visible;padding:4px}
+body[data-ux-viewport="phone-portrait"] .diagV2NavItem{min-height:58px}
+body[data-ux-viewport="phone-portrait"] .diagV2SidebarActions{display:grid;grid-template-columns:1fr 1fr}
+body[data-ux-viewport="phone-portrait"] .diagV2Summary{order:2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:62px}
+body[data-ux-viewport="phone-portrait"] .diagV2SummaryTile:nth-child(n){display:flex}
+body[data-ux-viewport="phone-portrait"] .diagV2Main{order:3;min-height:620px}
+body[data-ux-viewport="phone-portrait"] .diagV2Bottom{order:4;display:flex;flex-direction:column;gap:5px;min-height:0}
+body[data-ux-viewport="phone-portrait"] .diagV2BottomCard{min-height:260px;display:block!important}
+body[data-ux-viewport="phone-portrait"] .diagV2Wave,
+body[data-ux-viewport="phone-portrait"] .diagV2Wave.combo{height:230px}
+body[data-ux-viewport="phone-portrait"] .diagV2StatusGrid,
+body[data-ux-viewport="phone-portrait"] .diagV2InfoGrid,
+body[data-ux-viewport="phone-portrait"] .diagV2SensorList,
+body[data-ux-viewport="phone-portrait"] .diagV2Trends.context{grid-template-columns:1fr}
+body[data-ux-viewport="phone-portrait"] .diagV2Trends.context .diagV2Trend:nth-child(n){display:block}
+
+body[data-ux-viewport="phone-portrait"] .settingsPageV2{display:flex;flex-direction:column;height:auto;overflow:visible;gap:5px}
+body[data-ux-viewport="phone-portrait"] .settingsSideV2{order:1;display:flex;max-height:none;position:relative}
+body[data-ux-viewport="phone-portrait"] .settingsNavV2{display:grid;grid-template-columns:1fr 1fr;max-height:390px;overflow:auto;padding:0 4px 5px}
+body[data-ux-viewport="phone-portrait"] .settingsNavItemV2{min-height:58px;grid-template-columns:25px 1fr}
+body[data-ux-viewport="phone-portrait"] .settingsNavBadgeV2{display:none}
+body[data-ux-viewport="phone-portrait"] .settingsSideFootV2{display:none}
+body[data-ux-viewport="phone-portrait"] .settingsWorkspaceV2{order:2;display:grid;min-height:720px}
+body[data-ux-viewport="phone-portrait"] .settingsHeadV2{height:auto;min-height:54px;flex-wrap:wrap;padding:6px}
+body[data-ux-viewport="phone-portrait"] .settingsHeadV2 .spacer{display:none}
+body[data-ux-viewport="phone-portrait"] .settingsHeadStatusV2{margin-left:auto}
+body[data-ux-viewport="phone-portrait"] .settingsSectionV2,
+body[data-ux-viewport="phone-portrait"] .settingsSectionV2.searchResults{grid-template-columns:1fr}
+body[data-ux-viewport="phone-portrait"] .settingRowV2{grid-template-columns:1fr;gap:5px;padding:7px 0}
+body[data-ux-viewport="phone-portrait"] .settingControlV2{justify-content:flex-start}
+body[data-ux-viewport="phone-portrait"] .settingControlV2 select,
+body[data-ux-viewport="phone-portrait"] .settingControlV2 input[type=number],
+body[data-ux-viewport="phone-portrait"] .settingControlV2 input[type=text]{width:100%;max-width:none;min-width:0}
+body[data-ux-viewport="phone-portrait"] .settingControlV2 input[type=range]{width:100%}
+body[data-ux-viewport="phone-portrait"] .settingsModalV2{padding:4px}
+body[data-ux-viewport="phone-portrait"] .settingsModalBoxV2{width:100%;height:100%}
+
+/* --------------------------------------------------------------------------
+   Phone landscape — compact header and two-column workspaces where useful.
+   -------------------------------------------------------------------------- */
+body[data-ux-viewport="phone-landscape"] .app{
+  padding:var(--ux-safe-top) 3px calc(3px + var(--ux-safe-bottom));
+  grid-template-rows:48px minmax(0,1fr);gap:3px;
+}
+body[data-ux-viewport="phone-landscape"] .compactHeader{display:flex;height:48px;gap:3px;padding:0 3px}
+body[data-ux-viewport="phone-landscape"] .brandNav{flex:0 0 132px;min-width:132px;max-width:132px;height:44px;padding:0 2px}
+body[data-ux-viewport="phone-landscape"] .logo{width:28px;height:28px;margin-right:5px}
+body[data-ux-viewport="phone-landscape"] .logo:after{inset:6px;border-width:3px}
+body[data-ux-viewport="phone-landscape"] .brandNav .brandTitle{font-size:14px}
+body[data-ux-viewport="phone-landscape"] .brandNav .brandSub{display:none}
+body[data-ux-viewport="phone-landscape"] .headerTabs{height:44px;overflow-x:auto;justify-content:flex-start;flex:1}
+body[data-ux-viewport="phone-landscape"] .headerTabs .tab{flex:0 0 auto;min-width:68px;height:44px;padding:0 6px;font-size:8px}
+body[data-ux-viewport="phone-landscape"] .headerRight{gap:3px}
+body[data-ux-viewport="phone-landscape"] .headerRight .headBtn{height:34px;padding:0 7px;font-size:8px}
+body[data-ux-viewport="phone-landscape"] .panelPage{overflow-y:auto;overflow-x:hidden;border-radius:4px}
+body[data-ux-viewport="phone-landscape"] #panelContent{height:auto;min-height:100%}
+body[data-ux-viewport="phone-landscape"] .expPage{height:auto;min-height:100%;overflow:visible;align-content:start}
+body[data-ux-viewport="phone-landscape"] .stream{display:flex;overflow-x:auto}
+body[data-ux-viewport="phone-landscape"] .streamTitle{flex:0 0 96px;position:sticky;left:0;z-index:3;background:#031017;font-size:7px;padding:0 5px}
+body[data-ux-viewport="phone-landscape"] .streamItem{flex:0 0 73px;min-width:73px;font-size:7px;gap:3px}
+body[data-ux-viewport="phone-landscape"] .moreOverlay,
+body[data-ux-viewport="phone-landscape"] .demoScenarioOverlay{padding:51px 4px 4px}
+body[data-ux-viewport="phone-landscape"] .morePanel,
+body[data-ux-viewport="phone-landscape"] .demoScenarioPanel{max-height:calc(100vh - 55px)}
+
+body[data-ux-viewport="phone-landscape"] .dashboard{display:flex;flex-direction:column;overflow-y:auto;gap:4px}
+body[data-ux-viewport="phone-landscape"] .dashboard.hidden{display:none}
+body[data-ux-viewport="phone-landscape"] .dashboard .row{flex:none;gap:4px}
+body[data-ux-viewport="phone-landscape"] .row.top{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:220px}
+body[data-ux-viewport="phone-landscape"] .row.top .tachCard{grid-column:span 2;height:220px}
+body[data-ux-viewport="phone-landscape"] .tachDial{width:min(92%,210px)}
+body[data-ux-viewport="phone-landscape"] .tachValue{font-size:43px}
+body[data-ux-viewport="phone-landscape"] .tachUnit{font-size:14px;margin-top:5px}
+body[data-ux-viewport="phone-landscape"] .tachSubUnit{font-size:8px}
+body[data-ux-viewport="phone-landscape"] .tachMeta{gap:20px;font-size:7px}
+body[data-ux-viewport="phone-landscape"] .tachMeta b{font-size:10px}
+body[data-ux-viewport="phone-landscape"] .primaryGauge{grid-template-rows:28px minmax(0,1fr) 26px;padding:4px}
+body[data-ux-viewport="phone-landscape"] .primaryHead .icon{width:23px;height:23px}
+body[data-ux-viewport="phone-landscape"] .primaryHead .gaugeLabel{font-size:7px;letter-spacing:.5px}
+body[data-ux-viewport="phone-landscape"] .dial{width:min(95%,150px)}
+body[data-ux-viewport="phone-landscape"] .dialValue{font-size:29px}
+body[data-ux-viewport="phone-landscape"] .dialUnit{font-size:10px;margin-top:4px}
+body[data-ux-viewport="phone-landscape"] .dialScale{font-size:7px}
+body[data-ux-viewport="phone-landscape"] .status{height:25px;font-size:8px}
+body[data-ux-viewport="phone-landscape"] .row.secondary,
+body[data-ux-viewport="phone-landscape"] .row.compact{grid-template-columns:repeat(4,minmax(0,1fr))}
+body[data-ux-viewport="phone-landscape"] .secondaryCard{min-height:112px}
+body[data-ux-viewport="phone-landscape"] .compactCard{min-height:82px}
+body[data-ux-viewport="phone-landscape"] .row.outputs{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:110px}
+body[data-ux-viewport="phone-landscape"] .row.outputs .cylinderCard{grid-column:span 2}
+body[data-ux-viewport="phone-landscape"] .row.outputs .okCard{grid-column:span 1}
+
+body[data-ux-viewport="phone-landscape"] .tuningPage{grid-template-columns:160px minmax(0,1fr);grid-template-rows:minmax(560px,auto) auto}
+body[data-ux-viewport="phone-landscape"] .tuneCatalogSide{grid-column:1;grid-row:1;max-height:calc(100vh - 82px);position:sticky;top:0;padding:4px}
+body[data-ux-viewport="phone-landscape"] .tuneProjectMeta{display:none}
+body[data-ux-viewport="phone-landscape"] .tuneWorkspace{grid-column:2;grid-row:1;min-height:560px}
+body[data-ux-viewport="phone-landscape"] .tuneRight{grid-column:1/3;grid-row:2;display:grid;grid-template-columns:1.15fr 1fr .85fr;grid-template-rows:300px}
+body[data-ux-viewport="phone-landscape"] .tuneToolbar{overflow-x:auto;white-space:nowrap}
+body[data-ux-viewport="phone-landscape"] .tuneSetting{grid-template-columns:minmax(110px,1fr) minmax(130px,.9fr) 50px;gap:4px;padding:3px}
+body[data-ux-viewport="phone-landscape"] .tuneModal{padding:2px}
+body[data-ux-viewport="phone-landscape"] .tuneModalBox{width:100%;height:100%;border-radius:3px}
+
+body[data-ux-viewport="phone-landscape"] .tablesPage{height:auto;min-height:100%;grid-template-columns:160px minmax(0,1fr);grid-template-rows:minmax(560px,auto) auto auto;grid-template-areas:"left main" "left right" "bottom bottom";overflow:visible}
+body[data-ux-viewport="phone-landscape"] .tablesPage .tableSidebar{grid-area:left;max-height:calc(100vh - 82px);position:sticky;top:0}
+body[data-ux-viewport="phone-landscape"] .tablesPage .tableWorkspace{grid-area:main;min-height:560px}
+body[data-ux-viewport="phone-landscape"] .tablesPage .tableRight{grid-area:right;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:260px auto}
+body[data-ux-viewport="phone-landscape"] .tableRight .tableOpsCard{grid-column:1/3;min-height:300px}
+body[data-ux-viewport="phone-landscape"] .tablesPage .tableBottom{grid-area:bottom;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:170px}
+body[data-ux-viewport="phone-landscape"] .tableTopToolbar,
+body[data-ux-viewport="phone-landscape"] .tableViewTabs{overflow-x:auto;white-space:nowrap}
+
+body[data-ux-viewport="phone-landscape"] .loggingPageV2{height:auto;min-height:100%;grid-template-columns:160px minmax(0,1fr);grid-template-rows:minmax(570px,auto) auto auto;overflow:visible}
+body[data-ux-viewport="phone-landscape"] .logSidebarV2{grid-column:1;grid-row:1/3;max-height:calc(100vh - 82px);position:sticky;top:0}
+body[data-ux-viewport="phone-landscape"] .logMainV2{grid-column:2;grid-row:1;min-height:570px}
+body[data-ux-viewport="phone-landscape"] .logRightV2{grid-column:2;grid-row:2;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:230px}
+body[data-ux-viewport="phone-landscape"] .logBottomV2{grid-column:1/3;grid-row:3;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:190px}
+body[data-ux-viewport="phone-landscape"] .logToolbar{overflow-x:auto;white-space:nowrap}
+body[data-ux-viewport="phone-landscape"] .logGraphRowV2{grid-template-columns:90px minmax(0,1fr) 45px}
+
+body[data-ux-viewport="phone-landscape"] .diagnosticsPageV2{height:auto;min-height:100%;grid-template-columns:170px minmax(0,1fr);grid-template-rows:auto minmax(520px,auto) auto;overflow:visible}
+body[data-ux-viewport="phone-landscape"] .diagV2Sidebar{max-height:calc(100vh - 82px);position:sticky;top:0}
+body[data-ux-viewport="phone-landscape"] .diagV2Summary{grid-template-columns:repeat(4,minmax(0,1fr))}
+body[data-ux-viewport="phone-landscape"] .diagV2SummaryTile:nth-child(n){display:flex}
+body[data-ux-viewport="phone-landscape"] .diagV2Main{min-height:520px}
+body[data-ux-viewport="phone-landscape"] .diagV2Bottom{min-height:210px}
+
+body[data-ux-viewport="phone-landscape"] .settingsPageV2{height:auto;min-height:100%;grid-template-columns:175px minmax(0,1fr);align-items:start}
+body[data-ux-viewport="phone-landscape"] .settingsSideV2{max-height:calc(100vh - 82px);position:sticky;top:0}
+body[data-ux-viewport="phone-landscape"] .settingsWorkspaceV2{min-height:560px}
+body[data-ux-viewport="phone-landscape"] .settingsSectionV2,
+body[data-ux-viewport="phone-landscape"] .settingsSectionV2.searchResults{grid-template-columns:1fr}
+body[data-ux-viewport="phone-landscape"] .settingRowV2{grid-template-columns:minmax(120px,1fr) minmax(150px,48%)}
+
+/* Full-screen table/log modes remain authoritative at every responsive size. */
+body.tableFullscreen .app,body.logFullscreen .app{grid-template-rows:minmax(0,1fr)!important;padding:0!important;gap:0!important}
+body.tableFullscreen .header,body.tableFullscreen .stream,
+body.logFullscreen .header,body.logFullscreen .stream{display:none!important}
+
+
+/* ========================================================================== 
+   r26 phone workflow corrections
+   Hide/reveal controls are tablet-only. Phone layouts always expose content.
+   ========================================================================== */
+body[data-ux-viewport^="phone-"] .tablePanelControls [data-panel],
+body[data-ux-viewport^="phone-"] .tablePanelControls [data-table-action="focusTable"],
+body[data-ux-viewport^="phone-"] .tableFoldButton,
+body[data-ux-viewport^="phone-"] .tableRevealHandle,
+body[data-ux-viewport^="phone-"] .tableBottomFoldHandle,
+body[data-ux-viewport^="phone-"] .tableBottomRevealRail,
+body[data-ux-viewport^="phone-"] .logPanelControls [data-panel],
+body[data-ux-viewport^="phone-"] .logPanelControls [data-log-action="focus"],
+body[data-ux-viewport^="phone-"] .logReveal,
+body[data-ux-viewport^="phone-"] .logBottomFoldHandle,
+body[data-ux-viewport^="phone-"] .logBottomRevealRail,
+body[data-ux-viewport^="phone-"] .diagBottomFoldHandle,
+body[data-ux-viewport^="phone-"] .diagBottomRevealRail{display:none!important}
+body[data-ux-viewport^="phone-"] .tablesPage.hideLeft .tableSidebar,
+body[data-ux-viewport^="phone-"] .tablesPage.hideRight .tableRight,
+body[data-ux-viewport^="phone-"] .tablesPage.hideBottom .tableBottom,
+body[data-ux-viewport^="phone-"] .loggingPageV2.hideLeft .logSidebarV2,
+body[data-ux-viewport^="phone-"] .loggingPageV2.hideRight .logRightV2,
+body[data-ux-viewport^="phone-"] .loggingPageV2.hideBottom .logBottomV2,
+body[data-ux-viewport^="phone-"] .diagnosticsPageV2.hideBottom .diagV2Bottom{display:inherit!important}
+body[data-ux-viewport^="phone-"] .tableBottom,
+body[data-ux-viewport^="phone-"] .logBottomV2,
+body[data-ux-viewport^="phone-"] .diagV2Bottom{padding-top:0!important}
+
+/* Diagnostics symbols and long headings scale with the adjacent phone text. */
+body[data-ux-viewport="phone-portrait"] .diagV2NavItem{grid-template-columns:42px minmax(0,1fr) auto;min-height:68px;padding:7px}
+body[data-ux-viewport="phone-portrait"] .diagV2NavIcon{font-size:29px;line-height:1;min-width:38px}
+body[data-ux-viewport="phone-portrait"] .diagV2SummaryIcon{font-size:25px}
+body[data-ux-viewport="phone-landscape"] .diagV2NavItem{grid-template-columns:36px minmax(0,1fr) auto;min-height:58px}
+body[data-ux-viewport="phone-landscape"] .diagV2NavIcon{font-size:25px;line-height:1;min-width:32px}
+body[data-ux-viewport="phone-landscape"] .diagV2SummaryIcon{font-size:22px}
+body[data-ux-viewport^="phone-"] .diagV2MainHead.longTitle{min-height:45px;padding-block:5px;align-items:center;flex-wrap:wrap}
+body[data-ux-viewport^="phone-"] .diagV2MainHead.longTitle b{font-size:9px;line-height:1.12;max-width:58%;letter-spacing:.25px}
+body[data-ux-viewport^="phone-"] .diagV2MainHead.longTitle small{font-size:7px;max-width:36%;line-height:1.12}
+
+/* Settings phone navigation icons and complete content flow. */
+body[data-ux-viewport="phone-portrait"] .settingsNavItemV2{grid-template-columns:42px minmax(0,1fr);min-height:68px;padding:7px}
+body[data-ux-viewport="phone-portrait"] .settingsNavIconV2{font-size:28px;line-height:1;min-width:38px}
+body[data-ux-viewport="phone-landscape"] .settingsNavItemV2{grid-template-columns:36px minmax(0,1fr) auto;min-height:58px}
+body[data-ux-viewport="phone-landscape"] .settingsNavIconV2{font-size:24px;line-height:1;min-width:32px}
+body[data-ux-viewport^="phone-"] .settingsSideV2{overflow:visible}
+body[data-ux-viewport^="phone-"] .settingsWorkspaceV2{height:auto!important;min-height:0!important;overflow:visible!important;grid-template-rows:auto auto auto!important}
+body[data-ux-viewport^="phone-"] .settingsHeadV2{position:sticky;top:0;z-index:14;background:#04131a}
+body[data-ux-viewport^="phone-"] .settingsBodyV2{overflow:visible!important;max-height:none!important;height:auto!important}
+body[data-ux-viewport^="phone-"] .settingsSectionV2,
+body[data-ux-viewport^="phone-"] .settingsGroupV2,
+body[data-ux-viewport^="phone-"] .settingsGroupBodyV2{height:auto;max-height:none;overflow:visible}
+body[data-ux-viewport="phone-portrait"] .settingsNavV2{max-height:none;overflow:visible}
+
+/* r26 retained page DOM: avoids rebuilding complex workspaces during every swipe. */
+.cachedPanelPage{display:none}.cachedPanelPage.active{display:contents}
+
+/* r26 compositor-backed page navigation. Heavy workspaces remain cached and only
+   the active page is refreshed; supported WebViews animate snapshots rather than
+   repainting a complete table/graph DOM during the committed transition. */
+.dashboard:not(.hidden),.panelPage.active{view-transition-name:ux-page-content}
+.pageSwipeSurface{will-change:transform;backface-visibility:hidden;transform:translateZ(0);contain:paint}
+::view-transition-group(ux-page-content){animation-duration:175ms;animation-timing-function:cubic-bezier(.2,.78,.24,1)}
+body.pageSwipeForward::view-transition-old(ux-page-content){animation:uxPageOldForward 175ms cubic-bezier(.2,.78,.24,1) both}
+body.pageSwipeForward::view-transition-new(ux-page-content){animation:uxPageNewForward 175ms cubic-bezier(.2,.78,.24,1) both}
+body.pageSwipeBack::view-transition-old(ux-page-content){animation:uxPageOldBack 175ms cubic-bezier(.2,.78,.24,1) both}
+body.pageSwipeBack::view-transition-new(ux-page-content){animation:uxPageNewBack 175ms cubic-bezier(.2,.78,.24,1) both}
+@keyframes uxPageOldForward{to{transform:translate3d(-5.5%,0,0);opacity:.72}}
+@keyframes uxPageNewForward{from{transform:translate3d(5.5%,0,0);opacity:.72}}
+@keyframes uxPageOldBack{to{transform:translate3d(5.5%,0,0);opacity:.72}}
+@keyframes uxPageNewBack{from{transform:translate3d(-5.5%,0,0);opacity:.72}}
+body.reducedMotion ::view-transition-group(ux-page-content){animation-duration:1ms!important}
+
+/* ========================================================================== 
+   r27 tablet panel-state reflow
+   Responsive portrait layouts must not override hidden-panel grid states.
+   ========================================================================== */
+body[data-ux-viewport="tablet-portrait"] .tablesPage.hideLeft .tableSidebar,
+body[data-ux-viewport="tablet-portrait"] .tablesPage.hideRight .tableRight,
+body[data-ux-viewport="tablet-portrait"] .tablesPage.hideBottom .tableBottom,
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideLeft .logSidebarV2,
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideRight .logRightV2,
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideBottom .logBottomV2,
+body[data-ux-viewport="tablet-portrait"] .diagnosticsPageV2.hideBottom .diagV2Bottom{display:none!important}
+
+body[data-ux-viewport="tablet-portrait"] .tablesPage.hideLeft{
+  grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(790px,calc(100vh - 150px)) auto auto;
+  grid-template-areas:"main" "right" "bottom";
+}
+body[data-ux-viewport="tablet-portrait"] .tablesPage.hideRight{
+  grid-template-columns:218px minmax(0,1fr);grid-template-rows:minmax(790px,calc(100vh - 150px)) auto;
+  grid-template-areas:"left main" "bottom bottom";
+}
+body[data-ux-viewport="tablet-portrait"] .tablesPage.hideBottom{
+  grid-template-columns:218px minmax(0,1fr);grid-template-rows:minmax(790px,calc(100vh - 150px)) auto;
+  grid-template-areas:"left main" "left right";
+}
+body[data-ux-viewport="tablet-portrait"] .tablesPage.hideLeft.hideRight{
+  grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(790px,calc(100vh - 150px)) auto;
+  grid-template-areas:"main" "bottom";
+}
+body[data-ux-viewport="tablet-portrait"] .tablesPage.hideLeft.hideBottom{
+  grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(790px,calc(100vh - 150px)) auto;
+  grid-template-areas:"main" "right";
+}
+body[data-ux-viewport="tablet-portrait"] .tablesPage.hideRight.hideBottom{
+  grid-template-columns:218px minmax(0,1fr);grid-template-rows:minmax(790px,calc(100vh - 150px));
+  grid-template-areas:"left main";
+}
+body[data-ux-viewport="tablet-portrait"] .tablesPage.hideLeft.hideRight.hideBottom{
+  grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(790px,calc(100vh - 150px));grid-template-areas:"main";
+}
+
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideLeft{
+  grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(800px,calc(100vh - 150px)) auto auto;
+}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideLeft .logMainV2{grid-column:1;grid-row:1}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideLeft .logRightV2{grid-column:1;grid-row:2}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideLeft .logBottomV2{grid-column:1;grid-row:3}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideRight{
+  grid-template-columns:210px minmax(0,1fr);grid-template-rows:minmax(800px,calc(100vh - 150px)) auto;
+}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideRight .logSidebarV2{grid-column:1;grid-row:1}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideRight .logMainV2{grid-column:2;grid-row:1}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideRight .logBottomV2{grid-column:1/3;grid-row:2}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideBottom{
+  grid-template-rows:minmax(800px,calc(100vh - 150px)) auto 30px;
+}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideBottom .logSidebarV2{grid-row:1/3}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideBottom .logBottomRevealRail{display:flex;grid-column:1/3;grid-row:3}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideLeft.hideRight{grid-template-columns:minmax(0,1fr)}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideLeft.hideRight .logMainV2{grid-column:1;grid-row:1}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideLeft.hideRight .logBottomV2{grid-column:1;grid-row:2}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideLeft.hideRight.hideBottom{grid-template-rows:minmax(800px,calc(100vh - 150px)) 30px}
+body[data-ux-viewport="tablet-portrait"] .loggingPageV2.hideLeft.hideRight.hideBottom .logBottomRevealRail{grid-column:1;grid-row:2}
+
+body[data-ux-viewport="tablet-portrait"] .diagnosticsPageV2.hideBottom{
+  grid-template-rows:auto minmax(650px,auto) 30px;
+}
+body[data-ux-viewport="tablet-portrait"] .diagnosticsPageV2.hideBottom .diagV2Sidebar{grid-row:1/4}
+body[data-ux-viewport="tablet-portrait"] .diagnosticsPageV2.hideBottom .diagBottomRevealRail{display:flex;grid-column:2;grid-row:3}
+body[data-ux-viewport="tablet-portrait"] .diagnosticsPageV2.noContextBottom{
+  grid-template-rows:auto minmax(650px,auto);
+}
+body[data-ux-viewport="tablet-portrait"] .diagnosticsPageV2.noContextBottom .diagV2Sidebar{grid-row:1/3}
