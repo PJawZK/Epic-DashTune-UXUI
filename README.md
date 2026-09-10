@@ -33,9 +33,13 @@ The sole accepted APK baseline is **r31, unchanged**:
 
 The r31 APK is intentionally used **as built and tested**. Its internal app label, packaged assets, native code, signing identity and version metadata must not be renamed, patched, rebuilt or replaced for publication.
 
-The attempted r32 branding/rebuild path is rejected and is not an accepted release.
-
 The separate full application package remains `com.buttonbox.ble.jz`. Do not uninstall or modify it when testing this UX application.
+
+## About the discarded r32 attempt
+
+`r32` was an internal failed branding/rebuild experiment created after r31. It was rejected because it changed the validated APK instead of preserving the accepted r31 native package. It is **not an accepted release, not a successor baseline, and should not be installed or distributed**.
+
+Future work starts from accepted r31.
 
 ## GitHub release policy
 
@@ -43,11 +47,31 @@ Accepted test APKs are published as normal GitHub Releases, not as GitHub prerel
 
 Using a normal release keeps the download visible on the repository front page and makes the accepted APK easy for testers to find. This does not change the experimental status, scope limitations, or lack of production guarantees.
 
-## Current repository content
+## Source
 
-`main` currently contains the accepted r31 identity, verification records, release documentation and project policy. The recovered editable r31 source tree has **not yet been imported into normal browsable repository paths**.
+The preserved r31 source tree is now imported under:
 
-Until that import is completed, this repository must not be described as source-complete. The exact accepted APK and its checksum remain authoritative for testing, while the separately preserved r31 source archive remains the source-restoration authority.
+`source/r31/`
+
+Direct browser link:
+
+https://github.com/PJawZK/Epic-DashTune-UXUI/tree/main/source/r31
+
+The repository also contains the compact preserved source archive:
+
+`source/r31/EpicDash-UX-Source-r31-lean.tar.xz`
+
+The imported tree was checked against the preserved r31 source at Git blob level: **70/70 files match exactly, with zero missing files and zero byte differences**.
+
+### Important source provenance
+
+The editable HTML/CSS/JavaScript and related packaged UX assets are the developed r31 source assets and were verified against the released APK where recorded by the r31 verification process.
+
+However, the original working UX APK was produced through APK-level development using an already compiled native base. A complete original Kotlin/native source tree for that native layer was never preserved.
+
+Therefore the Android project under `source/r31/` is an **honest clean source reconstruction/wrapper**, not a claim that rebuilding it will reproduce the released r31 APK byte-for-byte or reproduce all native behavior.
+
+In particular, the clean wrapper does not fully reproduce the released APK's native USB, BLE, MSL and diagnostics bridge implementation. The unchanged released r31 APK remains authoritative for native behavior and public testing.
 
 ## Safety boundary
 
@@ -61,12 +85,6 @@ The UX experiment is designed around a strict read-only ECU boundary. It must no
 - ECU configuration changes.
 
 Only one application should own the ECU USB connection at a time.
-
-## Source provenance
-
-The working UX test APK was produced as an APK-level experiment rather than from a preserved dedicated native source repository. Recovered source and documentation may be used for inspection and future development, but they must not be represented as a byte-for-byte replacement for the accepted r31 APK.
-
-The accepted r31 APK and its checksum are authoritative for public testing.
 
 ## Repository policy
 
