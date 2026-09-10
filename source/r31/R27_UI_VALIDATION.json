@@ -1,0 +1,363 @@
+{
+  "profiles": [
+    "tablet-landscape",
+    "tablet-portrait",
+    "phone-portrait",
+    "phone-landscape"
+  ],
+  "checks_total": 70,
+  "checks_passed": 70,
+  "checks_failed": 0,
+  "results": [
+    {
+      "name": "tablet-landscape: no initial JS errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tablet-landscape: app has two rows",
+      "ok": true,
+      "detail": "60px 885px"
+    },
+    {
+      "name": "tablet-landscape: gauge context menu suppressed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tablet-landscape: 12 cylinder display",
+      "ok": true,
+      "detail": "{'ign': 12, 'inj': 12, 'bad': 12, 'label': 'IGNITION \u2022 FAULT \u2022 CYLINDER NOT REPORTED'}"
+    },
+    {
+      "name": "tablet-landscape: global ignition fault explicit",
+      "ok": true,
+      "detail": "{'ign': 12, 'inj': 12, 'bad': 12, 'label': 'IGNITION \u2022 FAULT \u2022 CYLINDER NOT REPORTED'}"
+    },
+    {
+      "name": "tablet-landscape: table operations reachable",
+      "ok": true,
+      "detail": "{'client': 205, 'scroll': 251, 'children': 5}"
+    },
+    {
+      "name": "tablet-landscape: live selection reachable",
+      "ok": true,
+      "detail": "{'client': 119, 'scroll': 176, 'children': 8}"
+    },
+    {
+      "name": "tablet-landscape: 3D modal opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tablet-landscape: modal close isolated",
+      "ok": true,
+      "detail": "modal=True,more=True"
+    },
+    {
+      "name": "tablet-landscape: table haptic bridge",
+      "ok": true,
+      "detail": "['range', 'range']"
+    },
+    {
+      "name": "tablet-landscape: table panel reflow",
+      "ok": true,
+      "detail": "{'w': 1022, 'h': 885}->{'w': 1347, 'h': 885, 'right': 'none', 'cls': 'expPage tablesPage hideRight'}"
+    },
+    {
+      "name": "tablet-landscape: 3 default + 3 custom presets",
+      "ok": true,
+      "detail": "def=3,custom=3"
+    },
+    {
+      "name": "tablet-landscape: graph-limit prompt",
+      "ok": true,
+      "detail": "Graph limit reached (8). Remove a graph or raise the limit in Settings."
+    },
+    {
+      "name": "tablet-landscape: logging panel reflow",
+      "ok": true,
+      "detail": "{'cls': 'expPage loggingPageV2 hideRight', 'right': 'none'}"
+    },
+    {
+      "name": "tablet-landscape: detailed thin crank trace",
+      "ok": true,
+      "detail": "{'stroke': '0.82', 'd': 14487}"
+    },
+    {
+      "name": "tablet-landscape: diagnostics panel reflow",
+      "ok": true,
+      "detail": "{'cls': 'diagnosticsPageV2 hideBottom', 'bottom': 'none'}"
+    },
+    {
+      "name": "tablet-landscape: gauge limits exposed",
+      "ok": true,
+      "detail": "9"
+    },
+    {
+      "name": "tablet-landscape: table haptic setting exposed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tablet-landscape: no runtime JS errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tablet-portrait: no initial JS errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tablet-portrait: app has two rows",
+      "ok": true,
+      "detail": "98px 1170px"
+    },
+    {
+      "name": "tablet-portrait: gauge context menu suppressed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tablet-portrait: 12 cylinder display",
+      "ok": true,
+      "detail": "{'ign': 12, 'inj': 12, 'bad': 12, 'label': 'IGNITION \u2022 FAULT \u2022 CYLINDER NOT REPORTED'}"
+    },
+    {
+      "name": "tablet-portrait: global ignition fault explicit",
+      "ok": true,
+      "detail": "{'ign': 12, 'inj': 12, 'bad': 12, 'label': 'IGNITION \u2022 FAULT \u2022 CYLINDER NOT REPORTED'}"
+    },
+    {
+      "name": "tablet-portrait: table operations reachable",
+      "ok": true,
+      "detail": "{'client': 311, 'scroll': 311, 'children': 5}"
+    },
+    {
+      "name": "tablet-portrait: live selection reachable",
+      "ok": true,
+      "detail": "{'client': 152, 'scroll': 176, 'children': 8}"
+    },
+    {
+      "name": "tablet-portrait: 3D modal opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tablet-portrait: modal close isolated",
+      "ok": true,
+      "detail": "modal=True,more=True"
+    },
+    {
+      "name": "tablet-portrait: table haptic bridge",
+      "ok": true,
+      "detail": "['range', 'range']"
+    },
+    {
+      "name": "tablet-portrait: table panel reflow",
+      "ok": true,
+      "detail": "{'w': 561, 'h': 2196.4375}->{'w': 561, 'h': 1541, 'right': 'none', 'cls': 'expPage tablesPage hideRight'}"
+    },
+    {
+      "name": "tablet-portrait: 3 default + 3 custom presets",
+      "ok": true,
+      "detail": "def=3,custom=3"
+    },
+    {
+      "name": "tablet-portrait: graph-limit prompt",
+      "ok": true,
+      "detail": "Graph limit reached (8). Remove a graph or raise the limit in Settings."
+    },
+    {
+      "name": "tablet-portrait: logging panel reflow",
+      "ok": true,
+      "detail": "{'cls': 'expPage loggingPageV2 hideRight', 'right': 'none'}"
+    },
+    {
+      "name": "tablet-portrait: detailed thin crank trace",
+      "ok": true,
+      "detail": "{'stroke': '0.82', 'd': 10763}"
+    },
+    {
+      "name": "tablet-portrait: diagnostics panel reflow",
+      "ok": true,
+      "detail": "{'cls': 'diagnosticsPageV2 hideBottom', 'bottom': 'none'}"
+    },
+    {
+      "name": "tablet-portrait: gauge limits exposed",
+      "ok": true,
+      "detail": "9"
+    },
+    {
+      "name": "tablet-portrait: table haptic setting exposed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tablet-portrait: no runtime JS errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phone-portrait: no initial JS errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phone-portrait: app has two rows",
+      "ok": true,
+      "detail": "90px 817px"
+    },
+    {
+      "name": "phone-portrait: gauge context menu suppressed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phone-portrait: 12 cylinder display",
+      "ok": true,
+      "detail": "{'ign': 12, 'inj': 12, 'bad': 12, 'label': 'IGNITION \u2022 FAULT \u2022 CYLINDER NOT REPORTED'}"
+    },
+    {
+      "name": "phone-portrait: global ignition fault explicit",
+      "ok": true,
+      "detail": "{'ign': 12, 'inj': 12, 'bad': 12, 'label': 'IGNITION \u2022 FAULT \u2022 CYLINDER NOT REPORTED'}"
+    },
+    {
+      "name": "phone-portrait: table operations reachable",
+      "ok": true,
+      "detail": "{'client': 390, 'scroll': 390, 'children': 5}"
+    },
+    {
+      "name": "phone-portrait: live selection reachable",
+      "ok": true,
+      "detail": "{'client': 192, 'scroll': 192, 'children': 8}"
+    },
+    {
+      "name": "phone-portrait: 3D modal opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phone-portrait: modal close isolated",
+      "ok": true,
+      "detail": "modal=True,more=True"
+    },
+    {
+      "name": "phone-portrait: table haptic bridge",
+      "ok": true,
+      "detail": "['range', 'range']"
+    },
+    {
+      "name": "phone-portrait: 3 default + 3 custom presets",
+      "ok": true,
+      "detail": "def=3,custom=3"
+    },
+    {
+      "name": "phone-portrait: graph-limit prompt",
+      "ok": true,
+      "detail": "Graph limit reached (8). Remove a graph or raise the limit in Settings."
+    },
+    {
+      "name": "phone-portrait: detailed thin crank trace",
+      "ok": true,
+      "detail": "{'stroke': '0.82', 'd': 14486}"
+    },
+    {
+      "name": "phone-portrait: gauge limits exposed",
+      "ok": true,
+      "detail": "9"
+    },
+    {
+      "name": "phone-portrait: table haptic setting exposed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phone-portrait: no runtime JS errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phone-landscape: no initial JS errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phone-landscape: app has two rows",
+      "ok": true,
+      "detail": "48px 358px"
+    },
+    {
+      "name": "phone-landscape: gauge context menu suppressed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phone-landscape: 12 cylinder display",
+      "ok": true,
+      "detail": "{'ign': 12, 'inj': 12, 'bad': 12, 'label': 'IGNITION \u2022 FAULT \u2022 CYLINDER NOT REPORTED'}"
+    },
+    {
+      "name": "phone-landscape: global ignition fault explicit",
+      "ok": true,
+      "detail": "{'ign': 12, 'inj': 12, 'bad': 12, 'label': 'IGNITION \u2022 FAULT \u2022 CYLINDER NOT REPORTED'}"
+    },
+    {
+      "name": "phone-landscape: table operations reachable",
+      "ok": true,
+      "detail": "{'client': 311, 'scroll': 311, 'children': 5}"
+    },
+    {
+      "name": "phone-landscape: live selection reachable",
+      "ok": true,
+      "detail": "{'client': 136, 'scroll': 176, 'children': 8}"
+    },
+    {
+      "name": "phone-landscape: 3D modal opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phone-landscape: modal close isolated",
+      "ok": true,
+      "detail": "modal=True,more=True"
+    },
+    {
+      "name": "phone-landscape: table haptic bridge",
+      "ok": true,
+      "detail": "['range', 'range']"
+    },
+    {
+      "name": "phone-landscape: 3 default + 3 custom presets",
+      "ok": true,
+      "detail": "def=3,custom=3"
+    },
+    {
+      "name": "phone-landscape: graph-limit prompt",
+      "ok": true,
+      "detail": "Graph limit reached (8). Remove a graph or raise the limit in Settings."
+    },
+    {
+      "name": "phone-landscape: detailed thin crank trace",
+      "ok": true,
+      "detail": "{'stroke': '0.82', 'd': 14487}"
+    },
+    {
+      "name": "phone-landscape: gauge limits exposed",
+      "ok": true,
+      "detail": "9"
+    },
+    {
+      "name": "phone-landscape: table haptic setting exposed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "phone-landscape: no runtime JS errors",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}
