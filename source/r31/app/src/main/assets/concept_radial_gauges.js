@@ -1,20 +1,269 @@
 'use strict';
 
-/* EpicDash UX r29 — low-cost radial renderer with adaptive major-step labels. */
+/* EpicDash UX r29 — low-cost radial renderer with adaptive major-step labels.
+   Static gauge artwork is built once. Runtime updates move only one pointer
+   group per gauge. No animated arc, per-segment activation, SVG blur, or glow. */
 (() => {
   const NS = 'http://www.w3.org/2000/svg';
-  const $svg = (name, attrs = {}) => { const node = document.createElementNS(NS, name); Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value))); return node; };
+  const $svg = (name, attrs = {}) => {
+    const node = document.createElementNS(NS, name);
+    Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value)));
+    return node;
+  };
   const clampLocal = (value, min, max) => Math.max(min, Math.min(max, value));
-  const polar = (cx, cy, radius, degrees) => { const angle = degrees * Math.PI / 180; return { x: cx + Math.cos(angle) * radius, y: cy + Math.sin(angle) * radius }; };
-  const arcPath = (cx, cy, radius, startDegrees, endDegrees) => { const start = polar(cx, cy, radius, startDegrees); const end = polar(cx, cy, radius, endDegrees); const span = Math.abs(endDegrees - startDegrees); return `M ${start.x.toFixed(3)} ${start.y.toFixed(3)} A ${radius} ${radius} 0 ${span > 180 ? 1 : 0} 1 ${end.x.toFixed(3)} ${end.y.toFixed(3)}`; };
-  const annularSegment = (cx, cy, outerRadius, innerRadius, startDegrees, endDegrees) => { const outerStart = polar(cx, cy, outerRadius, startDegrees), outerEnd = polar(cx, cy, outerRadius, endDegrees), innerEnd = polar(cx, cy, innerRadius, endDegrees), innerStart = polar(cx, cy, innerRadius, startDegrees), largeArc = Math.abs(endDegrees - startDegrees) > 180 ? 1 : 0; return [`M ${outerStart.x.toFixed(3)} ${outerStart.y.toFixed(3)}`,`A ${outerRadius} ${outerRadius} 0 ${largeArc} 1 ${outerEnd.x.toFixed(3)} ${outerEnd.y.toFixed(3)}`,`L ${innerEnd.x.toFixed(3)} ${innerEnd.y.toFixed(3)}`,`A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${innerStart.x.toFixed(3)} ${innerStart.y.toFixed(3)}`,'Z'].join(' '); };
-  const formatScale = value => { if (Math.abs(value) >= 1000) return String(Math.round(value / 1000)); if (Math.abs(value) < 10 && Math.abs(value % 1) > 1e-6) return Number(value).toFixed(1); return String(Math.round(value)); };
-  const formatGaugeScale = (id, value) => { if (id === 'rpmDial') return formatScale(value); const map = {boostDial:'pressureBar',afrDial:'afr',cltDial:'temperature',oilDial:'pressureBar'}; const kind = map[id]; if (!kind) return formatScale(value); try { const out = window.SettingsUX?.present?.(kind, value, id === 'afrDial' && window.SettingsUX?.getConfig?.()?.units?.afr === 'lambda' ? 2 : 1); return out?.text ?? formatScale(value); } catch (_) { return formatScale(value); } };
-  const adaptiveLabels = (config, hero) => { const span = Math.max(1e-9, config.max - config.min), major = Math.max(1e-9, Math.abs(Number(config.major) || span / 4)), majorIntervals = Math.max(1, Math.floor(span / major + 1e-6)), maxLabels = hero ? 13 : 7, stride = Math.max(1, Math.ceil(majorIntervals / Math.max(1, maxLabels - 1))), step = major * stride, out = [config.min]; for (let value = config.min + step; value < config.max - step * 0.15; value += step) out.push(Number(value.toFixed(8))); if (Math.abs(out[out.length - 1] - config.max) > 1e-7) out.push(config.max); return out; };
-  const CONFIG={rpmDial:{min:0,max:9000,major:1000,minor:250,labels:[0,1000,2000,3000,4000,5000,6000,7000,8000,9000],zones:[{from:0,to:6200,color:'#00bfe8',key:'cyan'},{from:6200,to:6800,color:'#e59d16',key:'amber'},{from:6800,to:9000,color:'#ef3b32',key:'red'}]},boostDial:{min:-1,max:2,major:.5,minor:.1,labels:[-1,0,1,2],zones:[{from:-1,to:1.2,color:'#00bfe8',key:'cyan'},{from:1.2,to:1.6,color:'#e59d16',key:'amber'},{from:1.6,to:2,color:'#ef3b32',key:'red'}]},afrDial:{min:9,max:20,major:1,minor:.5,labels:[9,11,13,15,17,20],zones:[{from:9,to:12.5,color:'#00bfe8',key:'cyan'},{from:12.5,to:15.2,color:'#73c916',key:'green'},{from:15.2,to:17,color:'#e59d16',key:'amber'},{from:17,to:20,color:'#ef3b32',key:'red'}]},cltDial:{min:40,max:120,major:20,minor:10,labels:[40,80,120],zones:[{from:40,to:65,color:'#00b5de',key:'cyan'},{from:65,to:100,color:'#73c916',key:'green'},{from:100,to:110,color:'#e59d16',key:'amber'},{from:110,to:120,color:'#ef3b32',key:'red'}]},oilDial:{min:0,max:10,major:2,minor:1,labels:[0,5,10],zones:[{from:0,to:1,color:'#ef3b32',key:'red'},{from:1,to:2,color:'#e59d16',key:'amber'},{from:2,to:10,color:'#73c916',key:'green'}]},fuelDial:{min:0,max:100,major:25,minor:12.5,labels:[0,50,100],zones:[{from:0,to:10,color:'#ef3b32',key:'red'},{from:10,to:20,color:'#e59d16',key:'amber'},{from:20,to:100,color:'#00bfe8',key:'cyan'}]}};
-  const normalized=(config,value)=>(Number(value)-config.min)/(config.max-config.min), angleFor=(config,value)=>180+clampLocal(normalized(config,value),0,1)*180;
-  function build(gauge){ if(!gauge)return; const id=gauge.id,baseConfig=CONFIG[id],limits=window.SettingsUX?.getConfig?.()?.dashboard?.gaugeLimits?.[id]||{},config=baseConfig?{...baseConfig,min:Number.isFinite(Number(limits.min))?Number(limits.min):baseConfig.min,max:Number.isFinite(Number(limits.max))?Number(limits.max):baseConfig.max}:null;if(config&&config.max<=config.min)config.max=config.min+1;if(config){config.zones=(baseConfig.zones||[]).map(z=>({...z,from:clampLocal(z.from,config.min,config.max),to:clampLocal(z.to,config.min,config.max)})).filter(z=>z.to>z.from);if(config.zones.length){config.zones[0].from=config.min;config.zones[config.zones.length-1].to=config.max}} if(!config)return; const hero=gauge.classList.contains('radialGaugeHero'); config.labels=adaptiveLabels(config,hero); const svg=gauge.querySelector('.radialSvg'); if(!svg)return; const cx=hero?180:120,cy=hero?188:132,outer=hero?158:102,bandOuter=hero?153:98,bandInner=hero?136:84,tickOuter=hero?160:104,minorInner=hero?151:97,majorInner=hero?143:90,labelRadius=hero?124:72,pointerInner=hero?105:59,pointerOuter=hero?156:101; svg.replaceChildren(); svg.classList.add('conceptRadialSvg'); const frameGroup=$svg('g',{class:'conceptGaugeFrame'}); frameGroup.appendChild($svg('path',{class:'conceptOuterBezel',d:arcPath(cx,cy,outer,180,360)})); frameGroup.appendChild($svg('path',{class:'conceptOuterEdge',d:arcPath(cx,cy,outer-3,180,360)})); frameGroup.appendChild($svg('path',{class:'conceptInnerShadow',d:arcPath(cx,cy,bandInner-4,180,360)})); svg.appendChild(frameGroup); const zoneGroup=$svg('g',{class:'conceptZoneLayer'}); config.zones.forEach(zone=>{zoneGroup.appendChild($svg('path',{class:`conceptZoneBand zone-${zone.key}`,d:annularSegment(cx,cy,bandOuter,bandInner,angleFor(config,zone.from),angleFor(config,zone.to)),fill:zone.color}));}); svg.appendChild(zoneGroup); const ticks=$svg('g',{class:'conceptTickLayer'}),totalMinor=Math.max(1,Math.round((config.max-config.min)/config.minor)); for(let index=0;index<=totalMinor;index++){const value=config.min+index*config.minor,majorRatio=(value-config.min)/config.major,isMajor=Math.abs(majorRatio-Math.round(majorRatio))<1e-6,angle=angleFor(config,value),start=polar(cx,cy,tickOuter,angle),end=polar(cx,cy,isMajor?majorInner:minorInner,angle);ticks.appendChild($svg('line',{class:isMajor?'conceptTick major':'conceptTick minor',x1:start.x.toFixed(2),y1:start.y.toFixed(2),x2:end.x.toFixed(2),y2:end.y.toFixed(2)}));} svg.appendChild(ticks); const labels=$svg('g',{class:'conceptScaleLabelLayer'}); config.labels.forEach(value=>{const point=polar(cx,cy,labelRadius,angleFor(config,value)),label=$svg('text',{class:'conceptScaleLabel',x:point.x.toFixed(2),y:point.y.toFixed(2),'text-anchor':'middle','dominant-baseline':'middle'});label.textContent=formatGaugeScale(id,value);labels.appendChild(label);});svg.appendChild(labels); const pointerGroup=$svg('g',{class:'conceptPointerGroup'});pointerGroup.appendChild($svg('line',{class:'conceptPointerNeedle',x1:(cx-pointerInner).toFixed(2),y1:cy,x2:(cx-pointerOuter).toFixed(2),y2:cy}));pointerGroup.appendChild($svg('circle',{class:'conceptPointerTip',cx:(cx-pointerOuter).toFixed(2),cy,r:hero?3.2:2.6}));svg.appendChild(pointerGroup);gauge.__conceptGauge={config,pointerGroup,cx,cy,lastRotation:null,lastValid:null};const scale=gauge.querySelectorAll('.radialScale span');if(scale.length>=3){scale[0].textContent=formatGaugeScale(id,config.min);scale[1].textContent=formatGaugeScale(id,config.min+(config.max-config.min)/2);scale[scale.length-1].textContent=formatGaugeScale(id,config.max)}gauge.dataset.radialReady='1';}
-  function update(id,value,min,max){const gauge=document.getElementById(id);if(!gauge)return;if(!gauge.__conceptGauge)build(gauge);const runtime=gauge.__conceptGauge;if(!runtime)return;const config=runtime.config,numeric=Number(value),valid=Number.isFinite(numeric),low=config.min,high=config.max,span=high-low,pct=valid&&span!==0?clampLocal((numeric-low)/span,0,1):0,rotation=Math.round(pct*180*4)/4;if(runtime.lastRotation!==rotation){runtime.pointerGroup.setAttribute('transform',`rotate(${rotation} ${runtime.cx} ${runtime.cy})`);runtime.lastRotation=rotation;}if(runtime.lastValid!==valid){gauge.classList.toggle('noData',!valid);runtime.lastValid=valid;}gauge.dataset.pct=(pct*100).toFixed(2);}
-  function initAll(){document.querySelectorAll('.radialGauge').forEach(build)} function rebuildAll(){document.querySelectorAll('.radialGauge').forEach(g=>{delete g.__conceptGauge;build(g)})}
-  window.ConceptRadialGauge={initAll,rebuildAll,build,update,config:CONFIG};
+  const polar = (cx, cy, radius, degrees) => {
+    const angle = degrees * Math.PI / 180;
+    return { x: cx + Math.cos(angle) * radius, y: cy + Math.sin(angle) * radius };
+  };
+  const arcPath = (cx, cy, radius, startDegrees, endDegrees) => {
+    const start = polar(cx, cy, radius, startDegrees);
+    const end = polar(cx, cy, radius, endDegrees);
+    const span = Math.abs(endDegrees - startDegrees);
+    return `M ${start.x.toFixed(3)} ${start.y.toFixed(3)} A ${radius} ${radius} 0 ${span > 180 ? 1 : 0} 1 ${end.x.toFixed(3)} ${end.y.toFixed(3)}`;
+  };
+  const annularSegment = (cx, cy, outerRadius, innerRadius, startDegrees, endDegrees) => {
+    const outerStart = polar(cx, cy, outerRadius, startDegrees);
+    const outerEnd = polar(cx, cy, outerRadius, endDegrees);
+    const innerEnd = polar(cx, cy, innerRadius, endDegrees);
+    const innerStart = polar(cx, cy, innerRadius, startDegrees);
+    const largeArc = Math.abs(endDegrees - startDegrees) > 180 ? 1 : 0;
+    return [
+      `M ${outerStart.x.toFixed(3)} ${outerStart.y.toFixed(3)}`,
+      `A ${outerRadius} ${outerRadius} 0 ${largeArc} 1 ${outerEnd.x.toFixed(3)} ${outerEnd.y.toFixed(3)}`,
+      `L ${innerEnd.x.toFixed(3)} ${innerEnd.y.toFixed(3)}`,
+      `A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${innerStart.x.toFixed(3)} ${innerStart.y.toFixed(3)}`,
+      'Z'
+    ].join(' ');
+  };
+  const formatScale = value => {
+    if (Math.abs(value) >= 1000) return String(Math.round(value / 1000));
+    if (Math.abs(value) < 10 && Math.abs(value % 1) > 1e-6) return Number(value).toFixed(1);
+    return String(Math.round(value));
+  };
+  const formatGaugeScale = (id, value) => {
+    if (id === 'rpmDial') return formatScale(value);
+    const map = {boostDial:'pressureBar',afrDial:'afr',cltDial:'temperature',oilDial:'pressureBar'};
+    const kind = map[id];
+    if (!kind) return formatScale(value);
+    try {
+      const out = window.SettingsUX?.present?.(kind, value, id === 'afrDial' && window.SettingsUX?.getConfig?.()?.units?.afr === 'lambda' ? 2 : 1);
+      return out?.text ?? formatScale(value);
+    } catch (_) { return formatScale(value); }
+  };
+  const adaptiveLabels = (config, hero) => {
+    const span = Math.max(1e-9, config.max - config.min);
+    const major = Math.max(1e-9, Math.abs(Number(config.major) || span / 4));
+    const majorIntervals = Math.max(1, Math.floor(span / major + 1e-6));
+    const maxLabels = hero ? 13 : 7;
+    const stride = Math.max(1, Math.ceil(majorIntervals / Math.max(1, maxLabels - 1)));
+    const step = major * stride;
+    const out = [config.min];
+    for (let value = config.min + step; value < config.max - step * 0.15; value += step) out.push(Number(value.toFixed(8)));
+    if (Math.abs(out[out.length - 1] - config.max) > 1e-7) out.push(config.max);
+    return out;
+  };
+
+  const CONFIG = {
+    rpmDial: {
+      min: 0, max: 9000, major: 1000, minor: 250,
+      labels: [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000],
+      zones: [
+        { from: 0, to: 6200, color: '#00bfe8', key: 'cyan' },
+        { from: 6200, to: 6800, color: '#e59d16', key: 'amber' },
+        { from: 6800, to: 9000, color: '#ef3b32', key: 'red' }
+      ]
+    },
+    boostDial: {
+      min: -1, max: 2, major: 0.5, minor: 0.1,
+      labels: [-1, 0, 1, 2],
+      zones: [
+        { from: -1, to: 1.2, color: '#00bfe8', key: 'cyan' },
+        { from: 1.2, to: 1.6, color: '#e59d16', key: 'amber' },
+        { from: 1.6, to: 2, color: '#ef3b32', key: 'red' }
+      ]
+    },
+    afrDial: {
+      min: 9, max: 20, major: 1, minor: 0.5,
+      labels: [9, 11, 13, 15, 17, 20],
+      zones: [
+        { from: 9, to: 12.5, color: '#00bfe8', key: 'cyan' },
+        { from: 12.5, to: 15.2, color: '#73c916', key: 'green' },
+        { from: 15.2, to: 17, color: '#e59d16', key: 'amber' },
+        { from: 17, to: 20, color: '#ef3b32', key: 'red' }
+      ]
+    },
+    cltDial: {
+      min: 40, max: 120, major: 20, minor: 10,
+      labels: [40, 80, 120],
+      zones: [
+        { from: 40, to: 65, color: '#00b5de', key: 'cyan' },
+        { from: 65, to: 100, color: '#73c916', key: 'green' },
+        { from: 100, to: 110, color: '#e59d16', key: 'amber' },
+        { from: 110, to: 120, color: '#ef3b32', key: 'red' }
+      ]
+    },
+    oilDial: {
+      min: 0, max: 10, major: 2, minor: 1,
+      labels: [0, 5, 10],
+      zones: [
+        { from: 0, to: 1, color: '#ef3b32', key: 'red' },
+        { from: 1, to: 2, color: '#e59d16', key: 'amber' },
+        { from: 2, to: 10, color: '#73c916', key: 'green' }
+      ]
+    },
+    fuelDial: {
+      min: 0, max: 100, major: 25, minor: 12.5,
+      labels: [0, 50, 100],
+      zones: [
+        { from: 0, to: 10, color: '#ef3b32', key: 'red' },
+        { from: 10, to: 20, color: '#e59d16', key: 'amber' },
+        { from: 20, to: 100, color: '#00bfe8', key: 'cyan' }
+      ]
+    }
+  };
+
+  const normalized = (config, value) => (Number(value) - config.min) / (config.max - config.min);
+  const angleFor = (config, value) => 180 + clampLocal(normalized(config, value), 0, 1) * 180;
+
+  function build(gauge) {
+    if (!gauge) return;
+    const id = gauge.id;
+    const baseConfig=CONFIG[id],limits=window.SettingsUX?.getConfig?.()?.dashboard?.gaugeLimits?.[id]||{},config=baseConfig?{...baseConfig,min:Number.isFinite(Number(limits.min))?Number(limits.min):baseConfig.min,max:Number.isFinite(Number(limits.max))?Number(limits.max):baseConfig.max}:null;if(config&&config.max<=config.min)config.max=config.min+1;if(config){config.zones=(baseConfig.zones||[]).map(z=>({...z,from:clampLocal(z.from,config.min,config.max),to:clampLocal(z.to,config.min,config.max)})).filter(z=>z.to>z.from);if(config.zones.length){config.zones[0].from=config.min;config.zones[config.zones.length-1].to=config.max}}
+    if (!config) return;
+    const hero = gauge.classList.contains('radialGaugeHero');
+    config.labels=adaptiveLabels(config,hero);
+    const svg = gauge.querySelector('.radialSvg');
+    if (!svg) return;
+
+    const cx = hero ? 180 : 120;
+    const cy = hero ? 188 : 132;
+    const outer = hero ? 158 : 102;
+    const bandOuter = hero ? 153 : 98;
+    const bandInner = hero ? 136 : 84;
+    const tickOuter = hero ? 160 : 104;
+    const minorInner = hero ? 151 : 97;
+    const majorInner = hero ? 143 : 90;
+    const labelRadius = hero ? 124 : 72;
+    const pointerInner = hero ? 105 : 59;
+    const pointerOuter = hero ? 156 : 101;
+
+    svg.replaceChildren();
+    svg.classList.add('conceptRadialSvg');
+
+    const frameGroup = $svg('g', { class: 'conceptGaugeFrame' });
+    frameGroup.appendChild($svg('path', {
+      class: 'conceptOuterBezel',
+      d: arcPath(cx, cy, outer, 180, 360)
+    }));
+    frameGroup.appendChild($svg('path', {
+      class: 'conceptOuterEdge',
+      d: arcPath(cx, cy, outer - 3, 180, 360)
+    }));
+    frameGroup.appendChild($svg('path', {
+      class: 'conceptInnerShadow',
+      d: arcPath(cx, cy, bandInner - 4, 180, 360)
+    }));
+    svg.appendChild(frameGroup);
+
+    // One static path per zone replaces r20's 224 individually animated segments.
+    const zoneGroup = $svg('g', { class: 'conceptZoneLayer' });
+    config.zones.forEach(zone => {
+      const startAngle = angleFor(config, zone.from);
+      const endAngle = angleFor(config, zone.to);
+      zoneGroup.appendChild($svg('path', {
+        class: `conceptZoneBand zone-${zone.key}`,
+        d: annularSegment(cx, cy, bandOuter, bandInner, startAngle, endAngle),
+        fill: zone.color
+      }));
+    });
+    svg.appendChild(zoneGroup);
+
+    const ticks = $svg('g', { class: 'conceptTickLayer' });
+    const totalMinor = Math.max(1, Math.round((config.max - config.min) / config.minor));
+    for (let index = 0; index <= totalMinor; index++) {
+      const value = config.min + index * config.minor;
+      const majorRatio = (value - config.min) / config.major;
+      const isMajor = Math.abs(majorRatio - Math.round(majorRatio)) < 1e-6;
+      const angle = angleFor(config, value);
+      const start = polar(cx, cy, tickOuter, angle);
+      const end = polar(cx, cy, isMajor ? majorInner : minorInner, angle);
+      ticks.appendChild($svg('line', {
+        class: isMajor ? 'conceptTick major' : 'conceptTick minor',
+        x1: start.x.toFixed(2), y1: start.y.toFixed(2),
+        x2: end.x.toFixed(2), y2: end.y.toFixed(2)
+      }));
+    }
+    svg.appendChild(ticks);
+
+    const labels = $svg('g', { class: 'conceptScaleLabelLayer' });
+    config.labels.forEach(value => {
+      const angle = angleFor(config, value);
+      const point = polar(cx, cy, labelRadius, angle);
+      const label = $svg('text', {
+        class: 'conceptScaleLabel',
+        x: point.x.toFixed(2),
+        y: point.y.toFixed(2),
+        'text-anchor': 'middle',
+        'dominant-baseline': 'middle'
+      });
+      label.textContent = formatGaugeScale(id, value);
+      labels.appendChild(label);
+    });
+    svg.appendChild(labels);
+
+    // Pointer is drawn once at the minimum angle. Runtime uses one group rotation.
+    const pointerGroup = $svg('g', { class: 'conceptPointerGroup' });
+    pointerGroup.appendChild($svg('line', {
+      class: 'conceptPointerNeedle',
+      x1: (cx - pointerInner).toFixed(2), y1: cy,
+      x2: (cx - pointerOuter).toFixed(2), y2: cy
+    }));
+    pointerGroup.appendChild($svg('circle', {
+      class: 'conceptPointerTip', cx: (cx - pointerOuter).toFixed(2), cy, r: hero ? 3.2 : 2.6
+    }));
+    svg.appendChild(pointerGroup);
+
+    gauge.__conceptGauge = {
+      config,
+      pointerGroup,
+      cx,
+      cy,
+      lastRotation: null,
+      lastValid: null
+    };
+    const scale=gauge.querySelectorAll('.radialScale span');if(scale.length>=3){scale[0].textContent=formatGaugeScale(id,config.min);scale[1].textContent=formatGaugeScale(id,config.min+(config.max-config.min)/2);scale[scale.length-1].textContent=formatGaugeScale(id,config.max)}
+    gauge.dataset.radialReady = '1';
+  }
+
+  function update(id, value, min, max) {
+    const gauge = document.getElementById(id);
+    if (!gauge) return;
+    if (!gauge.__conceptGauge) build(gauge);
+    const runtime = gauge.__conceptGauge;
+    if (!runtime) return;
+
+    const config = runtime.config;
+    const numeric = Number(value);
+    const valid = Number.isFinite(numeric);
+    const low=config.min;
+    const high=config.max;
+    const span = high - low;
+    const pct = valid && span !== 0 ? clampLocal((numeric - low) / span, 0, 1) : 0;
+    const rotation = Math.round(pct * 180 * 4) / 4; // quarter-degree visual resolution
+
+    if (runtime.lastRotation !== rotation) {
+      runtime.pointerGroup.setAttribute('transform', `rotate(${rotation} ${runtime.cx} ${runtime.cy})`);
+      runtime.lastRotation = rotation;
+    }
+    if (runtime.lastValid !== valid) {
+      gauge.classList.toggle('noData', !valid);
+      runtime.lastValid = valid;
+    }
+    gauge.dataset.pct = (pct * 100).toFixed(2);
+  }
+
+  function initAll() {document.querySelectorAll('.radialGauge').forEach(build)}
+  function rebuildAll(){document.querySelectorAll('.radialGauge').forEach(g=>{delete g.__conceptGauge;build(g)})}
+
+  window.ConceptRadialGauge = { initAll, rebuildAll, build, update, config: CONFIG };
 })();
