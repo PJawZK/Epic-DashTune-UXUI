@@ -4,22 +4,98 @@
   "signing": {
     "signing_block_start": 6680683,
     "central_directory_offset": 6683899,
-    "v2": {"verified": true,"digest": "40b4d27921eea2f7338e7fa818e0599f32f12e7f339ba0d588b51e4b61c07f6f","certificate_sha256": "cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142","attrs_length": 12},
-    "v3": {"verified": true,"digest": "40b4d27921eea2f7338e7fa818e0599f32f12e7f339ba0d588b51e4b61c07f6f","certificate_sha256": "cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142","attrs_length": 0}
+    "v2": {
+      "verified": true,
+      "digest": "40b4d27921eea2f7338e7fa818e0599f32f12e7f339ba0d588b51e4b61c07f6f",
+      "certificate_sha256": "cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142",
+      "attrs_length": 12
+    },
+    "v3": {
+      "verified": true,
+      "digest": "40b4d27921eea2f7338e7fa818e0599f32f12e7f339ba0d588b51e4b61c07f6f",
+      "certificate_sha256": "cc09e34e407d8ff8416fbdf48f208bb5c58483af8fcd427201a6b59f588c6142",
+      "attrs_length": 0
+    }
   },
-  "alignment": {"stored_entries": 231,"alignment_issues": []},
+  "alignment": {
+    "stored_entries": 231,
+    "alignment_issues": []
+  },
   "zip_test": null,
   "entries": 925,
   "one_signer": true,
   "dex": [
-    {"name":"classes.dex","size":10314692,"sha256":"55ad8d7bd8264659def0e3ba164dc55336d0b8b26653e426edb4fe12e06ded05","byte_identical_to_r19":true,"adler32_valid":true,"sha1_valid":true,"magic":"dex\n038\u0000"},
-    {"name":"classes2.dex","size":524252,"sha256":"41c3f108d3e6418ff9b31011cf797616676d7848c4fb3aa36fe342e65d1ce50b","byte_identical_to_r19":true,"adler32_valid":true,"sha1_valid":true,"magic":"dex\n038\u0000"},
-    {"name":"classes3.dex","size":34664,"sha256":"e893732aeea324a8c9f7637692473bfd90c9c64987fdf2d08fd53c498e0caf08","byte_identical_to_r19":true,"adler32_valid":true,"sha1_valid":true,"magic":"dex\n038\u0000"},
-    {"name":"classes4.dex","size":453652,"sha256":"3ddb3b43228f4c23c1983bcc116d831a102c75c44a43bc2cd3d4c680f591abb4","byte_identical_to_r19":true,"adler32_valid":true,"sha1_valid":true,"magic":"dex\n038\u0000"},
-    {"name":"classes5.dex","size":9744,"sha256":"3ea7d58560dee45d116dfc57d8bb3c08580cae8d5f7f44f33c99fdeb6a662bc4","byte_identical_to_r19":true,"adler32_valid":true,"sha1_valid":true,"magic":"dex\n038\u0000"},
-    {"name":"classes6.dex","size":763100,"sha256":"ee8698aaa0877b78cf8e3843f16d4ad463807f5597963edce728ac1b66f1dccd","byte_identical_to_r19":true,"adler32_valid":true,"sha1_valid":true,"magic":"dex\n038\u0000"}
+    {
+      "name": "classes.dex",
+      "size": 10314692,
+      "sha256": "55ad8d7bd8264659def0e3ba164dc55336d0b8b26653e426edb4fe12e06ded05",
+      "byte_identical_to_r19": true,
+      "adler32_valid": true,
+      "sha1_valid": true,
+      "magic": "dex\n038\u0000"
+    },
+    {
+      "name": "classes2.dex",
+      "size": 524252,
+      "sha256": "41c3f108d3e6418ff9b31011cf797616676d7848c4fb3aa36fe342e65d1ce50b",
+      "byte_identical_to_r19": true,
+      "adler32_valid": true,
+      "sha1_valid": true,
+      "magic": "dex\n038\u0000"
+    },
+    {
+      "name": "classes3.dex",
+      "size": 34664,
+      "sha256": "e893732aeea324a8c9f7637692473bfd90c9c64987fdf2d08fd53c498e0caf08",
+      "byte_identical_to_r19": true,
+      "adler32_valid": true,
+      "sha1_valid": true,
+      "magic": "dex\n038\u0000"
+    },
+    {
+      "name": "classes4.dex",
+      "size": 453652,
+      "sha256": "3ddb3b43228f4c23c1983bcc116d831a102c75c44a43bc2cd3d4c680f591abb4",
+      "byte_identical_to_r19": true,
+      "adler32_valid": true,
+      "sha1_valid": true,
+      "magic": "dex\n038\u0000"
+    },
+    {
+      "name": "classes5.dex",
+      "size": 9744,
+      "sha256": "3ea7d58560dee45d116dfc57d8bb3c08580cae8d5f7f44f33c99fdeb6a662bc4",
+      "byte_identical_to_r19": true,
+      "adler32_valid": true,
+      "sha1_valid": true,
+      "magic": "dex\n038\u0000"
+    },
+    {
+      "name": "classes6.dex",
+      "size": 763100,
+      "sha256": "ee8698aaa0877b78cf8e3843f16d4ad463807f5597963edce728ac1b66f1dccd",
+      "byte_identical_to_r19": true,
+      "adler32_valid": true,
+      "sha1_valid": true,
+      "magic": "dex\n038\u0000"
+    }
   ],
-  "manifest": {"package_utf16_present":true,"version_name_present":true,"version_code_present":true,"old_version_absent":true},
-  "asset_equality": {"assets/dashboard_lab.html":true,"assets/radial_gauges.css":true,"assets/concept_radial_gauges.js":true,"assets/whatsnew.txt":true},
-  "implementation": {"primary_symbols":6,"empty_concept_svg_count":6,"old_primary_radial_track_in_primary_section":false,"concept_renderer_present":true}
+  "manifest": {
+    "package_utf16_present": true,
+    "version_name_present": true,
+    "version_code_present": true,
+    "old_version_absent": true
+  },
+  "asset_equality": {
+    "assets/dashboard_lab.html": true,
+    "assets/radial_gauges.css": true,
+    "assets/concept_radial_gauges.js": true,
+    "assets/whatsnew.txt": true
+  },
+  "implementation": {
+    "primary_symbols": 6,
+    "empty_concept_svg_count": 6,
+    "old_primary_radial_track_in_primary_section": false,
+    "concept_renderer_present": true
+  }
 }
