@@ -1,4 +1,4 @@
-# EpicDash integration bride
+# EpicDash integration bridge
 
 This bridge is intentionally smaller than the standalone r31 Android wrapper.
 
